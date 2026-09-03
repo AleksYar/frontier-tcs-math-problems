@@ -1,0 +1,720 @@
+                                                  THE SHARP EXPONENT FOR THE MINIMAL DISTANCE PROBLEM
+
+                                                                                         COSMIN POHOATA
+
+
+                                                   Abstract. We show that for every fixed ε > 0, there exist arbitrarily large families of
+                                                   point–line pairs ( x1 , ℓ1 ), . . . , ( xn , ℓn ) in [0, 1]2 , with xi ∈ ℓi for all i, and such that
+                                                                                  dist( xi , ℓ j ) ≥ n−2/3−ε     ( i ̸ = j ).
+                                                   Combined with a previous result of Cohen, the author, and Zakharov, this solves the
+                                                   minimal distance problem.
+                                                      The same construction also comes with an unexpected finite field consequence: for every
+                                                   ε > 0, there exists a set of primes q of positive relative density for which F2q contains an
+                                                   induced point-line matching of size ≳ε q3/2−ε . This disproves a conjecture of Hunter, the
+                                                   author, Verstraëte and Zhang.
+
+
+
+
+arXiv:2607.20422v2 [math.CO] 30 Jul 2026
+                                                                                         1. Introduction
+                                             Choose points x1 , . . . , xn ∈ [0, 1]2 and, for each i = 1, . . . , n, let ℓi be a line through xi .
+                                           The minimal distance problem asks how far every point can be kept from every line to
+                                           which it is not assigned. More precisely, we define
+                                                                                ∆PL (n) := sup min dist( xi , ℓ j ),                                      (1)
+                                                                                                         i̸= j
+
+                                           where the supremum is over all configurations of points x1 , . . . , xn ∈ [0, 1]2 and lines
+                                           ℓ1 , . . . , ℓn ⊂ R2 such that xi ∈ ℓi . For convenience, let us call these point-line incidence
+                                           configurations of size n. The quantity ∆PL (n) can therefore be regarded as the largest
+                                           scale at which one can realize n prescribed point–line incidences while avoiding every
+                                           nontrivial incidence. In [7], Cohen, the author, and Zakharov introduced the problem
+                                           of determining the asymptotics of ∆PL (n) as n grows, in connection with the Heilbronn
+                                           triangle problem.
+                                               Trivially, taking xi = (i/n, 0) and ℓi = xi + (0, 1)R, for i = 1, . . . n, gives a point-line
+                                           incidence configuration with dist( xi , ℓ j ) ≥ 1/n for all i ̸= j. Thus, ∆PL (n) ≥ 1/n. In the
+                                           other direction, it is not difficult to see that in any point-line incidence configuration of
+                                           size n, we must have dist( xi , ℓ j ) ≤ | xi − x j | ≲ n−1/2 for some i ̸= j. Hence ∆PL (n) ≲ n−1/2 .
+                                           In [7], Cohen-Pohoata-Zakharov improved this upper bound to
+
+                                                                                       ∆PL (n) ≤ n−2/3+o(1) ,                                             (2)
+                                           and used this estimate to establish the latest record for the Heilbronn triangle problem.
+                                           For more history and context, see this recent survey by Zakharov [26].
+                                             The connection itself between the Heilbronn triangle problem and the minimal distance
+                                           problem is simple enough that we can recall it here: if we let
+                                                                             ∆H (n) := sup               min area( p, q, r )
+                                                                                                    p,q,r ∈ P
+                                                                                           P⊂[0,1]2
+                                                                                                    distinct
+                                                                                            | P|=n
+
+                                           denote the largest possible area of the smallest triangle determined by n points in the unit
+                                           square, then a simple iterated pigeonhole argument gives, from any n-point set P, at least
+                                           m ≳ n disjoint pairs { pi , qi } with | pi − qi | ≲ n−1/2 . For each i = 1, . . . , m, one can then
+                                                                                                     1
+2                                               COSMIN POHOATA
+
+define ℓi to be the line through pi and qi . For some i ̸= j we have dist( pi , ℓ j ) ≤ ∆PL (m),
+and therefore
+                                              1
+                   area( pi , p j , q j ) =     | p j − q j | dist( pi , ℓ j ) ≲ n−1/2 ∆PL (m).
+                                              2
+Since m ≳ n and ∆PL is nonincreasing (restricting a given point-line incidence con-
+figuration to a smaller configuration cannot decrease its minimum separation), this
+immediately translates to the fact that there is an absolute constant c > 0 such that
+∆H (n) ≲ n−1/2 ∆PL (⌊cn⌋). Thus (2) yields ∆H (n) ≤ n−7/6+o(1) , the current best known
+upper bound for the Heilbronn problem.
+   That being said, the Heilbronn triangle problem is not the only reason to study ∆PL . For
+example, in a recent paper [12], Hunter, the author, Verstraëte, and Zhang also established
+several new connections between the minimal distance problem and various other topics
+in finite geometry and arithmetic combinatorics. A particularly surprising one is with the
+so-called Furstenberg–Sárkőzy problem. This question concerns the quantity
+                         n                                                    o
+            s( N ) := max | A| : A ⊂ [ N ], ( A − A) ∩ {m2 : m ∈ Z \ {0}} = ∅ .           (3)
+
+In other words, s( N ) is the largest size of a subset of [ N ] containing no two distinct
+elements whose difference is a perfect square. Furstenberg [9] and Sárkőzy [22] inde-
+pendently proved that s( N ) = o ( N ). Furstenberg’s argument was ergodic, whereas
+Sárkőzy’s circle-method proof was quantitative. This estimate was subsequently sharp-
+ened by Pintz–Steiger–Szemerédi [19] and, more recently, by Bloom–Maynardp       [4] and
+Green–Sawhney [10], with the current record being at s( N ) ≲ N exp −c log N for some
+absolute constant c > 0.
+   In [12, Theorem 1.15 and Proposition 2.3], Hunter–Pohoata–Verstraëte–Zhang proved
+the following inequality directly connecting the Furstenberg-Sárkőzy problem with the
+minimal distance problem:
+                                   j            k
+                                ∆PL cN 1/2 s( N ) ≳ N −1 .                              (4)
+
+Here c > 0 denotes an absolute constant. Hence any improvement beyond the exponent
+2/3 in (2) would, in principle, have a substantial consequence for the Furstenberg–Sárkőzy
+problem (to be precise, an estimate of the form ∆PL (n) ≤ n−2/3−α+o(1) for some α > 0
+                                                                     9α
+would immediately imply the power-saving estimate s( N ) ≤ N 1− 4+6α +o(1) ).
+  Conversely, the relation (4) also immediately converts lower bounds for s( N ) into lower
+bounds for ∆PL (the original motivation in [12]). In a celebrated paper, Ruzsa [21] proved
+that if m is squarefree and D ⊂ Z/mZ has no nonzero square difference modulo m, then
+                                                                                   
+                                                             1          log | D |
+                                                                     1+ log m
+                                         s( N ) ≳m,D N       2
+                                                                                        .         (5)
+His choice | D | = 7 modulo 65 gave the exponent 0.733077 . . .. Refinements due to Beigel–
+Gasarch and Lewko
+                     give the best presently known explicit lower bound of s( N ) ≳ N β ,
+                     log 12
+where β := 12 1 + log 205 ≈ 0.733411797. See [2, 14]. Substitution into (4) then gave the
+following lower bound in [12]:
+                                                            1
+                    ∆PL (n) ≳ n−γ ,               γ :=           = 0.810759230 . . . .            (6)
+                                                         β + 1/2
+This result improved an earlier construction of Logunov–Zakharov [15], and prior to this
+work represented the best known lower bound for ∆PL .
+  Our main result closes the gap between (6) and (2).
+                    THE SHARP EXPONENT FOR THE MINIMAL DISTANCE PROBLEM                             3
+
+Theorem 1.1. For every ε > 0, there exists n0 (ε) such that, for every integer n ≥ n0 (ε), there are
+points p1 , . . . , pn ∈ [0, 1]2 and real lines ℓ1 , . . . , ℓn , with pi ∈ ℓi for every i, such that
+                                dist( pi , ℓ j ) ≥ n−2/3−ε       ( i ̸ = j ).
+Equivalently,
+                               ∆PL (n) ≥ n−2/3−ε             (n ≥ n0 (ε)).
+  Combining Theorem 1.1 with (2), it thus follows that the correct exponent for the
+minimal distance problem is 2/3.
+Corollary 1.2. As n → ∞,
+                                       ∆PL (n) = n−2/3+o(1) .
+   The same construction also comes with an unexpected finite field consequence. For a
+prime power q, let IM(2, q) denote the largest n for which there exist points p1 , . . . , pn ∈ F2q
+and affine lines ℓ1 , . . . , ℓn ⊂ F2q such that pi ∈ ℓ j if and only if i = j. As discussed in
+[6, 7, 12], this is a natural finite-field model for the minimal distance problem: avoidance
+of off-diagonal incidences over Fq plays the role of quantitative point–line separation
+over R. A simple Cauchy-Schwarz incidence estimate gives IM(2, q) ≤ q3/2 + q, for every
+prime power q. This may be viewed as the finite-field precursor of (2).
+   When q is a square, the Hermitian unital gives an induced matching of size q3/2 ,
+showing that this estimate is sharp up, to lower-order terms. See for example [12] for a
+more elaborate discussion. For fields of prime order q, the situation is significantly more
+mysterious. In [12, Theorem 1.2], Hunter–Pohoata–Verstraëte–Zhang used (5) to prove
+that IM(2, q) ≳ q1.2334... holds for all primes q, thereby establishing a separation between
+this problem and the closely related problem of determining the size of the largest clique
+in the Paley graph of prime order q. Furthermore, in [12, Conjecture 10.2], the authors also
+subsequently conjectured that IM(2, q) ≤ q3/2−c must hold for some absolute constant
+c > 0, for all sufficiently large primes q.
+   Using the construction behind Theorem 1.1, we can show that this conjecture is false, as
+originally stated.
+Theorem 1.3. For every ε > 0, there is a set Qε of rational primes having positive relative density
+among the primes such that, for every sufficiently large q ∈ Qε ,
+                                        IM(2, q) ≳ε q3/2−ε .
+  More precisely, what we will show that for every fixed prime r ≥ 5, we must always
+                             2
+have that IM(2, q) ≳r q3/2− r−1 for every sufficiently large prime q ≡ ±1 (mod r ). By the
+prime number theorem in arithmetic progressions, these primes have relative density
+2/(r − 1) among the primes.
+Overview. The proof of Theorem 1.1 will build upon the ideas from [12]. Roughly
+speaking, the driving force behind the relation (4) is a very simple polynomial identity: if
+Q( x, y) = 2x − y2 ∈ Z[ x, y], then
+          Q ( x, y) + t(y, 1) = Q x + ty, y + t = Q( x, y) − t2 , for every t ∈ Z.
+                                              
+
+This has the following crucial consequence.     If A ⊂ [ N ] is a set of integers without perfect
+square differences, and we let P = ( x, y) ∈ R2 : Q( x, y) ∈ A , then the “integer line"
+                                         
+
+ℓ x,y = {( x, y) + t(y, 1), t ∈ Z} can only intersect P at the point ( x, y) itself. After further
+reflection, this allows one to convert a square-difference-free set A ⊂ [ N ] of Q-values
+into an induced point–line matching in the Euclidean plane. A direct computation can
+then subsequently show that such an induced point-line matching is in fact a point-line
+4                                      COSMIN POHOATA
+
+incidence configuration with strong Euclidean separation (in the sense of (1)). Over
+the integers, the quality of this separation will constrained by the Furstenberg–Sárkőzy
+problem and by the density of the Ruzsa sets A ⊂ [ N ].
+   For s( N ) constructions, it is well-known that the natural endpoint of the Ruzsa digit
+method is β = 3/4 − o (1), which (4) would readily convert into the exponent γ = 4/5 +
+o (1) for the minimal distance problem. In order to use (5) to show that s( N ) ≳ N 3/4−o(1) ,
+one would however need to find, for squarefree moduli m, modular square-difference-free
+sets of size m1/2−o(1) . At a single prime this becomes a large independent-set problem
+in the Paley graph and square-root-size examples are not expected. Composite moduli
+could in principle allow for more elaborate entangled constructions, but in practice the
+best known exponent remains ≈ 0.733411797 (and achieving the 3/4 − o (1) limit for s( N )
+might not even be possible with this method to begin with).
+   The proof of Theorem 1.1 bypasses this barrier and the Ruzsa limit altogether, by
+performing the same construction (from scratch) in a high degree totally real number
+field instead. A key idea will be to replace the Ruzsa set by the trace-zero slice of
+its ring of integers. The positivity of the quadratic form TrK/Q (z2 ) rules out nonzero
+square differences in this slice, while the field norm converts algebraic nonvanishing into
+quantitative Euclidean separation after one real embedding.
+Remark 1.4. Curiously, the high degree number fields enter the proof of Theorem 1.1 in a
+very different manner than how they do in the recent constructions for the unit distance
+problem [1, 13], the sum-product problem over the reals [5], and the Elekes-Rónyai
+problem [20]. In all these other arguments, a local gain is (vertically) amplified across
+many residue-field, unit, or archimedean coordinates, and one needs arithmetic control,
+e.g. bounded root discriminant and/or split primes, to keep the ambient lattice from
+overwhelming that gain. See for example [20, 3, 24] and the references therein for more
+systematic discussions. Here the field is fixed before the box grows, and no sophisticated
+tower, split-prime input, or uniform regulator estimate is needed. The trace equation
+removes only one global dimension, and the degree increase will be used solely to dilute
+the effect of this fixed codimension. Thus, for example, if ζ p = e2πi/p denotes a primitive
+pth root of unity, it suffices to take K = Q(ζ p + ζ − 1
+                                                     p ) for a sufficiently large prime p.
+
+
+Paper organization. The rest of the paper is organized as follows. In Section 2 we will
+review the construction from [12] in full detail, with all the computations done explicitly.
+In Section 3 we will construct the trace-zero sets. In Section 4 we will discuss the new
+number-field construction and the proof of Theorem 1.1. In Section 5 we will discuss the
+proof of Theorem 1.3.
+
+              2. The Hunter-Pohoata-Verstraëte-Zhang construction
+   With an eye on the number field story that will follow, let us first isolate some basic
+facts that hold in greater generality.
+
+2.1. The induced-matching identity. Let F be any field of characteristic different from
+2, and let us Q( x, y) := 2x − y2 as a polynomial in F [ x, y]. In particular, the level set
+Q( x, y) = a is a parabola in F2 . For a point p = ( x, y) ∈ F2 , let
+                       L p := p + F (y, 1) = {( x + ty, y + t) : t ∈ F }.                  (7)
+This is the tangent line to the parabola Q = Q( p) at p. For two points p = ( x, y) and
+p′ = ( x ′ , y′ ), let us also single out the following recurring quantity:
+                               D ( p, p′ ) := x − x ′ + y(y′ − y).                         (8)
+                    THE SHARP EXPONENT FOR THE MINIMAL DISTANCE PROBLEM                            5
+
+We next record the key identity mentioned above, along with some important conse-
+quences.
+Observation 2.1. For p = ( x, y) ∈ F2 and t ∈ F, Q p + t(y, 1) = Q( p) − t2 . Moreover, for
+                                                                         
+
+p′ = ( x ′ , y′ ), we have that Q( p) − Q( p′ ) = 2D ( p, p′ ) + (y′ − y)2 , and
+                                   p′ ∈ L p        ⇐⇒       D ( p, p′ ) = 0.                     (9)
+  In particular, Observation 2.1 gives us the following important implication:
+                             p′ ∈ L p    =⇒        Q ( p ) − Q ( p ′ ) = ( y ′ − y )2 .         (10)
+  For the sake of completeness, we include the easy proof as well.
+Proof. The parametrisation in (7) gives
+                    Q( x + ty, y + t) = 2( x + ty) − (y + t)2 = 2x − y2 − t2 ,
+which gives the first equality. Expanding 2D ( p, p′ ) + (y′ − y)2 gives
+        2x − 2x ′ + 2y(y′ − y) + (y′ − y)2 = 2x − y2 − (2x ′ − y′2 ) = Q( p) − Q( p′ ).
+Finally, a defining equation for L p is
+                                Λ p ( X, Y ) := X − yY + (y2 − x ) = 0.                         (11)
+Its value at p′ is Λ p ( p′ ) = x ′ − yy′ + y2 − x = − D ( p, p′ ), so it vanishes exactly when
+p′ ∈ L p .                                                                                    □
+   A useful take-away is that the quantity D ( p, p′ ) is precisely the negative of the value
+at p′ of the normalized affine equation (11) for L p (so it detects incidences). For any
+A, Y ⊂ F, let us next define the set
+                         P ( A, Y ) := {( x, y) ∈ F2 : y ∈ Y, Q( x, y) ∈ A}.                    (12)
+Because the characteristic is not 2, the map
+                                                                            a + y2
+                                                                                    
+                       A × Y −→ P ( A, Y ),               ( a, y) 7−→              ,y ,         (13)
+                                                                              2
+is a bijection. To take advantage of (10), recall that the set A ⊂ F will be chosen to
+be a set with ( A − A) ∩ {t2 : t ∈ F × } = ∅. For convenience, let us call such sets
+square-difference-free.
+Corollary 2.2. If A ⊂ F is square-difference-free, then the pairs {( p, L p ) : p ∈ P ( A, Y )} form
+an induced matching: for p, p′ ∈ P ( A, Y ),
+                                        p′ ∈ L p      ⇐⇒        p′ = p.
+Proof. Suppose that p′ ∈ L p . By (10), the difference Q( p) − Q( p′ ) is a square. Since both
+values lie in A, square-difference-freeness gives Q( p) = Q( p′ ). Hence (y′ − y)2 = 0, so
+y′ = y, and also x ′ = x.                                                                   □
+
+2.2. Euclidean separation. We now specialise to the integer model and compute explicitly
+                          Let q bea positive integeroand let A ⊂ [q2 ] be square-difference-
+the Euclidean separation.n
+                                 a + y2
+free in Z. Set Pq ( A) :=          2 ,y    : a ∈ A, y ∈ [q] . For every point p = ( x, y) ∈ Pq ( A),
+regard L p as a real   L p = {( x + ty, y + t) : t ∈ R}, and apply the anisotropic linear
+                  line
+                    y x
+map ϕq ( x, y) :=   q , q2   . Finally, write p∗ := ϕq ( p) and ℓ∗p := ϕq (L p ). We can now check
+the following:
+6                                            COSMIN POHOATA
+
+Proposition 2.3. The set Pq ( A) has q| A| elements, every p∗ lies in [0, 1]2 , and p∗ ∈ ℓ∗p . For
+p = ( x, y), p′ = ( x ′ , y′ ) ∈ Pq ( A),
+                                                      | D ( p, p′ )|
+                                  dist( p′∗ , ℓ∗p ) = p              .                          (14)
+                                                        q4 + q2 y2
+If p ̸= p′ , then
+                                                             1
+                                        dist( p′∗ , ℓ∗p ) ≥ √     .                             (15)
+                                                           2 2 q2
+Thus the pairs ( p∗ , ℓ∗p ) form a robust induced matching.
+
+  In particular, Proposition 2.3 gives ∆PL q · s(q2 ) ≥ √1 2 , which recovers (4).
+                                                            
+                                                                    2 2q
+
+Proof. By design, the parametrisation in the definition of Pq ( A) is injective, so the point
+                                                                a + y2
+set has q| A| elements. Also 1 ≤ y ≤ q and 0 < x = 2 ≤ q2 , which proves p∗ ∈ [0, 1]2 .
+The assigned incidence is preserved by the invertible map ϕq .
+  Write (S, T ) = ϕq ( X, Y ). Under this change of variables, the line equation (11) becomes
+                                   q2 T − yqS + (y2 − x ) = 0,
+whose normal vector is (−yq, q2 ). Its value at p′∗ is Λ p ( p′ ) = − D ( p, p′ ). The point-to-line
+distance formula therefore gives (14).
+  Let a = Q( p) and a′ = Q( p′ ). By Observation 2.1,
+                                 2D ( p, p′ ) = a − a′ − (y′ − y)2 .                            (16)
+If D ( p, p′ ) = 0, square-difference-freeness forces p = p′ . Thus, for p ̸= p′ , the right-hand
+side of (16) is a√nonzero integer, and | D ( p, p′ )| ≥ 1/2. Since y ≤ q, the denominator in
+(14) is at most 2q2 , proving (15).                                                       □
+2.3. A Szemerédi–Trotter configuration in the background. For a brief moment, let us
+not pass to the square-difference-free set A ⊂ [q2 ] in the construction from the previous
+section, and consider instead the full set of points Pq := Pq ([q2 ]), together with the set of
+lines Lq := {L p : p ∈ Pq }.
+   Note that both sets Pq and Lq have q3 elements (Indeed, p = ( x, y) determines a = Q( p),
+while the normalised equation (11) determines first y and then x). Moreover, it turns out
+that Pq and Lq form an extremal Szemerédi-Trotter configuration.
+Proposition 2.4. The number of incidences between Pq and Lq is
+                                                                    q2 (5q2 + 1)
+                    I (Pq , Lq ) = ∑ (q − |h|)(q2 − h2 ) =                       ≍ q4 .         (17)
+                                 |h|<q
+                                                                          6
+
+Proof. Write a = Q( p) and a′ = Q( p′ ). By (10), an incidence p′ ∈ L p with h = y′ − y
+requires a − a′ = h2 . There are q − |h| ordered pairs (y, y′ ) ∈ [q]2 with difference h, and
+q2 − h2 ordered pairs ( a, a′ ) ∈ [q2 ]2 with a − a′ = h2 . Summing over |h| < q gives the first
+expression in (17). Moreover,
+                                                             q −1
+                       ∑ (q − |h|)(q − h ) = q + 2 ∑ (q − h)(q2 − h2 )
+                                         2     2      3
+
+                      |h|<q                                  h =1
+
+                                                            q2 (q − 1)(5q − 1)
+                                                   = q3 +
+                                                                         6
+                                                     q2 (5q2 + 1)
+                                                   =              .
+                                                           6
+                                                                                                 □
+                    THE SHARP EXPONENT FOR THE MINIMAL DISTANCE PROBLEM                               7
+
+   Writing N = q3 , we thus have that I (Pq , Lq ) ≍ N 4/3 , thereby Pq and Lq achieve equality
+in the Szemerédi–Trotter theorem [23]. Notably, the same configuration also achieves the
+critical positive distance scale discussed in [6, Section 3]. Indeed, if p′ ∈
+                                                                            / L p , then 2D ( p, p′ )
+                                                              − 2
+is a nonzero integer, so (14) gives a lower bound of ≍ q . Therefore
+                            min dist ϕq ( p), ϕq ( L) ≍ q−2 = N −2/3 .
+                                                      
+                          p∈Pq , L∈Lq
+                             p/∈L
+
+Thus the unrestricted parabola model is simultaneously a sharp incidence configuration
+and a configuration at the critical Euclidean scale. The square-difference-free set restriction
+is used to only extract an induced matching from it. The next section will essentially
+replace this sparse integer restriction with a more efficient (codimension one) trace-zero
+lattice restriction over a totally real field of large degree.
+
+                                        3. Trace-zero sets
+   We use only standard facts about trace, norm, and the Minkowski embedding of
+a number field. Let K/Q be a totally real number field of degree d ≥ 2, let OK be
+its ring of integers, and list its real embeddings as σ1 , . . . , σd : K ,→ R. Write ι( a) :=
+(σ1 ( a), . . . , σd ( a)) ∈ Rd for the Minkowski embedding. For u, v ∈ K, define bilinear form
+⟨u, v⟩tr := TrK/Q (uv). In other words,
+                                         d
+                            ⟨u, v⟩tr := ∑ σj (u)σj (v) = ⟨ι(u), ι(v)⟩Rd .                          (18)
+                                        j =1
+
+We record the following crucial consequence:
+Observation 3.1. The map ⟨·, ·⟩tr extends to a positive-definite inner product on K ⊗Q R, and its
+associated quadratic form satisfies
+                         qK (z) := TrK/Q (z2 ) = ∥ι(z)∥22 > 0        ( z ̸ = 0).                   (19)
+    This is where the total reality of K comes in. Since TrK/Q ( a) = ⟨ a, 1⟩tr , the trace-zero sub-
+space is the orthogonal complement of 1. Equivalently, under the Minkowski embedding it
+is the hyperplane X1 + · · · + Xd = 0. On the other hand, ι(z2 ) = (σ1 (z)2 , . . . , σd (z)2 ) ∈ Rd≥0 ,
+and this vector lies in the trace-zero hyperplane only when z = 0. Thus
+                                ker(TrK/Q ) ∩ {z2 : z ∈ K } = {0}.                                 (20)
+Geometrically, every nonzero square lies in the open half-space TrK/Q > 0, whose bound-
+ary is the trace-zero hyperplane.
+  For X ≥ 0, let us now define the symmetric Minkowski box of radius X
+                        BK ( X ) := { a ∈ OK : |σj ( a)| ≤ X for 1 ≤ j ≤ d}.                       (21)
+  One of the main new ideas in this construction is to consider the trace-zero lattice
+                                Λ0K := { a ∈ 2OK : TrK/Q ( a) = 0}.                                (22)
+The additive group 2OK has rank d, and the trace map is nonzero because TrK/Q (2) = 2d.
+Hence Λ0K has rank d − 1 (it lives in the trace-zero hyperplane x1 + · · · + xd = 0).
+  For two parameters R, M ≥ 1 (to be balanced appropriately later), let us denote
+                     AK ( R) := Λ0K ∩ BK ( R),       YK ( M ) := 2OK ∩ BK ( M ).                   (23)
+We record two important facts about AK ( R) and YK ( M ).
+Proposition 3.2. The set AK ( R) is square-difference-free. Moreover, for every R, M ≥ 1,
+                             | AK ( R)| ≍K Rd−1 ,      |YK ( M)| ≍K Md .                           (24)
+8                                          COSMIN POHOATA
+
+Proof. Let’s first check the square-difference-freeness. Suppose that a − a′ = z2 with
+a, a′ ∈ AK ( R) and z ∈ OK . Then
+                             0 = TrK/Q ( a − a′ ) = TrK/Q (z2 ) = qK (z).
+By the positive definiteness from Observation 3.1, one has z = 0, and therefore a = a′ .
+  The size estimates for AK ( R) and YK ( M ) immediately follow from the following stan-
+dard fact about lattices:
+Fact 3.3. Let Λ ⊂ Rm be a lattice of rank r ≥ 1. Then
+                                        |Λ ∩ [− T, T ]m | ≍Λ T r
+for every T ≥ 1.
+ Therefore, | AK ( R)| ≍K Rd−1 comes from the fact that the lattice Λ0K has rank d − 1,
+whereas |YK ( M )| ≍K Md follows from the fact that 2OK has full rank d.
+                                                                                    □
+    The fixed factor 2 in (22) only clears the possible half-integral first coordinate in (13). If
+                        a + y2
+a, y ∈ 2OK , then x = 2 ∈ OK . Consequently, for two points p = ( x, y) and p′ = ( x ′ , y′ )
+arising from A × Y, the quantity
+                                                   a − a ′ − ( y ′ − y )2
+                      D ( p, p′ ) = x − x ′ + y(y′ − y) =
+                                                            2
+is also an algebraic integer. Passing from OK to the finite-index sublattice 2OK has no
+effect on any exponent.
+Remark 3.4. The square-difference-free property has a direct geometric formulation. In K2 ,
+consider the trace level set
+                            SK := {( x, y) ∈ K2 : TrK/Q ( Q( x, y)) = 0}.
+Through every p = ( x, y) ∈ SK , take the affine K-line { p + t(y, 1) : t ∈ K }. By Observation
+2.1,
+                          TrK/Q Q( p + t(y, 1)) = − TrK/Q (t2 ).
+                                                  
+
+Furthermore, by Observation 3.1, this vanishes only when t = 0. Thus every assigned
+line meets the trace level set in a unique K-rational point. The next section converts
+this algebraic uniqueness into a quantitative separation statement, after appropriately
+projecting onto the real plane.
+
+              4. Point-line incidence configurations from number fields
+  Fix a totally real field K of degree d and distinguish one embedding σ : K ,→ R.
+The main purpose of this section is to establish the following number field analogue of
+Proposition 2.3.
+Proposition 4.1. Let A ⊂ 2OK ∩ BK ( R) be square-difference-free, and let Y ⊂ 2OK ∩ BK ( M ),
+where R, M ≥ 1. Define
+                                    a + y2
+                                                           
+                   P ( A, Y ) :=           , y : a ∈ A, y ∈ Y ⊂ OK2 ,
+                                      2
+and put
+                                        R + M2
+                                 N :=          ,      H := R + 2M2 .                          (25)
+                                           2
+                    THE SHARP EXPONENT FOR THE MINIMAL DISTANCE PROBLEM                                     9
+
+Then one can associate to each p ∈ P ( A, Y ) a point p∗ ∈ [0, 1]2 and a real line ℓ∗p through p∗
+such that, for distinct p, p′ ∈ P ( A, Y ),
+                                                          H −(d−1)
+                                     dist( p′∗ , ℓ∗p ) ≥ √         .
+                                                        2 N 2 + M4
+Proof. The parametrization defining P ( A, Y ) is injective, and hence |P ( A, Y )| = | A||Y |.
+Let
+                                                  a + y2
+                                                           
+                               p = ( x, y) =             , y ∈ P ( A, Y ).
+                                                     2
+Since a, y ∈ 2OK , we have x ∈ OK . For every real embedding ρ : K ,→ R, we therefore
+have
+                                       |ρ( a)| + |ρ(y)|2       R + M2
+                            |ρ( x )| ≤                      ≤          = N.
+                                                2                 2
+So (σ ( x ), σ(y)) lies in [− N, N ] × [− M, M ].
+  Let Lσp be the real line through (σ ( x ), σ(y)) with direction (σ (y), 1), and define
+                                                                     
+                                                      Y+M X+N
+                                Φ M,N ( X, Y ) :=             ,         .                (26)
+                                                       2M        2N
+This is the symmetric-box version of the previous anisotropic scaling ( x, y) 7→ (y/M, x/N ).
+Set
+                      p∗ := Φ M,N (σ ( x ), σ (y)), ℓ∗p := Φ M,N ( Lσp ).                (27)
+Then p∗ ∈ [0, 1]2 and p∗ ∈ ℓ∗p .
+   Take p = ( x, y) and p′ = ( x ′ , y′ ) in P ( A, Y ), and write a = Q( p) and a′ = Q( p′ ). The
+line-equation value from (8) is
+                                                    a − a ′ − ( y ′ − y )2
+                   D ( p, p′ ) = x − x ′ + y(y′ − y) =                     ∈ OK .             (28)
+                                                               2
+The inclusion in OK follows from x, x ′ , y, y′ ∈ OK . If D ( p, p′ ) = 0, then a − a′ = (y′ − y)2 .
+Square-difference-freeness gives a = a′ , hence y′ = y, and then x ′ = x. Therefore
+                                    p ̸= p′      =⇒       D ( p, p′ ) ̸= 0.                               (29)
+  For every real embedding ρ, the second expression in (28) gives
+                                |ρ( a − a′ )| + |ρ(y′ − y)|2
+                  |ρ( D ( p, p′ ))| ≤                        ≤ R + 2M2 = H.
+                                              2
+When p ̸= p′ , the algebraic integer D ( p, p′ ) is nonzero. Its norm is therefore a nonzero
+rational integer, and
+       1 ≤ | NK/Q ( D ( p, p′ ))| = |σ ( D ( p, p′ ))| ∏ |ρ( D ( p, p′ ))| ≤ |σ ( D ( p, p′ ))| H d−1 .
+                                                        ρ̸=σ
+
+Consequently,
+                                 |σ( D ( p, p′ ))| ≥ H −(d−1) .                              (30)
+   Under Φ M,N , it is easy to check that the direction vector for the line ℓ p is given by
+                                                                                     ∗
+                                           ′
+                                             σ(y −y) σ( x ′ − x )
+                                                                
+         1 σ(y)
+v p = 2M   , 2N , whereas p′∗ − p∗ =            2M  ,   2N          . The determinant formula for
+point-to-line distance then yields the exact identity
+                                         | det( p′∗ − p∗ , v p )|    |σ( D ( p, p′ ))|
+                   dist( p′∗ , ℓ∗p ) =                            = p                   .                 (31)
+                                                 ∥ v p ∥2          2 N 2 + M 2 σ ( y )2
+Combining (30) with |σ (y)| ≤ M proves Proposition 4.1.                                                    □
+  The natural choice is to balance the two algebraic scales by taking R = M2 .
+10                                          COSMIN POHOATA
+
+Corollary 4.2. Let M ≥ 1, and take
+                                  A = A K ( M 2 ),      Y = YK ( M ).
+Then the construction of Proposition 4.1 contains | A||Y | ≍K M3d−2 incident point–line pairs in
+[0, 1]2 , and every off-diagonal distance is at least (3M2 )−d .
+Proof. The count follows from Proposition 3.2. With R = M2 , the quantities in (25) are
+N = M2 and H = 3M2 . Hence Proposition 4.1 gives
+                                       (3M2 )−(d−1)   3
+                 dist( p′∗ , ℓ∗p ) ≥      √         = √ (3M2 )−d ≥ (3M2 )−d .
+                                         2 2M   4    2 2
+                                                                                              □
+     We are now ready to derive Theorem 1.1.
+                                                                           8      ε
+Proof of Theorem 1.1. Fix ε > 0, and choose an odd prime p so large that 9p− 21 < 2 . Let
+ζ p = e2πi/p be a primitive pth root of unity, and consider the maximal real subfield
+K : = Q( ζ p + ζ −
+                 p ) ⊂ Q( ζ p ). The conjugates of ζ p + ζ p are the real numbers
+                   1                                       −1
+                                                
+                          j       −j         2πj
+                        ζ p + ζ p = 2 cos          ,      1 ≤ j ≤ p − 1,
+                                              p
+so K is totally real. Moreover, since complex conjugation has order two in Gal(Q(ζ p )/Q),
+                                        p −1
+the field K has degree d := [K : Q] = 2 . See, for example, [25]. Applying Corollary 4.2
+to this fixed field K produces a point–line incidence configuration of size n ≍K M3d−2
+whose off-diagonal distances are at least (3M2 )−d . Consequently,
+                                                             2      4
+                   ∆PL (n) ≥ (3M2 )−d ≍K n−θd , where θd =     +         .
+                                                             3 9d − 6
+Since 2/3 + ε − θd > ε/2 > 0, the fixed constant cK is absorbed by the remaining power of
+n, which yields ∆PL (n) ≥ n−2/3−ε . This completes the proof of Theorem 1.1.           □
+
+                          5. Induced matchings over prime fields
+   The integral nature of the construction above allows us to pass back to finite fields. For
+a prime power q, recall that IM(2, q) denotes the maximum size of an induced matching
+in the point–line incidence graph of F2q . For any fixed prime r ≥ 5, we will show that
+                                                             2
+                                          IM(2, q) ≳r q3/2− r−1                             (32)
+for every sufficiently large prime q ≡ ±1 (mod r ). By the prime number theorem in
+arithmetic progressions, these primes have relative density 2/(r − 1), so this will directly
+imply Theorem 1.3.
+   We first isolate the main reduction mechanism for an arbitrary fixed totally real field.
+Let K/Q be a fixed totally real field of degree d ≥ 2. Let M ≥ 1, and set A := AK ( M2 )
+and Y := YK ( M ), like in Corollary 4.2.
+Proposition 5.1. Suppose that q is a rational prime for which there is a prime ideal q ⊂ OK with
+OK /q ∼
+      = Fq and q > (3M2 )d . Then,
+                                   IM(2, q) ≥ | A||Y | ≳K M3d−2 .
+Proof. Consider the unscaled point set
+                                            a + y2
+                                                                  
+             P M := P ( A, Y ) = p a,y :=          , y : a ∈ A, y ∈ Y ⊂ OK2 .
+                                              2
+                    THE SHARP EXPONENT FOR THE MINIMAL DISTANCE PROBLEM                         11
+
+To p = ( x, y) ∈ P M , assign the affine K-line L p := {( x + ty, y + t) : t ∈ K }. Fix an
+isomorphism OK /q ∼ = Fq , and write z for the residue class of z ∈ OK . Reduce the point
+and line by setting
+                 p := ( x, y) ∈ F2q ,       L p := {( x + ty, y + t) : t ∈ Fq } ⊂ F2q .
+
+The direction vector (y, 1) is nonzero, so L p is an affine line, and p ∈ L p . We claim that
+  p, L p p∈P form an induced matching in the point-line incidence graph of F2q .
+
+            M
+   Take distinct p = ( x, y) and p′ = ( x ′ , y′ ) in P M , and write a = Q( p) and a′ = Q( p′ ).
+Recall from (28) that
+                                                  a − a ′ − ( y ′ − y )2
+                  D ( p, p′ ) := x − x ′ + y(y′ − y) =                   ∈ OK .
+                                                           2
+Like before, this algebraic integer is nonzero and we know that for every real embedding
+ρ : K ,→ R,
+                                    |ρ( a − a′ )| + |ρ(y′ − y)|2   2M2 + 4M2
+              |ρ( D ( p, p′ ))| ≤                                ≤           = 3M2 .
+                                                  2                    2
+Consequently,
+                              0 < NK/Q D ( p, p′ )         ≤ (3M2 )d < q.
+                                                      
+                                                                                              (33)
+   The line equation (11) remains valid over the residue field and takes the value − D ( p, p′ )
+at p′ . Hence
+                                    p′ ∈ L p   ⇐⇒         D ( p, p′ ) ∈ q.                    (34)
+If the latter inclusion held, then q would divide the principal ideal ( D ( p, p′ )). Taking ideal
+norms would give
+                                                  NK/Q D ( p, p′ )
+                                                                      
+                                    q = N(q)                              ,
+contradicting (33). See, for example, [17, Chapter I] for these standard norm facts.
+Therefore every off-diagonal incidence remains absent after reduction.
+   This also shows that the reduced points are pairwise distinct. Indeed, if p = p′ , then
+p′ ∈ L p . Likewise, the reduced lines are pairwise distinct: equality L p = L p′ would imply
+p′ ∈ L p . We have therefore obtained an induced matching of size |P M | = | A||Y | ≍K
+( M2 )d−1 Md = M3d−2 (we used again Proposition 3.2).                                      □
+
+   To show (32), let r ≥ 5 be prime and consider again K = Q(ζ r + ζ r−1 ) to be the real
+subfield of the rth cyclotomic field Q(ζ r ). Recall again that this is a Galois extension of Q
+of degree d := [K : Q] = r−2 1 . Recall also that Gal(Q(ζ r )/Q) ∼
+                                                                 = (Z/rZ)× , where the class
+of a ∈ (Z/rZ) corresponds to the automorphism σa (ζ r ) = ζ ra . Complex conjugation is
+                 ×
+
+σ−1 , and Kr is precisely its fixed field. Consequently, Gal(K/Q) ∼   = (Z/rZ)× /{±1}.
+   Now let q ̸= r be a rational prime. Since q is unramified in Q(ζ r ), its Frobenius
+                                                     q
+automorphism is characterized by Frobq (ζ r ) = ζ r . Under the preceding identification, it
+therefore corresponds to the residue class of q modulo r. Its restriction to Kr is trivial if
+and only if this class becomes trivial after quotienting by {±1}, which is equivalent to
+q ≡ ±1 (mod r ). Concretely, if q ≡ 1 (mod r ), then Frobenius is already the identity on
+Q(ζ r ); if q ≡ −1 (mod r ), then Frobenius is complex conjugation, which acts trivially on
+the maximal real subfield Kr . Finally, since Kr /Q is Galois, an unramified prime splits
+completely if and only if its Frobenius automorphism is trivial. Hence
+                    q splits completely in Kr         ⇐⇒         q ≡ ±1       (mod r ).
+See, for example, [25, Chapter 2] for all these standard facts.
+12                                      COSMIN POHOATA
+                                  j 1/(2d) k                      d
+                                  q                                          3 d
+                                        , then (3M2 )d ≤ 34 q1/d =
+                                                                               
+Proof of Theorem 1.3. Set M :=      2                                        4   q   < q for all
+sufficiently large q. Hence, we can apply Proposition 5.1 to say that
+                                                                  2
+                               IM(2, q) ≳r q3/2−1/d = q3/2− r−1
+for every sufficiently large prime q ≡ ±1 (mod r ). This proves (32), and thus also
+Theorem 1.3.                                                                     □
+     Combining Theorem 1.3 with the IM(2, q) ≤ q3/2 + q estimate, it follows that
+                                               log IM(2, q)  3
+                                  lim sup                   = .
+                                    q→∞            log q     2
+                                   q prime
+
+In particular, no absolute power saving of the form IM(2, q) ≤ q3/2−c can hold for all
+sufficiently large primes q.
+
+                                  6. Concluding remarks
+  Many other interesting problems remain open. For example, we do not believe that
+the sharpness of the 2/3 exponent for the minimal distance problem means also that the
+Cohen–Pohoata–Zakharov upper bound of ∆H (n) ≤ n−7/6+o(1) should be definitive for
+the Heilbronn triangle problem. In particular, note that the proof of
+                                  ∆H (n) ≲ n−1/2 ∆PL (⌊cn⌋),
+discussed in Section 1, discards a substantial amount of geometry. In this spirit, we would
+like to take the opportunity to formally state the following conjecture:
+Conjecture 6.1. There exists an absolute constant c > 0 such that
+                                       ∆H (n) ≲ n−7/6−c .
+   Analogously, we also believe that s( N ) ≤ N 1−c should hold for the Furstenberg–Sárkőzy
+problem. This belief was already recorded in several other places, see e.g. [10]. In light
+of the proof of Theorem 1.1, it seems also natural to study the following number field
+generalization. For a fixed totally real field K of degree d ≥ 1, let
+                         n                                                       o
+          sK ( X ) := max | A| : A ⊂ BK ( X ), ( A − A) ∩ {z2 : 0 ̸= z ∈ OK } = ∅ .
+The case K = Q is exactly the classical Furstenberg–Sárkőzy problem. Indeed, in this
+case we have that OK = Z and BQ ( X ) = {−⌊ X ⌋, . . . , ⌊ X ⌋}. Therefore, after appropriately
+translating, it follows that sQ ( X ) = s(2⌊ X ⌋ + 1). See also the closely related version from
+[18] for general number fields.
+   For a totally real field K of degree d ≥ 2, the trace-zero lattice used in our proof of
+Theorem 1.1 gives sK ( X ) ≳K X d−1 . Conversely, Z · 1 is a primitive direct summand of
+the additive group OK , so one may partition BK ( X ) into OK ( X d−1 ) fibers parallel to this
+copy of Z. The intersection of A with each such fiber, after translation, is an ordinary
+square-difference-free set contained in an interval of length OK ( X ). The result of [10]
+therefore implies
+                           X d−1 ≲K sK ( X ) ≲K X d exp −c log X
+                                                             p        
+
+for an absolute constant c > 0. It would be interesting to narrow this gap for sufficiently
+large d.
+   Finally, in the spirit of [12], it is also natural to ask about the higher-dimensional
+analogues of Theorems 1.1 and 1.3, together with their potential applications to Nikodym
+sets and minimal blocking sets. We intend to address these in a separate work.
+                       THE SHARP EXPONENT FOR THE MINIMAL DISTANCE PROBLEM                                          13
+
+                                             Acknowledgments
+   The author would like to acknowledge the important role of OpenAI’s GPT-5.6 Pro
+in preparing the manuscript and in developing the proof of Theorem 1.1. The author’s
+original idea was to use a high-degree number field analogue of the Hunter–Pohoata–
+Verstraëte–Zhang construction to get from ∆PL (n) ≳ n−0.81075... to the Ruzsa endpoint
+∆PL (n) ≥ n−4/5 . Naturally, the point was to leverage a better behaved version of the
+Ruzsa construction (5) inside the rings of integers of such number fields. The decisive new
+idea of using the codimension one, square-difference-free, trace-zero lattice Λ0K ⊂ 2OK
+instead of a Ruzsa-like set, in order to subsequently upgrade the exponent 4/5 to the
+sharp exponent 2/3, is entirely due to GPT-5.6 Pro.
+
+
+                                                   References
+ [1] N. Alon, T. F. Bloom, W. T. Gowers, D. Litt, W. Sawin, A. Shankar, J. Tsimerman, V. Wang, and M. Matchett
+     Wood, Remarks on the disproof of the unit distance conjecture, arXiv:2605.20695, 2026.
+ [2] R. Beigel and W. Gasarch, Square-difference-free sets of size Ω(n0.7334... ), arXiv:0804.4892, 2008.
+ [3] T. F. Bloom, Sum-product, unit distances, and number fields, Blog post, May 31, 2026. https://www.erdosp
+     roblems.com/forum/thread/blog:6.
+ [4] T. F. Bloom and J. Maynard, A new upper bound for sets with no square differences, Compos. Math. 158 (2022),
+     no. 8, 1777–1798, doi:10.1112/S0010437X22007679.
+ [5] T. F. Bloom, W. Sawin, C. Schildkraut, and D. Zhelezov, The sum–product conjecture is false for real numbers,
+     arXiv:2605.28781, 2026.
+ [6] A. Cohen, C. Pohoata, and D. Zakharov, A new upper bound for the Heilbronn triangle problem,
+     arXiv:2305.18253, 2023.
+ [7] A. Cohen, C. Pohoata, and D. Zakharov, Lower bounds for incidences, Invent. Math. 240 (2025), 1045–1118,
+     doi:10.1007/s00222-025-01331-2.
+ [8] H. Davenport, Multiplicative number theory, 3rd ed., revised and with a preface by H. L. Montgomery,
+     Graduate Texts in Mathematics, vol. 74, Springer-Verlag, New York, 2000.
+ [9] H. Furstenberg, Ergodic behavior of diagonal measures and a theorem of Szemerédi on arithmetic progressions, J.
+     Analyse Math. 31 (1977), 204–256, doi:10.1007/BF02813304.
+[10] B. Green and M. Sawhney, New bounds for the Furstenberg–Sárkőzy theorem, arXiv:2411.17448, 2024.
+[11] F. Hajir, C. Maire, and R. Ramakrishna, Cutting towers of number fields, Ann. Math. Québec 45 (2021),
+     no. 2, 321–345.
+[12] Z. Hunter, C. Pohoata, J. Verstraëte, and S. Zhang, Large point–line matchings and small Nikodym sets,
+     arXiv:2601.19879, 2026.
+[13] S. Lee, C. Pohoata, and D. G. Zhu, The Minkowski grid has robustly many repeated distances, arXiv:2607.05374,
+     2026.
+[14] M. Lewko, An improved lower bound related to the Furstenberg–Sárkőzy theorem, Electron. J. Combin. 22
+     (2015), no. 1, Paper P1.32, 6 pp., doi:10.37236/4656.
+[15] A. Logunov and D. Zakharov, A fractal-like configuration of point–line pairs for the minimal distance problem,
+     arXiv:2511.10509, 2025.
+[16] J. Martinet, Tours de corps de classes et estimations de discriminants, Invent. Math. 44 (1978), 65–73.
+[17] J. Neukirch, Algebraic number theory, Grundlehren der Mathematischen Wissenschaften, vol. 322, Springer-
+     Verlag, Berlin, 1999.
+[18] D. R. Pandey and J. P. Saha, Furstenberg–Sárkőzy theorem over number fields, arXiv:2508.18990, 2025.
+[19] J. Pintz, W. L. Steiger, and E. Szemerédi, On sets of natural numbers whose difference set contains no squares, J.
+     London Math. Soc. (2) 37 (1988), no. 2, 219–231, doi:10.1112/jlms/s2-37.2.219.
+[20] C. Pohoata, Split primes and the Elekes–Rónyai problem, arXiv:2606.13619, 2026.
+[21] I. Z. Ruzsa, Difference sets without squares, Period. Math. Hungar. 15 (1984), no. 3, 205–209,
+     doi:10.1007/BF02454169.
+[22] A. Sárkőzy, On difference sets of sequences of integers. I, Acta Math. Acad. Sci. Hungar. 31 (1978), no. 1–2,
+     125–149, doi:10.1007/BF01896079.
+[23] E. Szemerédi and W. T. Trotter, Jr., Extremal problems in discrete geometry, Combinatorica 3 (1983), no. 3–4,
+     381–392.
+[24] T. Tao, A digestion of unit distance constructions, Blog Post, July 3, 2026. https://terrytao.wordpress.com/2
+     026/07/03/a-digestion-of-unit-distance-constructions/.
+14                                         COSMIN POHOATA
+
+[25] L. C. Washington, Introduction to cyclotomic fields, 2nd ed., Graduate Texts in Mathematics, vol. 83,
+     Springer-Verlag, New York, 1997.
+[26] D. Zakharov, Small triangles, J. London Math. Soc. (2) 113 (2026), Paper e70447.
+
+     Department of Mathematics, Emory University, Atlanta, GA, USA
+     Email address: cosmin.pohoata@emory.edu
+

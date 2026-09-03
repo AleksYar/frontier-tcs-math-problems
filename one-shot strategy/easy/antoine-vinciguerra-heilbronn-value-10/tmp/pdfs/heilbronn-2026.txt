@@ -1,0 +1,1217 @@
+                                                     From Computational Certification to Exact Coordinates:
+                                                        Heilbronn’s Triangle Problem on the Unit Square
+                                                               Using Mixed-Integer Optimization
+                                                                                   Nathan Sudermann-Merx∗
+
+                                                                                           May 22, 2026
+
+
+
+
+arXiv:2603.11107v2 [math.OC] 20 May 2026
+                                                                                             Abstract
+                                                         We develop a mixed-integer nonlinear programming (MINLP) approach for the classi-
+                                                     cal Heilbronn triangle problem, demonstrating the capability of modern global optimiza-
+                                                     tion solvers to tackle challenging combinatorial geometry problems. A symmetry-breaking
+                                                     strategy based on boundary structure yields a substantially stronger model: for n = 9, we
+                                                     compute an ε-globally optimal point in 15 minutes on a standard desktop computer, improv-
+                                                     ing upon the previously reported effort of approximately one day. By combining numerical
+                                                     certification with exact symbolic computation, we recover exact coordinates matching all
+                                                     best-known configurations for n ≤ 9, including the n = 9 configuration of Comellas and
+                                                     Yebra (2002). An analysis of these configurations reveals the clustering of noncritical tri-
+                                                     angle areas around a small number of distinct values, suggesting rich underlying algebraic
+                                                     structure. All code and data are publicly available.
+
+
+                                           1        Introduction
+                                           1.1        The problem
+                                           The Heilbronn triangle problem arises in discrete geometry and asks:
+
+                                               How should n points be placed in the unit square so that the smallest triangle determined
+                                                                    by any three of them is as large as possible?
+
+
+                                               The problem is named after the mathematician Hans Heilbronn (and not after the city
+                                           in southern Germany), who was born into a German-Jewish family and left Germany in 1933
+                                           during the rise of the Nazi regime. It first appeared in print in Roth’s 1951 paper [14], where the
+                                           unit square was replaced by an arbitrary closed convex region in the plane of positive measure,
+                                           and the emphasis was placed on the asymptotic behavior of the minimal triangle area rather
+                                           than on explicit constructions for small values of n.
+
+                                           1.2        Upper bounds
+                                           We denote the minimal triangle area in an optimal configuration of n points in the unit square
+                                           by ∆n . Heilbronn conjectured that ∆n should satisfy an asymptotic upper bound of the form
+                                                                                                 1
+                                                                                                       
+                                                                                          ∆n = O 2 .
+                                                                                                 n
+                                               ∗
+                                                   Institute for Computer Science, DHBW Mannheim. Email: nathan.sudermann-merx@dhbw.de
+
+
+
+                                                                                                  1
+As we will see in Section 1.3, this turned out to be incorrect. Roth observed in [14] that the
+problem admits a simple upper bound,
+                                                            1
+                                                   ∆n ≤        .
+                                                           n−2
+To see this, note that the convex hull of any configuration of n points can be partitioned into
+n − 2 triangles with pairwise disjoint interiors and total area at most 1, implying that at least
+one of these triangles must have area no greater than 1/(n − 2). Over the following decades, the
+upper bounds were steadily refined. In 1972, Schmidt [17] obtained a significant improvement,
+which was sharpened by Roth [15, 16] later that year and further strengthened by Komlós,
+Pintz, and Szemerédi [11] in 1981, establishing what remained the best-known estimate for over
+forty years. A major breakthrough came in 2023, when Cohen, Pohoata, and Zakharov [5]
+proved that for all sufficiently large n,
+
+                                                ∆n ≤ n−8/7−1/2000 ,
+
+which is currently the strongest known asymptotic upper bound. Figure 1 illustrates that this
+bound provides a reasonably tight envelope for all best-known configurations with n ≥ 6.
+
+                          0.5
+                                                         Best-known ∆n
+                          0.4
+                                                  Cohen–Pohoata–Zakharov bound
+                  value
+                          0.3
+                          0.2
+                          0.1
+
+                                3   4   5   6     7    8       9 10 11 12 13 14 15 16
+                                                                n
+
+Figure 1: Best-known values of ∆n for the Heilbronn problem in the unit square compared with
+the asymptotic upper bound n−8/7−1/2000 of Cohen, Pohoata, and Zakharov [5].
+
+
+1.3    Lower bounds
+A simple lower bound of order c/n3 for ∆n can be obtained as follows. Without regard to the
+unit-square constraint, consider the n points (i, i2 ) for i = 0, . . . , n − 1. No three of these points
+are collinear, and hence every triangle determined by them has strictly positive area. Moreover,
+each triangle area can be expressed as half the absolute value of a 3 × 3 determinant formed
+from the vertices’ coordinates (see Section 2.1). Since all coordinates are integers and the area
+is positive, the determinant has absolute value at least 1, implying that every triangle has area
+at least 1/2. To place the configuration inside the unit square, scale the x-coordinates by 1/n
+and the y-coordinates by 1/n2 . Areas then scale by 1/n3 , giving
+                                                                1
+                                                      ∆n ≥         .
+                                                               2n3
+As noted in the appendix of Roth’s paper [14], Paul Erdős refined this idea by choosing a prime
+p with n ≤ p ≤ 2n and considering the points (i, i2 mod p) for i = 0, . . . , p − 1. This construc-
+tion preserves the key properties used above—integral coordinates and the absence of collinear
+triples—while having the advantage that the y-coordinates are bounded by p. Consequently,
+scaling to the unit square reduces areas only by a factor of 1/p2 , leading to
+                                                         1     1
+                                                 ∆n ≥        ≥ 2
+                                                        2p 2  8n
+
+                                                           2
+for all n.
+    Combined with Heilbronn’s conjecture, this would have yielded the correct asymptotic order
+of magnitude for the problem. However, in 1982, following a suggestion by Roth that the
+conjecture might be false, Komlós, Pintz, and Szemerédi proved in [12] that there exists a
+constant c > 0 such that
+                                               c log n
+                                         ∆n ≥
+                                                  n2
+for infinitely many n, using a nonconstructive probabilistic argument. This gap between exis-
+tence and construction was closed in 2000 by Bertram-Kretzberg, Hofmeister, and Lefmann [3],
+who presented a polynomial-time algorithm producing configurations with asymptotic lower
+bound Ω(log n/n2 ).
+
+1.4   Results for small-n-configurations
+All best-known configurations for the Heilbronn problem with n ≤ 16 are documented on Erich’s
+Packing Center, a website maintained by Erich Friedman that tracks records for a variety of
+computational geometry problems (see [9]). The first case requiring a nontrivial
+                                                                              √       proof, n = 5,
+was resolved in 1991 by Yang, Zhang, and Zeng [18], who proved ∆5 = 3/9. In the same
+work, they disproved a conjecture of Goldberg, who had suggested that optimal configurations
+for n ≤ 7 arise from affine images of regular n-gons—a statement that turns out to hold only
+for n = 6. In 1995, Dress, Yang, and Zeng [8] established the optimal value ∆6 = 1/8.
+    In 2002, Comellas and Yebra [6] used simulated annealing followed by an analytical refine-
+ment procedure to discover best-known configurations and exact coordinates for many cases
+with n ≤ 12. As we shall see, their configurations for n = 7, 8, 9 have since all been proved
+optimal, and their configurations for n = 10 and n = 12 remain the best known to date. The
+optimality of their configuration for n = 7, with ∆7 ≈ 0.083859, was proved in 2011 by Zeng
+and Chen [19], who decomposed the problem into 226 nonlinear optimization subproblems. For
+n = 9, Chen, Xu, and Zeng [4] conducted in 2017 an extensive branch-and-bound computa-
+tion using CPU and GPU clusters, requiring a total of 125 days of wall-clock time to obtain
+sharp upper bounds. In 2022, Dehbi and Zeng [7] combined numerical search with symbolic
+computation
+       √      to prove that the configuration for n = 8 found by Comellas and Yebra, satisfying
+∆8 = ( 13 − 1)/36, is indeed optimal.
+    For n ≥ 13, the best-known configurations were found by Peter Karpov (n = 13, 15) and
+Mark Beyleveld (n = 14, 16) but have not been formally published; they are available only
+through personal communication with Erich Friedman and are presented in Appendix A.
+    More recently, in 2025, Monji, Modir, and Kocuk [13] applied nonlinear global optimization
+techniques to compute an optimality certificate for ∆9 , reducing the total wall-clock time to
+approximately one day using a state-of-the-art mixed-integer solver.
+    These results illustrate a broader trend: modern mixed-integer nonlinear programming
+(MINLP) solvers have matured to the point where they can tackle geometric optimization
+problems that were out of reach for general-purpose methods only a decade ago. Recent sys-
+tematic studies by Berthold et al. [2, 1] confirm this observation across a range of combinatorial
+geometry problems, showing that straightforward MINLP formulations solved with off-the-shelf
+solvers can match or improve upon the best previously known solutions. The present paper
+continues this line of work for the Heilbronn problem.
+
+1.5   Contributions
+The contributions of this paper are fourfold.
+
+A stronger mixed-integer formulation. We develop a mixed-integer optimization model
+for the Heilbronn problem that incorporates a novel symmetry-breaking strategy based on the
+
+
+                                                3
+boundary structure of optimal configurations. This strategy fixes several point coordinates
+a priori and, in addition, determines the orientation of certain triangles, which allows us to
+fix a number of binary sign variables before the solve. Together, these reductions lead to a
+formulation that is substantially stronger than existing models. In particular, the Heilbronn
+problem for n = 9 can be solved to certified global optimality in approximately 15 minutes
+on a standard desktop computer, improving upon the previously reported effort of about one
+day [13] by more than an order of magnitude.
+
+Exact coordinates via an optimize-then-refine framework. We introduce a two-step
+methodology that combines global optimization (Step 1) with exact symbolic refinement (Step 2).
+The numerical solution from the solver identifies the combinatorial structure of an optimal
+configuration—specifically, which triangles are critical and which points lie on the boundary.
+This information yields a structured polynomial system that is then solved exactly using com-
+puter algebra. Applying this pipeline, we derive closed-form exact coordinates for all optimal
+configurations with n = 5, . . . , 9, confirming earlier results of Comellas and Yebra [6] and some-
+times simplifying their presentation.
+
+Structural observations and new research questions. An empirical analysis of the cer-
+tified optimal configurations reveals two notable patterns: the number of critical triangles grows
+steadily with n, and the areas of the noncritical triangles cluster into a small number of distinct
+values. We document these observations and pose them as open research questions that may
+guide future investigations into the combinatorial geometry of extremal point sets.
+
+Reproducibility and data. Many of the best-known configurations for the Heilbronn prob-
+lem have circulated only through personal communication rather than formal publication, mak-
+ing independent verification difficult. We collect all best-known configurations for n ≤ 16 in
+this paper and its appendix. The complete source code, input data, and resulting solution files
+are publicly available at https://github.com/spiralulam/heilbronn.
+
+1.6   Paper outline
+Section 2 establishes a formal setting for the Heilbronn problem and derives structural properties
+of optimal configurations that are exploited in the optimization model. Section 3 develops the
+mixed-integer formulation and its enhancements, including a symmetry-breaking strategy based
+on the boundary structure of optimal configurations. Section 4 presents the optimize-then-refine
+framework and illustrates it in detail for n = 7. Section 5 reports the exact coordinates for
+n = 5, . . . , 9. Section 6 discusses the structural patterns and open questions. Section 7 concludes
+with an outlook. Appendix A collects the best-known configurations for n = 10, . . . , 16.
+
+
+2     Original formulation and theoretical results
+This section establishes a basic formulation of the Heilbronn problem in Section 2.1, which
+already suffices to prove its solvability. The theoretical results in Section 2.2 about the boundary
+points of optimal configurations and in Section 2.3 about a sign property of determinants are not
+only of theoretical interest but provide valuable structure that is exploited in the optimization
+model of Section 3, leading to a substantial runtime reduction.
+
+2.1   The original formulation and its solvability
+Let n ≥ 3 denote the number of points p1 = (x1 , y1 ), . . . , pn = (xn , yn ) we want to place in R2 ,
+I = {1, . . . , n}, and
+                         T = {(i, j, k)| 1 ≤ i < j < k ≤ n} ⊂ N3
+
+                                                  4
+the set of all triangles, where each triangle t = (i, j, k) ∈ T is identified with the indices of the
+                                                           n
+defining points pi , pj and pk . By construction, |T | = 3 .
+Remark 1. The enumeration of the points heavily influences the symmetry breaking and there-
+fore becomes a crucial modeling choice, as discussed in Section 3.2.2.
+   Further, let At be the area of triangle t and [0, 1]2 the unit square. Then the Heilbronn
+problem can be formulated as the following optimization problem:
+
+                       P∆ :      max min At         s.t. (xi , yi ) ∈ [0, 1]2 , i ∈ I.
+                                  x,y   t∈T
+
+and ∆n coincides with the optimal value of P∆ . All further specifications of this problem
+amount to modeling decisions, of which there are many and which must be made carefully.
+A first fundamental modeling choice concerns the representation of the triangle areas. For a
+triangle t = (i, j, k), the area can be expressed via the classical shoelace determinant formula,
+
+                      x i yi 1
+                                   
+               1                 1
+           At = det  xj yj 1 = |xi yj + xj yk + xk yi − xi yk − xj yi − xk yj | .
+                              
+               2                 2
+                     x k yk 1
+
+   With this representation, P∆ becomes a nonsmooth, nonconvex optimization problem with
+box constraints with the following properties.
+
+Proposition 1. The optimization problem P∆ admits a solution for every n, and its optimal
+value ∆n is strictly positive.
+
+Proof. Existence of a solution follows from the Weierstraß theorem. The objective function
+is continuous, and the feasible set is nonempty, closed, and bounded; hence it is compact.
+Therefore, the maximum is attained. Strict positivity of ∆n follows, for example, from Erdős’
+construction discussed in Section 1.3, which provides an explicit positive lower bound.
+
+Remark 2. In [14], Roth argues that P∆ is solvable because its feasible set “is a closed convex
+region”. However, closedness and convexity alone do not guarantee existence of a maximizer;
+compactness (or an equivalent coercivity argument) is required.
+   The following corollaries are immediate consequences of Proposition 1, since otherwise the
+configuration would contain a triangle of zero area.
+
+Corollary 1. An optimal configuration for the Heilbronn problem does not contain two coinci-
+dent points.
+
+Corollary 2. An optimal configuration for the Heilbronn problem does not contain three collinear
+points.
+
+2.2   Boundary structure of optimal configurations
+Let P = {p1 , . . . , pn } ⊆ S = [0, 1]2 be an optimal configuration for the Heilbronn problem, and
+let                                              n                 n
+                                              nX                                  o
+                         K := conv(P ) =            λi pi λi ≥ 0,          λi = 1
+                                                                     X
+
+                                              i=1                    i=1
+
+denote its convex hull. Let v1 , . . . , vm be the vertices of K, listed in cyclic order, so that
+K = v1 v2 · · · vm is a convex m-gon.
+
+Lemma 1 (Minimal covering parallelogram). The unit square S = [0, 1]2 is a minimum-area
+covering parallelogram of K.
+
+
+
+                                                     5
+Proof. Assume for contradiction that there exists a parallelogram S ′ ⊇ K with area(S ′ ) < 1.
+    Since every parallelogram is an affine image of the unit square, there exists an affine bijection
+T : S ′ → S with positive determinant satisfying
+
+                                                area(S)         1
+                                  | det T | =              =            > 1.
+                                                area(S ′ )   area(S ′ )
+
+   Because K ⊆ S ′ , we have T (K) ⊆ S, hence T (P ) ⊆ S. For every triangle τ formed by
+points of P , its area scales by
+
+                                     area(T (τ )) = | det T | area(τ ).
+
+Thus
+                                  ∆(T (P )) = | det T |∆(P ) > ∆(P ),
+contradicting the optimality of P .
+
+Proposition 2. Let n ≥ 5 and let P ⊆ [0, 1]2 be an optimal configuration. Then at least five
+distinct vertices of K = conv(P ) lie on the boundary ∂S of the unit square.
+
+Proof. By Lemma 1, S is a minimum-area covering parallelogram of K. Applying Lemma 2 of
+Zeng and Chen [19] yields three possible cases:
+
+   1. No common vertices. Then at least five vertices of K lie on the four edges of S.
+
+   2. Exactly one common vertex. Then each adjacent edge interior contains a vertex of K,
+      and the remaining two edges each contain a vertex, yielding at least five distinct boundary
+      vertices.
+
+   3. Two common vertices forming a diagonal. Then each of the four edges of S contains
+      a vertex of K in its interior. Together with the two corner vertices, this yields at least six
+      distinct boundary vertices.
+
+    In all cases, ∂S contains at least five distinct vertices of K, hence at least five distinct points
+of P .
+
+Remark 3. The argument of this subsection is essentially due to Amirali Modir, who commu-
+nicated to us the proof of Proposition 2 building on Lemma 2 of Zeng and Chen [19]. Our only
+contribution is Lemma 1, which shows that the unit square is a minimum-area covering paral-
+lelogram of the convex hull and thereby makes the result of Zeng and Chen directly applicable
+in our setting.
+
+2.3    On the signs of the triangle areas
+The signed area of a triangle with vertices pi , pj , pk is
+
+                             1 xi yi
+                                               
+                        1               1
+         A± (i, j, k) := det1 xj yj  = (xj − xi )(yk − yi ) − (yj − yi )(xk − xi ) .
+                                                                                  
+                        2               2
+                             1 x k yk
+
+It is well known that A± (i, j, k) > 0 if and only if (pi , pj , pk ) are ordered counterclockwise,
+A± (i, j, k) < 0 for a clockwise ordering, and A± (i, j, k) = 0 for collinear points. In particular,
+the (unsigned) area satisfies A(i, j, k) = |A± (i, j, k)|, and for counterclockwise-ordered triples
+A(i, j, k) = A± (i, j, k). This sign information plays a key role in the optimization model of
+Section 3.
+
+
+                                                       6
+3     Mixed-integer optimization models
+In Section 3.1 we present a baseline mixed-integer formulation that mirrors the original nons-
+mooth model as closely as possible; solving this model already certifies optimality for small in-
+stances but becomes intractable around n = 8. Section 3.2 then develops several enhancements—
+in particular a symmetry-breaking strategy based on boundary structure that, as a byproduct,
+also fixes the signs of certain triangle areas. Together, these improvements lead to a much
+stronger formulation. The resulting final model is collected in Section 3.4, and Section 3.3
+compares it with the formulation of Monji, Modir, and Kocuk [13].
+
+3.1   A first mixed-integer formulation
+For each triangle t = (i, j, k) ∈ T we introduce a continuous auxiliary variable A±
+                                                                                  t ∈ [− 2 , 2 ]
+                                                                                         1 1
+
+representing the signed area
+                                1
+                       A±
+                        t =       (xi yj + xj yk + xk yi − xi yk − xj yi − xk yj ) .
+                                2
+To eliminate the minimum over triangles in the objective, we introduce an auxiliary variable z
+and impose
+                                   z ≤ |A±t |,    t ∈ T.
+This formulation remains nonsmooth because of the absolute value. To handle it, we introduce
+a binary variable bt ∈ {0, 1} for each triangle t that selects the sign of A±
+                                                                            t , and replace the
+absolute-value constraint by
+                                  z ≤ (2bt − 1) A±
+                                                 t ,    t ∈ T.
+Maximizing z forces the model to choose the sign that yields the larger of −A±      ±
+                                                                             t and At , thereby
+                                ±           ±     ±
+mimicking the absolute value |At | = max(At , −At ).
+   Our first baseline mixed-integer optimization model is therefore
+
+
+           0
+          P∆ :     max      z
+                    z,x,y
+
+                     s.t.   (xi , yi ) ∈ [0, 1]2 , i ∈ I,
+                                      1
+                            A±t =       (xi yj + xj yk + xk yi − xi yk − xj yi − xk yj ) ,   t ∈ T,
+                                      2
+                            z ≤ (2bt − 1) A±    t ,  t ∈ T,
+                                         1 1
+                                             
+                            A±t ∈ − ,           ,
+                                         2 2
+                            bt ∈ {0, 1}, t ∈ T,
+                                        1
+                            0≤z≤ .
+                                        2
+  This formulation is a nonlinear mixed-integer model and can in principle be solved by any
+MINLP solver.
+Remark 4. This baseline model solves the case n = 5 within seconds using Gurobi and proves
+optimality for n = 6 in approximately three minutes. For n = 7, however, the solver did not
+terminate within 45 minutes, illustrating the rapid growth in computational difficulty.
+
+3.2   Some improvements
+We enhance the baseline model with three key improvements.
+
+
+
+                                                     7
+3.2.1    Bounds and variable substitution
+We add the constraint z ≤ ∆n−1 (since solving the problem for n − 1 points provides an upper
+bound for n points). Additionally, we introduce auxiliary variables wij ∈ [0, 1] with wij = xi yj
+to isolate bilinear terms, which are the main source of nonconvexity and are approximated by
+solvers using techniques such as McCormick inequalities.
+
+3.2.2    Symmetry breaking
+The primary obstacle is the enormous symmetry: the dihedral group D4 acts on coordinates
+(8 symmetries: 4 rotations, 4 reflections) and the symmetric group Sn permutes point labels,
+yielding a combined symmetry group of order 8 · n!. For n = 9, this is up to 2.9 million
+equivalent solutions. Our strategy exploits the boundary structure of optimal configurations
+using Proposition 2 to break this symmetry in three steps:
+
+Step 1: Boundary assignment and elimination of geometric symmetry. We designate
+the edge carrying at least two boundary vertices as the left edge (x = 0), eliminating all rotations
+in D4 . Combined with the constraint x2 ≤ x4 , this breaks all reflection symmetries.
+
+Step 2: Canonical boundary labeling. We label the five boundary points p1 , . . . , p5 coun-
+terclockwise starting from the left edge, assigning them to specific edges: p1 (left, lower), p2
+(bottom), p3 (right), p4 (top), p5 (left, upper). The constraint y5 ≥ y1 resolves ambiguity among
+left-edge points.
+
+Step 3: Interior point ordering. The remaining points p6 , . . . , pn are ordered by increasing
+x-coordinate, eliminating the (n − 5)! labeling symmetries.
+    This three-step approach fixes five coordinate variables outright and breaks the combined
+symmetry group, which is crucial for solver performance. Table 1 and Figure 2 illustrate the
+resulting configuration structure.
+
+                                    Point     Coord.       Value   Edge
+                                      p1        x1          0      left
+                                      p2        y2          0      bottom
+                                      p3        x3          1      right
+                                      p4        y4          1      top
+                                      p5        x5          0      left
+
+Table 1: Coordinates fixed a priori by the symmetry-breaking strategy. The remaining free
+coordinates are y1 , x2 , y3 , x4 , y5 , and all coordinates of p6 , . . . , pn , subject to y5 ≥ y1 , x2 ≤ x4 ,
+and x6 ≤ · · · ≤ xn .
+
+Remark 5. This symmetry-breaking approach also yields correct results for n < 5, although the
+theoretical justification does not stem from Proposition 2 but from a separate investigation of
+the cases n = 3 and n = 4.
+
+3.2.3    Sign fixing
+The symmetry breaking approach from Section 3.2.2 allows us to fix the signs for two groups
+of triangles:
+
+   1. All triangles in the set T + = {(i, j, k) ∈ T | k ≤ 5} have their three vertices on the
+      boundary, arranged counterclockwise (since i < j < k). Therefore A±t ≥ 0 for all t ∈ T .
+                                                                                            +
+
+
+
+                                                       8
+                                                        p4
+
+
+                             p5
+
+                                        x2 ≤ x4
+                                                       p7
+                                                              p8
+                                             p6
+                                                                       p3
+                             p1
+
+                                      p2
+
+Figure 2: Symmetry breaking used in the optimization model. Five points are fixed on the
+boundary in counterclockwise order, while the remaining points are ordered by increasing x-
+coordinate; additionally x2 ≤ x4 .
+
+
+  2. Since p1 and p5 are located on the left edge with y5 ≥ y1 , we have A±
+                                                                          t ≤ 0 for all
+     t ∈ T := {(i, j, k) ∈ T | i = 1, j = 5}.
+          −
+
+
+   This allows us to add the constraints
+
+                           bt = 1, t ∈ T +        and        bt = 0, t ∈ T −
+
+and therefore fix some of the binary variables in advance.
+Remark 6. It is also valid to introduce only the binary variables that are not fixed a priori, but
+we did not experience a computational advantage from that approach.
+
+3.3   Comparison with Monji, Modir, and Kocuk
+Concurrent work by Monji, Modir, and Kocuk [13] was the first to apply MINLP solvers to the
+Heilbronn problem, certifying n = 9 within one day—a major improvement over prior methods.
+Our formulation differs in several key respects:
+
+  1. Absolute value handling: We replace z ≤ |A±       t | with the bilinear constraint z ≤
+               ±
+     (2bt − 1)At , avoiding big-M parameters and leveraging the mixed-integer nonlinear pro-
+     gramming solver’s spatial branching.
+
+  2. Symmetry breaking: We fix five boundary points on specific edges in counterclockwise
+     order eliminating 5 coordinates outright, whereas Monji et al. impose ordering constraints.
+     This also enables sign fixing for 53 + (n − 5) binary variables.
+                                         
+
+
+  3. Minimal auxiliary variables: We introduce no edge-proximity, strip-assignment, or
+     grid-cell auxiliary binary variables.
+
+  4. No pre-processing: Unlike Monji et al. no optimization-based bound-tightening or other
+     pre-processing techniques are used.
+
+   The result is a more compact model that solves faster (15 minutes for n = 9 vs. one day)
+without pre-processing.
+
+
+
+                                                   9
+3.4   The final model
+Combining all ingredients from the previous subsection we arrive at the formulation P∆  ⋆ dis-
+
+played in Figure 3. The colored boxes highlight the individual enhancement groups; the core
+model corresponds to the baseline formulation P∆
+                                               0 expressed in the substituted variables.
+
+
+                                              Core Model
+         ⋆
+        P∆ :      max     z
+                  z,x,y
+
+                   s.t. (xi , yi ) ∈ [0, 1]2 , i ∈ I,
+                                    1
+                        A±ijk =        (wij + wjk + wki − wik − wji − wkj ) ,   (i, j, k) ∈ T
+                                    2
+                        z ≤ (2bt − 1)A±       t , t∈T
+                                                    Product Substitution
+                          wij = xi yj ,       i, j ∈ I
+
+                                                           Sign Fixing
+                          bt = 1,   t∈T       +
+
+                          bt = 0,   t ∈ T−
+                                                    Symmetry Breaking
+                          x1 = x5 = y2 = 0
+                          x3 = y4 = 1
+                          x2 ≤ x4
+                          y1 ≤ y5
+                          xi ≤ xi+1 ,     i≥6
+                                                         Variable Domains
+                                    1 1
+                                         
+                          A±
+                           t ∈ − ,       , t∈T
+                                    2 2
+                          wij ∈ [0, 1], i, j ∈ I
+                          bt ∈ {0, 1},    t ∈ T,
+                          0 ≤ z ≤ ∆n−1
+
+
+
+Figure 3: The final mixed-integer formulation P∆⋆ . Colored boxes indicate the core model P 0
+                                                                                             ∆
+(blue) and the enhancements: product substitution (teal), sign fixing (orange), symmetry break-
+ing (red), and variable domains (gray).
+
+Remark 7. Using this final formulation, the Heilbronn problem for n = 5 is solved in 0.13
+seconds, for n = 6 in 0.7 seconds, for n = 7 in 1.75 seconds, for n = 8 in 14.03 seconds, and for
+n = 9 in 908 seconds.
+
+
+4     The optimize-then-refine framework
+4.1   The framework
+Our approach proceeds in two stages. In the first step, we solve the MINLP formulation P∆
+                                                                                        ⋆ from
+
+Section 3.4 to global optimality using Gurobi. The solver returns a numerical point placement
+together with matching lower and upper bounds, thereby certifying the optimal value ∆n up
+
+                                                     10
+to numerical precision which is why we refer to it as ε-globally optimal. From these numerical
+coordinates we identify the critical triangles—those whose area equals the certified minimum—
+and record which points lie on which edges of the unit square. In the second step, we treat these
+structural observations as an ansatz for deriving exact symbolic coordinates: setting the areas of
+the critical triangles equal yields a system of polynomial equations that can be solved in closed
+form with a computer algebra system. The result is a fully symbolic optimal configuration
+whose optimality is backed by the numerical certificate from the first step.
+Remark 8. A key practical concern is the identification of critical triangles and boundary points
+in the first step, since these decisions rest on numerical data subject to solver tolerances. In
+all instances considered here, the gaps are unambiguous: the area of the smallest non-critical
+triangle exceeds that of the critical triangles by a margin that is several orders of magnitude
+larger than the solver tolerance, and every point classified as lying on an edge has a coordinate
+that deviates from the boundary value by less than 10−6 . This clear separation makes the
+structural input to Step 2 unambiguous in all cases considered.
+   The pipeline is illustrated in Figure 4.
+
+                   Step 1: Global computational certification
+                   • Create mixed-integer optimization model
+                   • Compute global optimal point numerically
+                   • Identify critical triangles and boundary points
+
+                                                  certified configurations
+
+                   Step 2: Exact analytical refinement
+                   • Derivation of nonlinear polynomial equation systems
+                   • Exact symbolic solution of the systems
+
+
+
+
+                   Result: Exact symbolic coordinates of a point with a global
+                   numerical optimality certificate
+
+Figure 4: Methodological pipeline of the paper: global computational certification (Step 1),
+exact analytical refinement (Step 2), yielding points with exact symbolic coordinates and global
+numerical optimality certificates.
+
+   While due to the recent advances in global mixed-integer nonlinear programming solvers,
+Step 1 is a standard optimization task, Step 2 is more involved. The equal-area conditions
+on the critical triangles form a system of polynomial equations whose unknowns are the free
+coordinate parameters remaining after boundary constraints and coordinate coincidences have
+been exploited. The number k of these parameters ranges from 4 (for n = 5) to 8 (for n = 9),
+and we employ three solving strategies, tried in succession.
+
+  1. Direct symbolic solve. For small systems (k ≤ 6, covering n = 5, 6, 8), SymPy’s symbolic
+     solver produces exact solutions directly, including the detection of the one-parameter
+     family for n = 6.
+
+  2. Gröbner basis. For n = 7, the solution lies in a cubic extension field; a lexicographic
+     Gröbner basis computation yields a triangular system from which all coordinates follow
+     by back-substitution through the minimal polynomial 19f 3 − 27f 2 + 11f − 1 = 0 (see
+     Section 4.2).
+
+
+
+                                                11
+   3. Numeric-to-symbolic refinement. For n = 9, where k = 8, neither a direct solve nor a
+      Gröbner basis computation terminates in reasonable time. Instead, we apply a numeric-
+      to-symbolic approach:√from the certified numerical
+                                                 √       coordinates we first identify the under-
+      lying number field Q( 65) by recognizing 65 in the simplest coordinate, then express all
+      coordinates as elements of this field using SymPy’s nsimplify function with the known
+      algebraic extension.
+The numeric-to-symbolic step involves a risk: numerical proximity does not guarantee algebraic
+correctness, since Gurobi’s certified values√carry only about six significant digits. For instance,
+for n = 9 the spurious expression 16619
+                                         + 316665 ≈ 0.26017 is numerically indistinguishable from
+                        √
+the true value 16
+                9
+                  − 3 8065 ≈ 0.26017 at solver precision, yet only the latter satisfies the equal-area
+equations. We therefore verify every candidate solution symbolically by substituting into the
+full polynomial system. Any coordinate that fails this check is corrected by fixing the validated
+coordinates and solving the resulting reduced (and much smaller) subsystem exactly.
+     The entire pipeline is implemented as a reproducible Python script, available together with
+all input data in the accompanying repository.1
+
+4.2     Illustration of the methodology for n = 7
+We now illustrate the two-step pipeline on the case n = 7, for which Comellas and Yebra [6]
+heuristically obtained conjectured optimal coordinates via simulated annealing followed by a
+local optimality analysis. Global optimality was subsequently proved by Zeng and Chen [19],
+who decomposed the problem into 226 nonlinear optimization subproblems. Our approach
+provides an independent proof and yields simpler coordinate expressions.
+
+Step 1: Global computational certification
+Running our final MIP model from Section 3.4 with n = 7, Gurobi terminates after 1.75 seconds
+with an optimal value of ∆7 ≈ 0.0838590 and the numerical configuration shown in Table 2.
+                                                                  The 8 minimal area triangles for n=7
+ Pt        x        y            Edge                 1.0    5                                            4
+
+ p1        0     0.1352         left edge
+ p2     0.7127      0         bottom edge             0.8
+ p3        1     0.1808        right edge
+ p4        1        1             corner              0.6                                    7
+ p5        0        1             corner                               6
+ p6     0.1939   0.4926          interior             0.4
+ p7     0.7127   0.5839     shared x with p2
+                                                      0.2                                                 3
+Table 2: Numerical coor-                                     1
+dinates returned by Gurobi
+                                                                                             2
+for n = 7 (rounded to four                            0.0
+decimal places).    Five of                                 0.0      0.2      0.4     0.6        0.8     1.0
+the seven points lie on the
+                                                  Figure 5: Optimal configuration for n = 7 with
+boundary of the unit square.
+                                                  its eight critical triangles highlighted.
+
+    Figure 5 shows the configuration together with its eight critical triangles, which all have
+areas within 5 × 10−7 of the optimal value. The ninth-smallest triangle area is roughly 0.0948,
+leaving a comfortable gap of about 13% above the optimum.
+    Two structural observations guide the symbolic step that follows:
+  1
+      https://github.com/spiralulam/heilbronn
+
+
+                                                 12
+  1. Five of the seven points lie on the boundary (p4 , p5 at corners, p1 on the left edge, p2 on
+     the bottom edge, p3 on the right edge).
+  2. Points p2 and p7 share the same x-coordinate, suggesting a hidden algebraic relation.
+
+Step 2: Exact analytical refinement
+Guided by these observations, we set up a parametric ansatz. The boundary structure fixes
+seven coordinates (x1 = 0, y2 = 0, x3 = 1, x4 = y4 = 1, x5 = 0, y5 = 1), and the shared
+x-coordinate of p2 and p7 introduces an additional coupling, leaving six unknowns a, b, c, d, e, f
+(Table 3).
+
+                                 Pt    x       y   Rationale
+                                  p1   0       a   left edge
+                                  p2   b       0   bottom edge
+                                  p3   1       c   right edge
+                                  p4   1       1   corner
+                                  p5   0       1   corner
+                                  p6   d       e   interior
+                                  p7   b       f   shared x with p2
+
+Table 3: Parametric ansatz for n = 7. Boundary constraints fix seven coordinates; the shared
+x-coordinate of p2 and p7 introduces the coupling x7 = b.
+
+    Setting the areas of the eight critical triangles equal yields seven polynomial equations in
+six unknowns. A lexicographic Gröbner basis computation eliminates all unknowns except f ,
+which must satisfy the irreducible cubic
+                                 19 f 3 − 27 f 2 + 11 f − 1 = 0.
+This cubic has three real roots: f1 ≈ 0.1269, f2 ≈ 0.5839, and f3 ≈ 0.7103. The first root
+gives b = 19f12 − 27f1 + 10 ≈ 6.88 > 1, and the third gives a = 19f32 − 16f3 + 3 ≈ 1.22 > 1;
+both violate the unit-square constraint. The unique feasible solution corresponds to f = f2 .
+Back-substitution through the Gröbner basis yields the exact symbolic coordinates in Table 4.
+
+                           Pt              x                   y
+                           p1              0             19f 2 − 16f + 3
+                           p2    19f 2 − 27f + 10              0
+                                                        −19f 2 + 10f + 1
+                           p3              1
+                                                                2
+                           p4              1                    1
+                           p5              0                   1
+                           p6    −19f 2 + 8f + 2         57f 2 − 41f + 5
+                           p7    19f 2 − 27f + 10              f
+
+Table 4: Exact symbolic coordinates of the optimal seven-point configuration, where f ≈ 0.5839
+is the second real root of 19f 3 − 27f 2 + 11f − 1.
+
+   The optimal value simplifies to
+                                ∆7 = f − 21 ≈ 0.0838590090 . . .
+
+                                                   13
+Comparison with Comellas and Yebra [6]. The exact coordinates we obtain are notably
+simpler than those reported by Comellas and Yebra, who express each coordinate as a degree-
+two polynomial in a parameter z with rational coefficients over denominators 19 and 38 and
+integer numerators as large as 223, for instance x1 = − 50
+                                                        19 z − 38 z + 38 .
+                                                               17 2   37
+
+
+
+5      Optimal solutions for 5 ≤ n ≤ 9
+5.1     Software and hardware
+The models are implemented in Python 3.11 using the Gurobi 13.0 solver interface (gurobipy);
+the exact symbolic refinements use SymPy 1.14. Gurobi’s only non-default setting is MIPFocus = 2
+to prioritise the dual bound. Computations were carried out on a standard desktop PC equipped
+with an AMD Ryzen 9 9950X3D processor (16 cores, 4.30 GHz) and 96 GB DDR5 RAM.
+                                                    √
+5.2     n = 5: Four critical triangles, ∆5 = 93
+The configuration has four critical triangles. Setting these four areas equal
+                                                                        √     yields a system
+whose unique feasible solution gives the closed-form optimal value ∆5 = 3/9 ≈ 0.19245.
+                                                                              The 4 minimal area triangles for n=5
+                                                                  1.0    5                                4
+
+                Pt      x          y
+                                                                  0.8
+                1       0          1
+                                   3
+                        √                                         0.6
+                2       3
+                         3
+                                   0                                                                                  3
+                                       √                          0.4
+                                                                         1
+                3       1       1−     3
+                                        3
+                                                                  0.2
+                4       2
+                        3          1
+                                                                                                    2
+                5       0          1                              0.0
+                                                                        0.0      0.2      0.4       0.6       0.8    1.0
+
+      Table 5: Exact coordinates for n = 5.                    Figure 6: Optimal configuration
+                                                               for n = 5.
+
+
+5.3     n = 6: Six critical triangles, ∆6 = 18
+The configuration has six critical triangles. Remarkably, there is a one-parameter family of opti-
+mal solutions parameterized by c ∈ [0, 14 ], all achieving ∆6 = 1/8 = 0.125. The full distribution
+of triangle areas is independent of the choice of c.
+                                                                              The 6 minimal area triangles for n=6
+                                                                                                4
+                 Pt     x         y                               1.0
+
+
+                    1   0         c                               0.8
+                                                                                                                      6
+                                                                         5
+                    2       1
+                            2     0                               0.6
+
+                    3   1       1
+                                2 −c
+                                                                  0.4
+                    4       1
+                            2     1                                                                                   3
+
+                                                                  0.2    1
+                    5   0       c + 21
+                                                                                                2
+                    6   1       1−c                               0.0
+                                                                        0.0      0.2      0.4       0.6       0.8    1.0
+
+Table 6: Exact coordinates for n = 6, c ∈                      Figure 7: Optimal configuration
+[0, 14 ].                                                      for n = 6.
+
+
+
+                                               14
+5.4       n = 7: Eight critical triangles, ∆7 = f − 12
+The detailed derivation for n = 7 is given in Section 4.2. The configuration has eight critical
+triangles, and the exact coordinates are parameterized by the root of 19f 3 − 27f 2 + 11f − 1
+near 0.5839, yielding ∆7 ≈ 0.08386.
+                                                                         The 8 minimal area triangles for n=7
+ Pt                x                       y                 1.0    5                                             4
+
+ 1                 0               19f 2 − 16f + 3
+                                                             0.8
+ 2     19f 2 − 27f + 10                    0
+                                     −19f 2 +10f +1          0.6                                    7
+ 3                 1                        2                                 6
+
+ 4                 1                       1                 0.4
+
+ 5                 0                       1                                                                      3
+                                                             0.2
+                                                                    1
+ 6        −19f 2 + 8f + 2          57f 2 − 41f + 5
+                                                             0.0                                    2
+ 7     19f 2 − 27f + 10                    f
+                                                                   0.0       0.2       0.4    0.6       0.8      1.0
+
+Table 7: Exact coordinates for                             Figure 8: Optimal configuration for
+n = 7.                                                     n = 7.
+
+
+                                                             √
+                                                   1
+5.5       n = 8: Twelve critical triangles, ∆8 = − 36 + 3613
+The configuration exhibits a point-symmetric
+                                 √           structure with twelve critical triangles and a
+unique optimal solution involving 13.
+
+      Pt        x              y                                         The 12 minimal area triangles for n=8
+                                                             1.0                   6                              4
+      1         0              0
+                   √
+                                                                    5
+      2      6 +
+             1         13
+                       6       0                             0.8
+                                   √
+      3         1           7     13
+                            18 − 18                          0.6
+                                                                                                        8
+
+      4         1              1
+                                 √                           0.4                   7
+      5         0           11
+                            18 +   13
+                                  18
+                 √
+                                                                                                                  3
+      6      5
+             6 −  6
+                   13
+                               1                             0.2
+                 √               √
+      7      5
+             6 − 6
+                   13       7
+                            9 − 9
+                                 13
+                                                             0.0    1                                   2
+                 √             √                                   0.0       0.2       0.4    0.6       0.8      1.0
+      8      6 + 6
+             1     13
+                            9 + 9
+                            2    13
+
+                                                           Figure 9: Optimal configuration for
+Table 8: Exact coordinates for                             n = 8.
+n = 8.
+
+
+                                                              √
+5.6       n = 9: Eleven critical triangles, ∆9 = − 11
+                                                   64
+                                                      + 932065
+The configuration has eleven critical triangles and is invariant under√reflection in the anti-
+diagonal (x, y) 7→ (1 − y, 1 − x). The unique optimal solution involves 65.
+
+
+
+
+                                                      15
+            Pt       x              y                                                   The 11 minimal area triangles for n=9
+                                     √                                      1.0             4                                 8
+            1        0           1 − 1065
+                     √
+                                                                                    5                                               9
+            2    3
+                 8 − 40
+                       65
+                                    0                                       0.8
+                                    √
+            3        1        9
+                              16 − 3 65
+                                    80
+                     √                                                      0.6
+            4    3
+                 8 − 40
+                       65
+                                    1
+                                     √
+            5        0           5
+                                   +   65
+                                                                            0.4
+                      √
+                                 8   40
+                                     √                                                                                6
+            6     4 + 20
+                  1      65      3
+                                 4 − 20
+                                       65                                                                                           3
+                        √                                                   0.2     1
+            7    16 + 80
+                 7     3 65
+                                    0
+                    √
+            8         65
+                     10             1                                       0.0             2                             7
+                                     √
+            9        1                                                            0.0       0.2       0.4       0.6       0.8     1.0
+                                 8 + 40
+                                 5    65
+
+                                                                       Figure 10: Optimal configuration for n = 9.
+      Table 9: Exact coordinates for n = 9.
+
+
+6      Further observations and research questions
+6.1     Growth of the number of critical triangles
+A structural feature of the optimal configurations worth noting is the number of critical triangles,
+i.e., triangles whose area equals the minimum. Table 10 and Figure 11 summarize the counts
+for n = 5, . . . , 9.
+
+
+
+
+                                                # critical triangles
+                                                                       12
+        n   Critical triangles
+                                                                       10
+        5           4                                                   8
+        6           6                                                   6
+        7           8
+                                                                        4
+        8           12
+                                                                        2
+        9           11
+                                                                        0
+                                                                                   5              6         7             8        9
+Table 10: Number of critical tri-                                                                           n
+angles for n = 5, . . . , 9.
+                                               Figure 11: Critical triangles as a function of n.
+
+   The data suggest a broadly increasing trend, although the decrease from n = 8 to n = 9
+shows that the growth is not strictly monotone. A natural question arises:
+
+       Can one establish a nontrivial lower bound on the number of critical triangles in an
+       optimal Heilbronn configuration as a function of n?
+
+    Any such bound would have implications for the structure of the polynomial systems that
+arise in Step 2 of the framework, since each critical triangle contributes an equality constraint.
+Even a linear lower bound of the form Ω(n) would be significant, as it would guarantee that
+optimal configurations are constrained by at least as many active area equalities as there are
+free coordinate variables.
+Remark 9. We thank Oliver Stein for pointing out that the number of critical triangles should be
+bounded above if the linear independence constraint qualification (LICQ) holds at the optimal
+solution, since each critical triangle corresponds to an active constraint. However, we do not
+know whether LICQ holds for optimal Heilbronn configurations.
+
+                                                  16
+6.2          Clustering of noncritical triangle areas
+A second observation concerns the noncritical triangles—those whose area strictly exceeds the
+minimum. Inspecting the degeneracy plots (Figures 12 and 13), one notices that the triangle
+areas do not spread out continuously but instead cluster around a small number of distinct
+values.
+    For n = 5, there are only three distinct noncritical area levels beyond the four critical
+triangles (see Figure 12). For n = 8, the pattern is particularly clear: after the twelve critical
+triangles, the remaining 3 − 12 = 44 triangle areas visibly group into a handful of narrow
+                           8
+
+clusters (see Figure 13). Similar clustering is observed for n = 6, n = 7, and n = 9.
+
+                       Degeneracy plot (absolute areas)                                      Degeneracy plot (absolute areas)
+        4                                                                         12
+                                                                                  10
+        3
+                                                                                  8
+count   2
+                                                                          count   6
+
+        1                                                                         4
+                                                                                  2
+        0
+             3     2                                      1+ 3   1                0
+            9      9                                      9 9    3                     0.1    0.2               0.3             0.4   0.5
+                                Triangle area                                                         Triangle area
+
+
+Figure  12: Degeneracy plot for n = 5: all                                Figure  13: Degeneracy plot for n = 8: all
+ 5
+ 3  =  10  triangle areas sorted in ascending                              8
+                                                                           3  =  56  triangle areas sorted in ascending
+order. Four critical triangles are followed by                            order. Twelve critical triangles are followed
+three clearly separated noncritical area levels.                          by distinctly clustered noncritical area levels.
+
+   To the best of our knowledge, this clustering phenomenon has not been noted in the liter-
+ature. This suggests a structural rigidity in the extremal configurations that goes beyond the
+optimality of the minimum area.
+
+            Can one explain the clustering of noncritical triangle areas in optimal Heilbronn
+            configurations? In particular, is it possible to show that, for each n, the n3 triangle
+                                                                                          
+
+            areas of an optimal configuration take only O(n) distinct values?
+
+   A positive answer would reveal strong hidden symmetries in the optimal configurations and
+could considerably simplify the algebraic systems used to derive exact coordinates.
+
+
+7           Outlook and final remarks
+We have presented an optimize–then–refine framework for the Heilbronn triangle problem on the
+unit square that combines a mixed-integer optimization model with exact symbolic computation.
+A symmetry-breaking strategy and a product-form determinant reformulation yield a model
+that Gurobi solves to certified global optimality for all n ≤ 9, and the subsequent symbolic step
+recovers exact algebraic coordinates from the numerical certificate.
+    Several directions remain open. Extending the global certification to n = 10 appears within
+reach given continued improvements in solver technology and hardware, but will require sub-
+stantial computational effort. On the theoretical side, establishing nontrivial bounds on the
+number of critical triangles (Section 6.1) or explaining the clustering of noncritical triangle
+areas (Section 6.2) would deepen our understanding of optimal Heilbronn configurations.
+    More broadly, the two-step methodology illustrated here—global certification via mixed-
+integer programming followed by exact coordinate recovery through computer algebra—is ap-
+plicable to other packing and covering problems in discrete geometry where the conjectured
+optimal configurations involve algebraic numbers of moderate degree.
+
+
+
+                                                                     17
+Acknowledgments
+We thank Erich Friedman for kindly sharing the previously unpublished best-known configura-
+tions of Peter Karpov (n = 13, 15) and Mark Beyleveld (n = 14, 16) reproduced in Appendix A.
+
+
+References
+ [1]   T. Berthold, D. Kamp, G. Mexi, S. Pokutta, and I. Polik. Out-of-the-Box Global Opti-
+       mization for Packing Problems: New Models and Improved Solutions. 2026.
+ [2]   T. Berthold, D. Kamp, G. Mexi, S. Pokutta, and I. Pólik. Global Optimization for Com-
+       binatorial Geometry Problems Revisited in the Era of LLMs. 2026.
+ [3]   C. Bertram–Kretzberg, T. Hofmeister, and H. Lefmann. “An Algorithm for Heilbronn’s
+       Problem”. In: SIAM Journal on Computing 30.2 (2000), pp. 383–390.
+ [4]   L. Chen, Y. Xu, and Z. Zeng. “Searching approximate global optimal Heilbronn configu-
+       rations of nine points in the unit square via GPGPU computing”. In: Journal of Global
+       Optimization 68.1 (2017), pp. 147–167.
+ [5]   A. Cohen, C. Pohoata, and D. Zakharov. “Lower bounds for incidences”. In: Inventiones
+       Mathematicae 240 (2025), pp. 713–752.
+ [6]   F. Comellas and J. L. A. Yebra. “New lower bounds for Heilbronn numbers”. In: The
+       Electronic Journal of Combinatorics 9.1 (2002), R6.
+ [7]   L. Dehbi and Z. Zeng. “Heilbronn’s problem of eight points in the square”. In: Journal of
+       Systems Science and Complexity 35.6 (2022), pp. 2452–2480.
+ [8]   A. W. M. Dress, L. Yang, and Z. Zeng. “Heilbronn Problem for Six Points in a Planar
+       Convex Body”. In: Minimax and Applications. Ed. by D.-Z. Du and P. M. Pardalos.
+       Boston, MA: Springer US, 1995, pp. 173–190.
+ [9]   E. Friedman. Packing Center. https : / / erich - friedman . github . io / packing/. Ac-
+       cessed: 2026-02-20.
+[10]   M. Goldberg. “Maximizing the Smallest Triangle Made by N Points in a Square”. In:
+       Mathematics Magazine 45.3 (1972), pp. 135–144.
+[11]   J. Komlós, J. Pintz, and E. Szemerédi. “On Heilbronn’s triangle problem”. In: Journal of
+       the London Mathematical Society. 2nd ser. 24.3 (1981), pp. 385–396.
+[12]   J. Komlós, J. Pintz, and E. Szemerédi. “A lower bound for Heilbronn’s problem”. In:
+       Journal of the London Mathematical Society. 2nd ser. 25.1 (1982), pp. 13–24.
+[13]   A. Monji, A. Modir, and B. Kocuk. Solving the Heilbronn Triangle Problem using Global
+       Optimization Methods. 2025.
+[14]   K. F. Roth. “On a Problem of Heilbronn”. In: Journal of the London Mathematical Society
+       s1-26.3 (1951), pp. 198–204.
+[15]   K. F. Roth. “On a problem of Heilbronn, II”. In: Proceedings of the London Mathematical
+       Society. 3rd ser. 25.2 (1972), pp. 193–212.
+[16]   K. F. Roth. “On a problem of Heilbronn, III”. In: Proceedings of the London Mathematical
+       Society. 3rd ser. 25.3 (1972), pp. 543–549.
+[17]   W. M. Schmidt. “On a problem of Heilbronn”. In: Journal of the London Mathematical
+       Society. 2nd ser. 4.3 (1972), pp. 545–550.
+[18]   L. Yang, J. Zhang, and Z. Zeng. Heilbronn problem for five points. Tech. rep. 1991.
+
+
+
+
+                                               18
+[19]   Z. Zeng and L. Chen. “On the Heilbronn Optimal Configuration of Seven Points in the
+       Square”. In: Automated Deduction in Geometry. Ed. by T. Sturm and C. Zengler. Berlin,
+       Heidelberg: Springer Berlin Heidelberg, 2011, pp. 196–224.
+
+
+
+A      Best-known configurations for 10 ≤ n ≤ 16
+For completeness, we collect the best-known configurations for 10 ≤ n ≤ 16. Those for n = 10
+and n = 12 are due to Comellas and Yebra [6], the one for n = 11 to Goldberg [10], and the
+remaining ones to Peter Karpov (n = 13, 15) and Mark Beyleveld (n = 14, 16), all unpublished.
+The exact coordinates are listed in Tables 11–13; the parameters appearing in the n = 10 and
+n = 12 entries are defined next.
+                                           √     1/3
+    • For n = 10, let z = 34 − (63+81262)              − 12(63+81√62)1/3 ≈ 0.3156, x = z/2, and y = 1−3z+2z 2 .
+                                           √      2/3
+    • For n = 12, let x = 1 − (27+3  57)
+                                     √    +6
+                               6(27+3 57)1/3
+                                             ≈ 0.1154 and y = 2x2 − 3x + 12 .
+
+
+Table 11: Best-known configurations for n = 10, . . . , 16. The configurations for n = 10, 12
+are due to Comellas and Yebra [6], n = 11 to Goldberg [10], n = 13, 15 to Peter Karpov
+(unpublished), and n = 14, 16 to Mark Beyleveld (unpublished).
+
+                    n = 10                               n = 11                       n = 12
+         #      x            y             #       x          y         #       x                        y
+          0    x           0                0     1/3         0         0      x                         0
+          1   1−y          0                1     2/3         0         1   1−x                          0
+          2    0           x                2      0         2/9        2      0                         x
+          3    1           y                3      1         2/9        3      1                         x
+          4   1−z          z                4     1/3        4/9        4    1/2                         y
+          5    z          1−z               5     2/3        4/9        5      y                       1/2
+          6    0          1−y               6      0         2/3        6   1−y                        1/2
+          7    1          1−x               7      1         2/3        7    1/2                      1−y
+          8    y           1                8     1/2        7/9        8      0                      1−x
+          9   1−x          1                9     1/6         1         9      1                      1−x
+                                           10     5/6         1        10      x                         1
+                                                                       11   1−x                          1
+         ∆10 ≥ 58 z 2 − 12 z 3 ≈ 0.04654       ∆11 ≥ 1/27 ≈ 0.03704      ∆12 ≥ 14 x+ 12 xy− 12 x2 ≈ 0.03260
+
+
+
+
+                                                             19
+                Table 12: Best-known configurations for n = 13 and n = 14.
+
+                               n = 13                       n = 14
+                       #          x        y        #          x         y
+                       0   0.964815 0.087630         0   0.077620        0
+                       1          0        1         1   0.922380        1
+                       2   0.896939 0.902546         2   0.922380        0
+                       3   0.761346 0.441996         3   0.077620        1
+                       4   0.655161        1         4          0 0.186886
+                       5   0.748551        0         5          1 0.813114
+                       6          0 0.099250         6          1 0.186886
+                       7          1 0.461332         7          0 0.813114
+                       8   0.328490 0.633357         8   0.292333 0.321345
+                       9   0.087939 0.614507         9   0.707667 0.678655
+                      10   0.345014 0.901507        10   0.707667 0.321345
+                      11   0.087938        0        11   0.292333 0.678655
+                      12   0.500181 0.149235        12        0.5 0.138278
+                                                    13        0.5 0.861722
+                           ∆13 ≥ 0.02702                 ∆14 ≥ 0.02430
+
+
+
+
+Table 13: Best-known configurations for n = 15 and n = 16. All coordinates for n = 16 are
+rational.
+
+                              n = 15                        n = 16
+                      #          x         y        #       x            y
+                       0   0.934094        1     0        2/31           0
+                       1   0.287119 0.302829     1       29/31           1
+                       2   0.342286 0.701349     2       23/31           0
+                       3   0.963064 0.095730     3        8/31           1
+                       4   0.066630 0.633568     4           0       10/33
+                       5   0.648909        0     5           1       23/33
+                       6   0.277707        1     6           1        2/33
+                       7   0.066641        0     7           0       31/33
+                       8   0.589972 0.272487     8        8/31        4/11
+                       9   0.603055 0.928222     9       23/31        7/11
+                      10   0.895664 0.684290    10       10/31        2/33
+                      11          0 0.192215    11       21/31       31/33
+                      12   0.670814 0.614942    12       21/31       10/33
+                      13          0 0.924975    13       10/31       23/33
+                      14          1 0.399875    14       29/31        4/11
+                                                15        2/31        7/11
+                           ∆15 ≥ 0.02111            ∆16 ≥ 7/341 ≈ 0.02053
+
+
+
+
+                                               20
+

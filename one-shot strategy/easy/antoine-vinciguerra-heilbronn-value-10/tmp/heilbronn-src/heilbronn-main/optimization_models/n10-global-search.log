@@ -1,0 +1,14 @@
+
+Gurobi 12.0.3 (mac64[arm]) logging started Thu Aug 27 13:07:38 2026
+
+Set parameter LogFile to value "n10-global-search.log"
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (mac64[arm] - Darwin 25.2.0 25C56)
+
+CPU model: Apple M5
+Thread count: 10 physical cores, 10 logical processors, using up to 10 threads
+
+Non-default parameters:
+TimeLimit  7200
+MIPFocus  2
+JSONSolDetail  1
+

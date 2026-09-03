@@ -1,0 +1,228 @@
+                                                A FRACTAL-LIKE CONFIGURATION OF POINT-LINE PAIRS FOR THE
+                                                               MINIMAL DISTANCE PROBLEM
+
+                                                                              ALEXANDER LOGUNOV, DMITRII ZAKHAROV
+
+
+                                                   Abstract. We show that for every n ∈ N there is a collection of points p1 , . . . , pn and lines ℓ1 , . . . , ℓn
+                                                   in the unit square such that for any i we have pi ∈ ℓi and the distance from pi to any other line ℓj
+
+
+
+
+arXiv:2511.10509v1 [math.CO] 13 Nov 2025
+                                                   is at least cnγ−1 for some universal constants c, γ > 0. This is better than a trivial construction by a
+                                                   polynomial factor.
+
+
+
+
+                                                                                               1. Introduction
+                                               In [2], Cohen, Pohoata and the second author considered the following problem about collections
+                                           of point-line pairs. For an integer n ⩾ 2, what is the largest δ > 0 such that there are points
+                                           p1 , . . . , pn ∈ [0, 1]2 and lines ℓ1 , . . . , ℓn ⊂ R2 such that pi ∈ ℓi and for every i ̸= j we have d(pi , ℓj ) ⩾ δ?
+                                           By taking pi = (i/n, 0) and ℓi = pi + (0, 1)R it is easy too see that δ ⩾ 1/n. On the other hand, by
+                                                                       1         1
+                                           tiling [0, 1]2 with [√n−1]      × [√n−1]     -squares we see that among any n points in the unit square there is
+                                                                               √
+                                                                         2
+                                           a pair at distance at most [√n−1] . So using that d(pi , ℓj ) ⩽ d(pi , pj ) this leads to the upper bound
+                                                  √
+                                                  2
+                                           δ ⩽ [√n−1] .
+                                              In [2], authors managed to improve this simple upper bound to δ ⩽ n−2/3+o(1) . As a corollary, they
+                                           obtained a new upper bound for Heilbronn’s triangle problem which asks to determine the smallest
+                                           number ∆(n) such that among any n points in unit square there exists a triangle with area at most
+                                           ∆(n). The connection between these two problems can be seen as follows: given a set of n points
+                                           in [0, 1]2 we can find a collection of at least n/10 disjoint pairs {pi , qi } among these points so that
+                                           d(pi , qi ) ⩽ 2n−1/2 for all i. Let ℓi be the line passing through pi , qi and note that if d(pi , ℓj ) ⩽ δ for
+                                           some i ̸= j then the points pi , pj , qj form a triangle of area at most ∆ ⩽ 12 d(pi , ℓj )d(pj , qj ) ⩽ n−1/2 δ.
+                                           So better upper bounds on the minimal distance δ lead to better upper bounds on the area of smallest
+                                           triangle ∆. In particular, the upper bound δ ⩽ n−2/3+o(1) gives ∆ ⩽ n−7/6+o(1) . This estimate
+                                           improves on previous work on Heilbronn’s triangle problem by Roth [5], [6], Komlós–Pintz–Szemerédi
+                                           [3] and Cohen, Pohoata and the second author [1] and reaches a certain ‘high-low’ limit of the method.
+                                              Many authors (see e.g. the table on page 34 in [1]) have guessed that the bound ∆(n) ≲ n−3/2 should
+                                           hold based on the following heuristic. Let ℓj = pj qj be lines defined as above and let Hj ⊂ [0, 1]2 be
+                                           the strip of points x ∈ [0, 1]2 at distance at most ⩽ K/n to ℓj . If the points p1 , . . . , pn were uniformly
+                                           distributed in [0, 1]2 then we would expect that about |Hj |n ∼ K of them would land in the strip
+                                           Hj . So for K ≫ 1 there should be lots of points in the strip Hj and so we should be able to find a
+                                           triangle with area at most 2n−1/2 (K/n) ≲ n−3/2 . One way to turn this idea into a rigorous proof is to
+                                           show that in the setup in the first paragraph, we have the upper bound δ ≲ n−1 . Because of this, it
+                                           seemed plausible to the authors of [2] that the upper bound δ ⩽ n−1+o(1) holds. In Appendix B of [2],
+                                           they further note that this estimate, if true, would also imply non-trivial upper bounds for Heilbronn’s
+                                           problem for k-gons.
+                                              In this note, we show that this is not the case, namely that there are collections of point-line pairs
+                                           with δ ≳ nγ−1 for some (small) constant γ > 0.
+                                           Theorem 1.1. There exist constants c, γ > 0 such that for any n ⩾ 2 there are points p1 , . . . , pn ∈
+                                           [0, 1]2 and lines ℓ1 , . . . , ℓn such that pi ∈ ℓi and d(pi , ℓj ) ⩾ cnγ−1 for any i ̸= j.
+                                                                                                          1
+2                                  ALEXANDER LOGUNOV, DMITRII ZAKHAROV
+
+   Similar lower bounds hold for higher dimensional variants of this problem. For example, the same
+proof works for collections of point-line pairs in [0, 1]d for any d ⩾ 2, we omit the details since they are
+essentially identical. On the other hand, Theorem 1.1 does not imply anything new about Heilbronn’s
+triangle problem. However it does hint at the possibility that there could be better lower bound
+constructions: the current best lower bound ∆(n) ≳ log        n2
+                                                                n
+                                                                   due to Komlós–Pintz–Szemerédi [4] is a
+                                                               −2
+slight improvement over the ‘easy’ lower bound ∆(n) ≳ n due to Erdős.
+   In the next section we present the proof of Theorem 1.1. The proof consists of two parts: first, we use
+the probabilistic method to beat the lower bound by a logarithmic factor and second, we use a recursive
+construction to amplify this improvement into a polynomial gain. In particular, the set of points and
+lines we construct is essentially a self-affine fractal. Self-affine fractals might be an interesting special
+class of configurations for further study of the minimal distance problem.
+
+                                                      2. Proof
+   To ease the recursive construction it is convenient to introduce the following notation (very similar
+to the one used in [2]). Let Ω = [−1, 1]2 × [−1, 1], where we view Ω as the configuration space of
+incident point-line pairs in the plane. Namely, for (p, θ) ∈ Ω let ℓ = ℓ(p, θ) = p + (1, θ)R be the
+line with slope θ through p. So we can identify a subset X ⊂ Ω with the point-line configuration
+{(p, ℓ(p, θ)), (p, θ) ∈ X}.
+   For ω = (x, y, θ), ω ′ = (x′ , y ′ , θ′ ) ∈ Ω define the vertical distance d(ω, ω ′ ) = |y − y ′ − θ′ (x − x′ )|. For
+ω, ω ′ ∈ Ω, d(ω, ω ′ ) measures the vertical distance from the point p = (x, y) to the line ℓ′ = ℓ′ (p′ , θ′ ),
+with p′ = (x′ , y ′ ). Since |θ′ | ⩽ 1 it coincides with the euclidean distance up to a constant factor. For a
+point-line configuration X ⊂ Ω define the minimal distance of X as
+                                             d(X) = min
+                                                     ′
+                                                        d(ω, ω ′ ).
+                                                       ω̸=ω ∈X
+
+  For δ > 0 define n(δ) to be the largest integer n such that there exists X ⊂ Ω with d(X) ⩾ δ and
+|X| = n. With this notation, it is easy to see that Theorem 1.1 is equivalent to the following.
+Theorem 2.1. There exist constants γ, c > 0 such that n(δ) ⩾ cδ −1−γ for all δ ∈ (0, 1).
+    Theorem 2.1 now follows the following two lemmas.
+Lemma 2.1. There exists a constant c1 > 0 such that n(δ) ⩾ c1 δ −1 log 1/δ for all δ ∈ (0, 1).
+Lemma 2.2. There exists a constant C2 ⩾ 1 such that for any w, δ ∈ (0, 1) such that δ ⩽ w2 we have
+n(δ) ⩾ w−1 n(C2 w)n(δ/w2 ).
+Proof of Theorem 2.1. Let w ∈ (0, 1) be such that log(1/C2 w) ⩾ ec−1
+                                                                  1 C2 holds. Then for any δ ⩽ w
+                                                                                                 2
+
+we have
+              n(δ) ⩾ w−1 n(C2 w)n(δ/w2 ) ⩾ c1 C2−1 w−2 log(1/C2 w)n(δ/w2 ) ⩾ ew−2 n(δ/w2 ).
+Now fix w and let δ ∈ [w2m+2 , w2m ] for an integer m ⩾ 1, then iterating this inequality m times gives
+                         n(δ) ⩾ em w−2m n(δ/w2m ) ⩾ em w−2m ⩾ em w2 δ −1 ⩾ cδ −1−γ
+for some c = c(w) > 0 and γ = γ(w) > 0.                                                                              2
+    In the remainder of the section we prove the two lemmas.
+Proof of Lemma 2.1. If is enough to prove the lemma for all sufficiently small δ ⩽ δ0 (for δ > δ0 we
+can just choose c1 small enough). For p ∈ R2 and θ ∈ [−1, 1] let T (p, θ) = p + (1, θ)R + {0} × [−δ, δ],
+i.e. T (p, θ) is a strip of vertical width 2δ through p at slope θ.
+   Let N = [0.1δ −1 (log 1/δ)]. Let p1 , . . . , pN ∈ [0, 1]2 be a uniformly random and mutually independent
+collection of points and let P = {p1 , . . . , pN }. For each point pi , it suffices to show that the probability
+that there exists an angle θ ∈ [−1, 1] such that T (pi , θ) ∩ P = {pi } is at least 1/2 (for δ ⩽ δ0 ). Indeed,
+by linearity of expectation this would give a collection of N/2 points among p1 , . . . , pN so that for
+     A FRACTAL-LIKE CONFIGURATION OF POINT-LINE PAIRS FOR THE MINIMAL DISTANCE PROBLEM                        3
+
+every pi in the collection there is an angle θ such that T (pi , θ) ∩ P = {pi }. In particular, this gives
+n(δ) ⩾ N/2 ⩾ cδ −1 log 1/δ.
+  Fix an index i. Let Qi = pi + [− 4√1N , 4√1N ]2 . Note that for i′ ̸= i we have pi′ ∈ Qi with probability
+                 1
+at most |Qi | ⩽ 4N . So by the union bound we have
+                                   Pr[Qi ∩ P ̸= {pi }] ⩽ (N − 1)|Qi | ⩽ 1/4.
+So with probability at least 3/4 there are no points inside Qi besides pi . So it suffices to show that
+with probability at least 3/4 there exists a slope θ such that (T (pi√, θ) \ Qi ) ∩ P = ∅.
+   Let P ′ = P \ {pi }. Denote M = [ 8δ 1√N ] and let θj = 8jδ N , for j = 1, . . . , M . Note that
+for any j ̸= j ′ ∈ {1, . . . , M } we have T (pi , θj ) ∩ T (pi , θj ′ ) ⊂ Qi . We now estimate the probability
+that P ′ ∩ (T (pi , θj ) \ Qi ) = ∅ for some j ∈ {1, . . . , M }. For a region A ⊂ R2 the probability that
+A ∩ P ′ = ∅ is equal to (1 − |A ∩ [0, 1]2 |)N −1 . By mutual independence of the collection {p1 . . . , pN },
+this also holds if A is a random set depending only on pi . Since T (pi , θ) has vertical width 2δ, we
+have |T (pi , θ) ∩ [0, 1]2 | ⩽ 2δ. So we can choose pairwise disjoint sets Aj ⊂ [0, 1]2 of area 2δ so that Aj
+contains T (pi , θj ) ∩ [0, 1]2 \ Qi .
+   Let Zj = 1Aj ∩P ′ =∅ be the indicator of the event that Aj ∩ P ′ = ∅. Then we have
+           EZj = (1 − 2δ)N −1 ⩾ exp(−2δ(N − 1)) ⩾ exp(−2δ × 0.1δ −1 log(1/δ)) ⩾ δ 0.2 .
+Denote q = (1 − 2δ)N −1 . So the sum Z = M                                              1
+                                        P
+                                         j=1 Zj has expectation EZ = M q. Since M = [ 8δ N ] ∼
+                                                                                        √
+
+(δ log(1/δ))−1/2 ≫ δ −0.2 , we have M q > 16 for δ ⩽ δ0 . We note that the variables Zj are negatively
+correlated: for j ̸= j ′ the product Zj Zj ′ is the indicator of the event that P ′ ∩ (Aj ∪ Aj ′ ) = ∅ and so
+EZj Zj ′ = (1 − 4δ)N −1 ⩽ q 2 = (EZj )(EZj ′ ). For j = j ′ we have EZj Zj ′ = EZj = q. We use this to
+estimate the variance of Z:
+                                                   M
+                                                   X
+                                    2        2
+                                                                                      
+                     Var Z = EZ − (EZ) =                     EZj Zj ′ − (EZj )(EZj ′ ) ⩽ M q.
+                                                  j,j ′ =1
+
+By Chebyshev’s inequality,
+                                                               Var Z    4
+                              Pr[|Z − EZ| ⩾ EZ/2] ⩽ 4               2
+                                                                      ⩽    ⩽ 1/4.
+                                                               (EZ)     Mq
+We conclude that for every i, the probability that there exists θ with T (pi , θ) ∩ P = {pi } is at least
+1/2 which in turn implies that n(δ) ⩾ N/2 ⩾ cδ −1 log 1/δ, as desired.                                 2
+                                                                                   (w)
+  Fix w > 0. For (p0 , θ0 ) = (x0 , y0 , θ0 ) ∈ Ω let us define an affine map ψp0 ,θ0 : R2 → R2 given by
+                                   (w)
+                                  ψp0 ,θ0 (x, y) = (x0 + wx, y0 + wθ0 x + w2 y)
+and extend it to a map on R2 × R by
+                            (w)
+                          ψp0 ,θ0 (x, y, θ) = (x0 + wx, y0 + wθ0 x + w2 y, θ0 + wθ).
+                                                                 (w)
+We note that if |x0 |, |y0 |, |θ0 | ⩽ 1/2 and w ⩽ 1/2, then ψp0 ,θ0 (Ω) ⊂ Ω, i.e. we get a well-defined map on
+                                                                                     (w)
+the configuration space of point-line pairs. Roughly speaking, the map ψp0 ,θ0 sends a point line pair
+inside [−1, 1]2 to a point-line pair inside of a w × w2 rectangle centered at p0 and inclined by slope θ0 .
+                                (w)
+   The rescaling map ψ = ψp0 ,θ0 interacts well with the distance d: a straightforward computation
+shows that for ω = (x, y, θ), ω ′ = (x′ , y ′ , θ′ ) we have
+                          d(ψ(ω), ψ(ω ′ )) = w2 |y − y ′ − θ′ (x − x′ )| = w2 d(ω, ω ′ ).
+In particular, for any X ⊂ Ω we have d(ψ(X)) = w2 d(X). Now we use the rescaling maps to prove
+Lemma 2.2.
+4                                    ALEXANDER LOGUNOV, DMITRII ZAKHAROV
+
+Proof of Lemma 2.2. Fix a sufficiently large constant C and let w ∈ (0, 1/4C 2 ). Let X0 ⊂ Ω be a
+                                                                             (1/2)
+configuration of size k = n(4C 2 w) such that d(X0 ) ⩾ 4C 2 w. Then X1 = ψ(0,0),0 (X0 ) ⊂ [−1/2, 1/2] ×
+[−1/4, 1/4] × [−1/2, 1/2] is a configuration with d(X1 ) ⩾ C 2 w. Write X1 = {(p1 , θ1 ), . . . , (pk , θk )}. For
+|j| ⩽ w−1 let pi,j = pi + (0, Cjw2 ). Note that if C ⩾ 4 then pi,j ∈ [−1/2, 1/2]2 . For each i = 1, . . . , k
+                                                     (w)
+and |j| ⩽ w−1 we then have an affine map ψi,j = ψpi,j ,θi : Ω → Ω.
+    Now given an arbitrary X ⊂ Ω we define a new configuration X̃ by
+                                               [
+                                     X̃ =            ψi,j (X).
+                                                       i∈[k],|j|⩽w−1
+
+We claim that this is a disjoint union and for an appropriate C we have d(X̃) ⩾ w2 min(d(X), 1).
+Given this, we can finish the proof as follows: by construction, we have |X̃| = k(2[w−1 ] − 1)|X| ⩾
+n(4C 2 w)w−1 |X|. For δ ⩽ w2 and w ⩽ 1/4C 2 we then get
+                            n(δ) ⩾ |X̃| ⩾ n(4C 2 w)w−1 |X| ⩾ n(4C 2 w)w−1 n(δ/w2 ).
+   Now it remains to show that for any (p̃, θ̃) ̸= (p̃′ , θ̃′ ) ∈ X̃ we have d((p̃, θ̃), (p̃′ , θ̃′ )) ⩾ w2 min(d(X), 1).
+We can write
+                                          ω̃ = ψi,j (p, θ), ω̃ ′ = ψi′ ,j ′ (p′ , θ′ ),
+for some i, i′ ∈ [k], |j|, |j ′ | ⩽ w−1 and (p, θ), (p′ , θ′ ) ∈ X. We split into three cases:
+      • Suppose that i ̸= i′ . One can check that we have p̃ = ψi,j (p) ∈ pi + [−w, w] × [−2Cw, 2Cw]
+        and p̃′ = ψi′ ,j ′ (p′ ) ∈ pi′ + [−w, w] × [−2Cw, 2Cw]. Furthermore, we have θ̃′ ∈ θi′ + [−w, w] and
+        so we get
+                        d((p̃, θ̃), (p̃′ , θ̃′ )) ⩾ d((pi , θi ), (pi′ , θi′ )) − (4C + 4)w
+                                             ⩾ d(X1 ) − (4C + 4)w ⩾ (C 2 − 4C − 4)w ⩾ w
+        for C ⩾ 5.
+      • Suppose that i = i′ but j ̸= j ′ . In this case, one can check that for p = (x, y) and p′ = (x′ , y ′ )
+              d((p̃, θ̃), (p̃′ , θ̃′ )) = |Cw2 (j − j ′ ) + w2 (y − y ′ − θ′ (x − x′ ))| ⩾ Cw2 − 4w2 ⩾ w2 ,
+        where we used |j − j ′ | ⩾ 1 and C ⩾ 5.
+      • Finally, suppose that i = i′ , j = j ′ and (p, θ) ̸= (p′ , θ′ ). Then we know that
+                                 d((p̃, θ̃), (p̃′ , θ̃′ )) = w2 d((p, θ), (p′ , θ′ )) ⩾ w2 d(X).
+    Putting the three cases together this implies the desired bound on d(X̃) which completes the proof.
+2
+
+                                                        References
+[1] Alex Cohen, Cosmin Pohoata, and Dmitrii Zakharov, A new upper bound for the heilbronn triangle problem, arXiv
+    preprint arXiv:2305.18253 (2023).
+[2] Alex Cohen, Cosmin Pohoata, and Dmitrii Zakharov, Lower bounds for incidences, Inventiones mathematicae (2025),
+    1–74.
+[3] János Komlós, János Pintz, and Endre Szemerédi, On heilbronn’s triangle problem, Journal of the London Mathemat-
+    ical Society 2 (1981), 385–396.
+[4] János Komlós, János Pintz, and Endre Szemerédi, A lower bound for heilbronn’s problem, Journal of the London
+    Mathematical Society 2 (1982), 13–24.
+[5] KF Roth, On a problem of heilbronn, ii, Proceedings of the London Mathematical Society 3 (1972), 193–212.
+[6] KF Roth, On a problem of heilbronn, iii, Proceedings of the London Mathematical Society 3 (1972), 543–549.
+
+    Department of Mathematics, Massachusetts Institute of Technology, Cambridge, MA 02139, USA
+    Email address: alogunov@mit.edu
+
+    Department of Mathematics, Massachusetts Institute of Technology, Cambridge, MA 02139, USA
+    Email address: zakhdm@mit.edu
+

@@ -1,0 +1,195 @@
+ Polynomial-Time Approximation of the Star Height of a DFA
+                                        Yoav Danieli
+
+
+1    Regular expressions and star height
+Fix a finite alphabet Σ.
+
+Definition 1 (Ordinary regular expression). The regular expressions over Σ are generated
+by
+                     E ::= ∅ | ε | a | E ∪ E | E · E | E ∗ , a ∈ Σ.
+Their semantics is
+           L(∅) = ∅,                  L(ε) = {ε},                        L(a) = {a},
+      L(E ∪ F ) = L(E) ∪ L(F ), L(EF ) = {uv : u ∈ L(E), v ∈ L(F )},
+                   [
+         L(E ∗ ) =   L(E)m .
+                     m≥0
+
+Definition 2 (Star height). The star height h(E) of a regular expression is defined by
+
+                           h(∅) = h(ε) = h(a) = 0,
+                           h(E ∪ F ) = h(EF ) = max{h(E), h(F )},
+                                        h(E ∗ ) = 1 + h(E).
+
+For a regular language L ⊆ Σ∗ , its star height is
+
+                               h(L) = min{h(E) : L(E) = L}.
+
+    Since expressions without Kleene star denote finite languages,
+
+                                h(L) = 0     ⇐⇒      L is finite.
+
+For a DFA, finiteness is decidable in polynomial time by checking whether a directed cycle
+is reachable from the initial state and can reach an accepting state.
+
+
+2    DFA input model
+Definition 3 (Deterministic finite automaton). A DFA is a tuple
+
+                                     A = (Q, Σ, δ, q0 , F ),
+
+where Q is finite, δ : Q × Σ → Q is total, q0 ∈ Q, and F ⊆ Q. Its language is
+
+                              L(A) = {w ∈ Σ∗ : δ(q0 , w) ∈ F }.
+
+The input size parameter used below is n = |Q|. Unless stated otherwise, the DFA is assumed
+to be trim and minimal.
+
+                                               1
+3     Polynomial-size output: regular-expression circuits
+An explicit regular expression equivalent to an n-state DFA may require exponential size. A
+polynomial-time algorithm therefore cannot always print the fully unfolded expression. We
+use shared subexpressions.
+
+Definition 4 (Regular-expression circuit). A regular-expression circuit is a finite directed
+acyclic graph with one output node. Each node is labelled by
+
+                                   ∅,   ε,   a ∈ Σ,         ∪,     ·,   or     ∗,
+
+with the expected arity. Its semantics is obtained by evaluating the circuit as a regular
+expression. Its size is its number of nodes.
+    The star height of the circuit is the maximum number of ∗-nodes on a directed path from
+the output to a leaf. This equals the star height of its unfolding.
+
+   A constructive polynomial-time approximation algorithm must output a polynomial-size
+regular-expression circuit. An output-sensitive variant may instead print an ordinary ex-
+pression in time polynomial in the input and output sizes.
+
+
+4     Kleene’s dynamic-programming construction
+                                                            (k)
+Let Q = {q1 , . . . , qn }. For 0 ≤ k ≤ n, let Rij denote the words taking qi to qj whose
+intermediate states belong to {q1 , . . . , qk }. The standard recurrence is
+                                 (k)     (k−1)      (k−1)          (k−1) ∗    (k−1)
+                                Rij = Rij        ∪ Rik            Rkk         Rkj      .
+
+                          (0)
+The base expressions Rij are unions of transition labels, together with ε when i = j. The
+                           (n)
+output is the union of R0f over accepting states f .
+   With sharing, this gives a polynomial-size circuit. Syntactically,
+                                                    (k) 
+                                              h Rij         ≤ k,
+
+up to an inessential indexing shift. Thus the construction gives height at most n. For every
+infinite language, h(L) ≥ 1, so this is an O(n)-factor constructive approximation.
+    The order of the states can affect the resulting expression substantially, but merely choos-
+ing the best ordering of the input DFA does not necessarily find the optimal star height of
+the language.
+
+
+5     Cycle rank and the automata characterization
+Definition 5 (Cycle rank). Let G be a finite directed graph. Its cycle rank r(G) is defined
+recursively:
+
+    (i) if G is acyclic, then r(G) = 0;
+
+ (ii) if G is strongly connected and has at least one edge, then
+
+                                         r(G) = 1 + min r(G − v);
+                                                          v∈V (G)
+
+
+(iii) otherwise, r(G) is the maximum cycle rank of a strongly connected component of G.
+
+                                                      2
+    For an automaton B, write r(B) for the cycle rank of its transition graph.
+Theorem 1 (Eggan). For every regular language L,
+                       h(L) = min{r(B) : B is an NFA accepting L}.
+    In particular, for the input DFA A,
+                                    h(L(A)) ≤ r(A) ≤ n.
+The first inequality may be strict because Eggan’s minimum ranges over all equivalent NFAs,
+not merely the input DFA or its state-elimination order.
+Definition 6 (Bideterministic automaton). A trim DFA is bideterministic if it has one
+accepting state and reversing all transitions, while exchanging initial and accepting states,
+yields a deterministic automaton.
+    For bideterministic languages, the minimal trim DFA satisfies
+                                      h(L(A)) = r(A).
+Consequently, approximation of star height for this class is exactly approximation of cycle
+rank.
+
+
+6     Approximation conventions
+A multiplicative approximation needs special treatment at optimum 0.
+Definition 7 (Value approximation). Let α : N → [1, ∞). A polynomial-time α(n)-
+approximation for DFA star height is an algorithm which, on input an n-state minimal
+DFA A, outputs an integer b h(A) such that:
+  (i) if h(L(A)) = 0, then b
+                           h(A) = 0;
+ (ii) if h(L(A)) ≥ 1, then
+                                 h(L(A)) ≤ b
+                                           h(A) ≤ α(n) h(L(A)).
+Definition 8 (Constructive approximation). A constructive α(n)-approximation outputs a
+polynomial-size regular-expression circuit CA satisfying
+                                       L(CA ) = L(A),
+and                       
+                          h(CA ) = 0,                    h(L(A)) = 0,
+                          h(C ) ≤ α(n) h(L(A)), h(L(A)) ≥ 1.
+                              A
+
+    Constructive approximation is stronger than value approximation because the output
+circuit certifies the upper bound.
+Definition 9 (Best polynomial-time approximation ratio). Let αval     ∗ (n) be the pointwise
+
+infimum, up to asymptotic constants, of the approximation ratios achieved by polynomial-
+                                 ∗ (n) analogously for constructive algorithms.
+time value algorithms. Define αcon
+    The central quantitative problem is to determine the asymptotic growth of these functions.
+    The Kleene construction gives
+                                           ∗
+                                          αcon (n) ≤ n.
+For bideterministic input, known cycle-rank algorithms give a polynomial-time
+                                                    
+                                       O (log n)3/2
+approximation.
+
+                                               3
+7   Moderate conjecture
+Conjecture 1 (Moderate IV: cycle-rank-aware elimination). There is a polynomial-time
+algorithm which, given a DFA A, computes an elimination strategy and an equivalent regular-
+expression circuit C with
+                                  h(C) ≤ O(log n) r(A).
+
+    This conjecture concerns approximation relative to the cycle rank of the given automaton.
+It does not by itself approximate the language’s optimal star height when r(A)/h(L(A)) is
+large, but it would improve state-elimination as a graph-sensitive conversion method.
+
+
+References
+[1] L. C. Eggan, Transition Graphs and the Star-Height of Regular Events, Michigan Math-
+    ematical Journal 10(4) (1963), 385–397.
+
+[2] K. Hashiguchi, Algorithms for Determining Relative Star Height and Star Height, Infor-
+    mation and Computation 78(2) (1988), 124–169.
+
+[3] R. McNaughton, The Loop Complexity of Pure-Group Events, Information and Control
+    11(1–2) (1967), 167–176.
+
+[4] R. McNaughton, The Loop Complexity of Regular Events, Information Sciences 1(3)
+    (1969), 305–328.
+
+[5] H. Gruber, Digraph Complexity Measures and Applications in Formal Language Theory,
+    Discrete Mathematics & Theoretical Computer Science 14(2) (2012), 189–204.
+
+[6] H. Gruber and M. Holzer, From Finite Automata to Regular Expressions and Back—A
+    Summary on Descriptional Complexity, International Journal of Foundations of Com-
+    puter Science 26(8) (2015), 1009–1040.
+
+[7] S. C. Kleene, Representation of Events in Nerve Nets and Finite Automata, in Automata
+    Studies, Annals of Mathematics Studies 34, Princeton University Press, 1956, 3–41.
+
+
+
+
+                                             4
+

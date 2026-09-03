@@ -1,0 +1,47 @@
+           Heilbronn’s Triangle Problem: The Upper Bound
+
+1    Deﬁnition
+
+Let U = [0, 1]2 . For a ﬁnite set P ⊆ U , deﬁne
+                                                           (         )
+                                 h(P ) = min area ∆(x, y, z) ,                                (1)
+                                           x,y,z∈P
+                                           distinct
+
+where ∆(x, y, z) denotes the triangle formed by the three points x, y, z, and degenerate triangles
+have area zero.
+
+Deﬁnition 1 (The nth Heilbronn number). For n ≥ 3, the nth Heilbronn number of the unit
+square is
+                                 H(n) = max h(P ).                                  (2)
+                                                       P ⊆U
+                                                      |P |=n
+
+A set attaining this maximum is called an optimal Heilbronn conﬁguration.
+
+The maximum exists by compactness. The use of the unit square is convenient but not es-
+sential for asymptotic questions: for any two ﬁxed convex bodies with nonempty interior, the
+corresponding Heilbronn numbers diﬀer by multiplicative constants depending only on the two
+bodies.
+
+
+2    Current best result
+
+The best known asymptotic bounds are
+                                     (        )
+                                         log n
+                          H(n) = Ω             ,          H(n) ≤ n−7/6+o(1) .                 (3)
+                                          n2
+
+
+3    Problem formalization
+
+Prove an asymptotic upper bound for H(n) that is strictly stronger than
+
+                                         H(n) ≤ n−7/6+o(1) .                                  (4)
+
+
+
+
+                                                      1
+

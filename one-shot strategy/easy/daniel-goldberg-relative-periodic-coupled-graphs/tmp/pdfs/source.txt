@@ -1,0 +1,38 @@
+                             Relative-Periodic Coupled Graphs
+
+1 Definitions
+Let
+                                                     T = R/(2πZ).
+Let smooth periodic functions u, v solve
+                             (            )                               (              )
+                                   ux                                           v
+                     ut = ∂ x √             − (u − v),         v t = ∂x       √ x            + (u − v).   (1)
+                                  1 + u2x                                      1 + vx2
+
+Suppose that, for some
+                                            T > 0,      a ∈ T,       b ∈ R,                               (2)
+one has
+                             u(x, T ) = u(x + a, 0) + b,       v(x, T ) = v(x + a, 0) + b.                (3)
+
+
+2     Best Known Result
+Horizontal translations and common vertical translations are symmetries of the functional
+                                       ∫ (√                                )
+                                                      √          1
+                             L(u, v) =       1 + ux + 1 + vx + (u − v) dx.
+                                                  2           2          2
+                                                                                                          (4)
+                                        T                        2
+
+The source indicates that an exact Lyapunov identity, together with rigidity of the critical points, should
+determine the classification. It does not provide the resulting classification.
+
+
+3     Problem Formalization
+Classify all such smooth solutions and all possible triples (a, b, T ).
+
+
+
+
+                                                           1
+

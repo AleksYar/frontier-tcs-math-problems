@@ -1,0 +1,33 @@
+        Twenty (simple) questions — moderate
+
+                                 Yuval Filmus
+
+
+    For every distribution µ on [n], we can find a prefix code whose average
+codeword length is less than H(µ) + 1 (where we use base 2 logarithms in
+the definition of entropy), known as Shannon–Fano coding. We can think of
+the prefix code as a strategy for determining a random x ∼ µ using Yes/No
+questions which uses fewer than H(µ) + 1 questions in average.
+    What happens if we restrict the set of allowed questions? For questions of
+the form “x < m” (corresponding to binary search trees), the bound becomes
+H(µ) + 2.
+    The paper “Twenty (simple) questions” asks whether we can recover the
+bound H(µ) + 1 using a small inventory of questions, and answers this in the
+aﬀirmative: it suﬀices to consider questions of the form “x < m” and “x = m”.
+    What happens when we consider questions with at most c possible answers
+for some c > 2? Shannon–Fano coding still works: there is a strategy that uses
+fewer than Hc (µ) + 1 questions in average, where Hc is base c entropy.
+    The natural generalization of “x < m” to the c-ary setting is to consider
+partitions of [n] into at most c intervals. This results in the bound Hc (µ)+logc 2
+(one can see this using the Gilbert–Moore algorithm, for example).
+Problem 1. Find a small and natural inventory of c-way questions In such
+that for each µ there is a strategy using only questions in In which asks fewer
+than Hc (µ) + 1 questions on average.
+    A natural guess is to generalize the inventory of “Twenty (simple) questions”
+to the c-way setting.
+
+
+
+
+                                        1
+
