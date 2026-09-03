@@ -1,0 +1,137 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem*{definition*}{Definition}
+\newtheorem*{problem*}{Problem}
+
+\newcommand{\CL}{\mathsf{CL}}
+\newcommand{\NC}{\mathsf{NC}}
+\newcommand{\TC}{\mathsf{TC}}
+\newcommand{\SAC}{\mathsf{SAC}}
+\newcommand{\CSPACE}{\mathsf{CSPACE}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlength{\emergencystretch}{2em}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries NC\textsuperscript{2} versus Catalytic Logspace}
+\end{center}
+
+\section{Definitions}
+
+\begin{definition*}[Uniform Boolean circuits]
+A Boolean circuit is a directed acyclic graph whose internal gates are
+$\wedge$, $\vee$, and $\neg$ gates. Unless stated otherwise, $\wedge$ and
+$\vee$ have fan-in two. A family $\{C_n\}_{n\geq1}$ is
+\emph{logspace-uniform} if a deterministic logspace transducer, given
+$(1^n,i)$, outputs the type of the $i$th gate of $C_n$ and its incident wires.
+All circuit families below are logspace-uniform and have polynomial size.
+\end{definition*}
+
+\begin{definition*}[$\NC^2$ and depth-bounded $\NC$]
+The class $\NC^2$ consists of the languages decided by polynomial-size
+Boolean circuit families of depth $O(\log^2n)$. More generally,
+$\mathsf{NC\mbox{-}DEPTH}(d(n))$ denotes the languages decided by such
+families of depth $O(d(n))$.
+\end{definition*}
+
+\begin{definition*}[Catalytic logspace]
+A catalytic Turing machine is a deterministic Turing machine with a read-only
+input tape, an ordinary read-write work tape, and an additional read-write
+catalytic tape. For every input $x$ and every string $a$ initially stored on
+the catalytic tape, the machine must halt with the correct answer and restore
+the catalytic tape exactly to $a$.
+
+Let $\CSPACE(s(n),c(n))$ denote the class of languages decided using
+$O(s(n))$ work-tape cells and $O(c(n))$ catalytic-tape cells. Catalytic
+logspace is
+\begin{equation}
+  \CL:=\CSPACE\bigl(O(\log n),n^{O(1)}\bigr).
+\end{equation}
+No running-time bound is imposed.
+\end{definition*}
+
+\begin{definition*}[$\SAC^2$ and clean register programs]
+The class $\SAC^2$ is defined like $\NC^2$ except that $\vee$ gates may have
+unbounded fan-in, while $\wedge$ gates retain fan-in two.
+
+A register program over a ring $R$ applies a fixed sequence of reversible
+register instructions to input elements and to registers with arbitrary
+initial contents $\tau_i$. It \emph{cleanly computes} $f$ if each designated
+output register finishes with value $\tau_i+f_i(x)$ and every other register
+returns to $\tau_i$. Clean register programs can be simulated by catalytic
+machines; their number of registers controls catalytic space, while nested or
+recursive input calls control ordinary work space.
+\end{definition*}
+
+\section{Best Known Result}
+
+The strongest full circuit-class containment in catalytic logspace stated in
+the source is
+\begin{equation}
+  \TC^1\subseteq\CL.
+\end{equation}
+For bounded-fan-in circuits, the reachable depth extends slightly beyond
+logarithmic depth:
+\begin{equation}\label{eq:depth}
+  \mathsf{NC\mbox{-}DEPTH}(\log n\log\log n)
+  \subseteq
+  \CL.
+\end{equation}
+For the full class $\NC^2$, the best simulation supplied by the source is
+\begin{equation}\label{eq:nc2}
+  \NC^2
+  \subseteq
+  \CSPACE\left(
+    O\left(\frac{\log^2n}{\log\log n}\right),
+    n^{O(1)}
+  \right).
+\end{equation}
+This improves the standard $O(\log^2n)$ work-space simulation by a factor
+$\Theta(\log\log n)$ while retaining a polynomial-size catalyst. To reach
+$\CL$, the work space in~\eqref{eq:nc2} must still be reduced by a factor
+$\Theta(\log n/\log\log n)$. Equivalently, at the exact $O(\log n)$
+work-space threshold, the depth in~\eqref{eq:depth} must be increased by the
+same asymptotic factor to cover depth $O(\log^2n)$.
+
+For every fixed $\varepsilon>0$, the stronger circuit-class simulation
+\begin{equation}\label{eq:sac2}
+  \SAC^2
+  \subseteq
+  \CSPACE\left(
+    O\left(\frac{\log^2n}{\log\log n}\right),
+    2^{O(\log^{1+\varepsilon}n)}
+  \right)
+\end{equation}
+is known. Here the catalyst is superpolynomial, so~\eqref{eq:sac2} is not a
+containment in $\CL$. It nevertheless shows that layer merging and polynomial
+representations apply beyond bounded-fan-in circuits.
+
+\section{Problem Formalization}
+
+\begin{problem*}[$\NC^2$ versus $\CL$]
+Prove the full containment
+\begin{equation}
+  (\mathsf{Uniform})-\NC^2\subseteq\CL,
+\end{equation}
+or, failing that, substantially improve the best known simulation by proving:
+  \begin{equation}
+    (\mathsf{Uniform})-\NC^2
+    \subseteq
+    \CSPACE\bigl(s(n),n^{O(1)}\bigr)
+  \end{equation}
+  for some
+  \begin{equation}
+    s(n)=o\left(\frac{\log^2n}{\log\log n}\right);
+  \end{equation}
+
+
+\end{problem*}
+
+\end{document}

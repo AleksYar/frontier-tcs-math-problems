@@ -1,0 +1,60 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+\newcommand{\Area}{\operatorname{area}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+\begin{center}
+  {\Large\bfseries Heilbronn's Triangle Problem: Ten Points}
+\end{center}
+\section{Definition}
+Let $U=[0,1]^2$. For a finite set $P\subseteq U$, define
+\begin{equation}\label{eq:delta}
+ h(P)
+ =\min_{\substack{x,y,z\in P\\\text{distinct}}}
+   \Area\bigl(\Delta(x,y,z)\bigr),
+\end{equation}
+where $\Delta(x,y,z)$ denotes the triangle formed by the three points $x,y,z$,
+and degenerate triangles have area zero.
+
+\begin{definition}[The $n$th Heilbronn number]
+For $n\geq 3$, the \emph{$n$th Heilbronn number} of the unit square is
+\begin{equation}\label{eq:H}
+ H(n)=\max_{\substack{P\subseteq U\\|P|=n}} h(P).
+\end{equation}
+A set attaining this maximum is called an \emph{optimal Heilbronn
+configuration}.
+\end{definition}
+
+The maximum exists by compactness. The use of the unit square is convenient but
+not essential for asymptotic questions: for any two fixed convex bodies with
+nonempty interior, the corresponding Heilbronn numbers differ by multiplicative
+constants depending only on the two bodies.
+
+
+\section{Current best result}
+Optimal configurations have been determined or globally certified for
+$3\leq n\leq 9$. The first unresolved case is $n=10$. 
+The best known configurations satisfy
+\begin{align*}
+    H(10)&\geq 0.04653741958254,\\
+H(11)&\geq \frac{1}{27},\\
+H(12)&\geq 0.03259885869182.
+\end{align*}
+
+None of these values has been proved globally optimal.
+
+\section{problem formalization}
+Determine the exact value of $H(10)$ and classify all ten-point configurations
+in the unit square that attain it.
+
+\end{document}

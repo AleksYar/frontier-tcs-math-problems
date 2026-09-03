@@ -1,0 +1,130 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\theoremstyle{plain}
+\newtheorem{conjecture}{Conjecture}
+\theoremstyle{definition}
+\newtheorem{problem}{Problem}
+
+\newcommand{\KW}{\mathsf{KW}}
+\newcommand{\CC}{\mathsf{CC}}
+\newcommand{\Depth}{\mathsf{D}}
+\newcommand{\Size}{\mathsf{L}}
+\newcommand{\UR}{\mathsf{U}}
+\newcommand{\XOR}{\mathsf{XOR}}
+\newcommand{\Leaves}{\mathsf{leaves}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Ordinary KRW Composition}
+\end{center}
+\section{Definition}
+\begin{definition}[De Morgan formulas]
+A \emph{De Morgan formula} is a rooted tree whose internal vertices are fan-in-two
+$\wedge$- or $\vee$-gates and whose leaves are literals $x_i$ or $\neg x_i$.
+For a Boolean function $f$, let $\Size(f)$ be the minimum number of leaves of such a
+formula computing $f$, and let $\Depth(f)$ be its minimum depth. Since every depth-$d$
+formula has at most $2^d$ leaves,
+\begin{equation}\label{eq:size-depth}
+  \Depth(f)\geq \log \Size(f).
+\end{equation}
+\end{definition}
+
+\begin{definition}[Block composition]
+Let $f:\{0,1\}^{m}\to\{0,1\}$ and $g:\{0,1\}^{n}\to\{0,1\}$ be nonconstant.
+For an $m\times n$ Boolean matrix $X=(X_1,\ldots,X_m)$, define
+\begin{equation}\label{eq:composition}
+  (f\diamond g)(X)=f\bigl(g(X_1),\ldots,g(X_m)\bigr).
+\end{equation}
+Substituting a formula for $g$ at every input leaf of a formula for $f$ gives
+\begin{equation}\label{eq:easy-upper}
+  \Depth(f\diamond g)\leq \Depth(f)+\Depth(g),
+  \qquad
+  \Size(f\diamond g)\leq \Size(f)\Size(g).
+\end{equation}
+\end{definition}
+
+\begin{definition}[Karchmer--Wigderson relation]
+For a nonconstant $f:\{0,1\}^{n}\to\{0,1\}$, the relation $\KW_f$ is
+\begin{equation}\label{eq:kw-relation}
+  \KW_f=\{(x,y,i):x\in f^{-1}(1),\ y\in f^{-1}(0),\ x_i\neq y_i\}.
+\end{equation}
+Alice receives $x$, Bob receives $y$, and they must output such an index $i$.
+Writing $\CC(R)$ for deterministic communication complexity, the
+Karchmer--Wigderson correspondence states
+\begin{equation}\label{eq:kw-correspondence}
+  \Depth(f)=\CC(\KW_f),
+  \qquad
+  \Size(f)=\min_{\Pi\text{ solves }\KW_f}\Leaves(\Pi).
+\end{equation}
+Moreover, $\KW_{f\diamond g}$ is denoted by $\KW_f\diamond\KW_g$.
+\end{definition}
+
+\begin{definition}[Universal relation]
+For $n\geq 1$, the \emph{universal relation} $\UR_n$ is the search problem in
+which Alice receives $x\in\{0,1\}^n$, Bob receives $y\in\{0,1\}^n$, and they are
+promised that $x\neq y$. Their task is to output an index $j\in[n]$ such that
+$x_j\neq y_j$. Replacing one factor by $\UR$ gives the relaxations
+$\KW_f\diamond\UR_n$ and $\UR_m\diamond\KW_g$.
+\end{definition}
+
+\begin{definition}[Strong composition]
+Let $X,Y\in(\{0,1\}^n)^m$ be valid inputs for $\KW_{f\diamond g}$, and set
+$a_i=g(X_i)$ and $b_i=g(Y_i)$. In the ordinary relation
+$\KW_f\diamond\KW_g=\KW_{f\diamond g}$, the players may output any pair $(i,j)$
+with $X_{i,j}\neq Y_{i,j}$. In the \emph{strong composition}
+$\KW_f\circledast\KW_g$, they must output $(i,j)$ satisfying
+\begin{equation}\label{eq:strong-def}
+  a_i\neq b_i
+  \qquad\text{and}\qquad
+  X_{i,j}\neq Y_{i,j}.
+\end{equation}
+Hence the output row must itself be a valid instance of $\KW_g$. Strong composition
+therefore enforces the two-stage direct-sum strategy: first identify an outer solution
+$i$, then solve the inner relation in row $i$.
+\end{definition}
+
+\begin{conjecture}[Karchmer--Raz--Wigderson]\label{conj:krw}
+There is a universal constant $C>0$ such that, for all nonconstant
+$f:\{0,1\}^{m}\to\{0,1\}$ and $g:\{0,1\}^{n}\to\{0,1\}$,
+\begin{equation}\label{eq:krw}
+  \Depth(f\diamond g)
+  \geq \Depth(f)+\Depth(g)-C\log(mn).
+\end{equation}
+Equivalently,
+\begin{equation}\label{eq:krw-cc}
+  \CC(\KW_f\diamond\KW_g)
+  \geq \CC(\KW_f)+\CC(\KW_g)-C\log(mn).
+\end{equation}
+Together with~\eqref{eq:easy-upper}, this asserts additive depth under composition
+up to a logarithmic loss.
+\end{conjecture}
+
+\section{Current best result}
+The unrestricted conjecture remains open. Near-additive lower bounds are known
+for some special inner functions. In particular, for every outer function $f$,
+\begin{equation}
+  \Depth(f\diamond\XOR_n)
+  \geq \Depth(f)+\Depth(\XOR_n)-O(\log\log n).
+\end{equation}
+Strong composition forces the protocol to identify a row whose two inner
+function values differ. No general argument is known that forces this behavior
+for ordinary composition.
+
+\section{Problem formalization}
+Prove Conjecture~\ref{conj:krw}; that is, prove
+\begin{equation}
+  \CC(\KW_f\diamond\KW_g)
+  \geq \CC(\KW_f)+\CC(\KW_g)-O(\log(mn))
+\end{equation}
+for every pair of nonconstant Boolean functions. 
+\end{document}

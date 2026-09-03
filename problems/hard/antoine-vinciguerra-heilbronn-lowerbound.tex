@@ -1,0 +1,59 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\newcommand{\Area}{\operatorname{area}}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+\section{Definition}
+Let $U=[0,1]^2$. For a finite set $P\subseteq U$, define
+\begin{equation}\label{eq:delta}
+ h(P)
+ =\min_{\substack{x,y,z\in P\\\text{distinct}}}
+   \Area\bigl(\Delta(x,y,z)\bigr),
+\end{equation}
+where $\Delta(x,y,z)$ denotes the triangle formed by the three points $x,y,z$,
+and degenerate triangles have area zero.
+
+\begin{definition}[The $n$th Heilbronn number]
+For $n\geq 3$, the \emph{$n$th Heilbronn number} of the unit square is
+\begin{equation}\label{eq:H}
+ H(n)=\max_{\substack{P\subseteq U\\|P|=n}} h(P).
+\end{equation}
+A set attaining this maximum is called an \emph{optimal Heilbronn
+configuration}.
+\end{definition}
+
+The maximum exists by compactness. The use of the unit square is convenient but
+not essential for asymptotic questions: for any two fixed convex bodies with
+nonempty interior, the corresponding Heilbronn numbers differ by multiplicative
+constants depending only on the two bodies.
+
+
+\section{Current best result}
+The best known asymptotic bounds are
+\begin{equation}
+  H(n)=\Omega\!\left(\frac{\log n}{n^2}\right),
+  \qquad
+  H(n)\leq n^{-7/6+o(1)}.
+\end{equation}
+
+
+\section{Problem formalization}
+
+Construct $n$-point configurations $P_n\subseteq[0,1]^2$ such that
+\begin{equation}
+  h(P_n)=\omega\!\left(\frac{\log n}{n^2}\right).
+\end{equation}
+
+
+\end{document}

@@ -1,0 +1,54 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amsthm}
+
+\newtheorem{definition}{Definition}
+
+\title{VC dimension puzzle - medium}
+\author{Yaroslav Alekseev}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+We consider a family $\mathcal{H}\subseteq 2^{[n]}$, identified with a family
+of Boolean vectors in $\{0,1\}^n$.
+
+For $h\in\{0,1\}^n$ and $S\subseteq[n]$, we write $h|_S$ for the restriction
+of $h$ to the coordinates in $S$. The Hamming weight of $h$ is
+\[
+|h|:=\bigl|\{i\in[n]:h_i=1\}\bigr|.
+\]
+
+\begin{definition}[VC dimension]
+A set $S\subseteq[n]$ is \emph{shattered} by $\mathcal{H}$ if
+\[
+\{h|_S:h\in\mathcal{H}\}=\{0,1\}^S.
+\]
+The \emph{VC dimension} of $\mathcal{H}$, denoted
+$\operatorname{VCdim}(\mathcal{H})$, is the maximum cardinality of a set
+$S\subseteq[n]$ shattered by $\mathcal{H}$.
+\end{definition}
+
+\section{Problem formulation}
+
+Let $n\ge3$ and let $\mathcal{H}\subseteq 2^{[n]}$ satisfy the following two properties:
+\begin{itemize}
+    \item For every three distinct indices $i,j,k\in[n]$, there is
+    $h\in\mathcal{H}$ such that
+    \[
+    h|_{\{i,j,k\}}=111.
+    \]
+    \item $\operatorname{VCdim}(\mathcal{H})\le 2$.
+\end{itemize}
+Then $\mathcal{H}$ contains a vector of Hamming weight strictly greater than
+\[
+\frac{n}{2}.
+\]
+
+
+
+\end{document}

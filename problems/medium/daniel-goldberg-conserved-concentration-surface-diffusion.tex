@@ -1,0 +1,355 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem*{problem*}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\newcommand{\Erho}{\mathbb E_{\rho}}
+\newcommand{\Eq}{\mathbb E_{q}}
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries A Conserved Concentration Coupled to Surface Diffusion}
+\end{center}
+
+\section{Definitions}
+
+Fix $p>6$ and $\eta\in(0,\tfrac12)$. Let
+$\Sigma\subset\mathbb R^3$ be a closed, connected, oriented $C^\infty$
+surface with unit normal $\nu_\Sigma$.
+
+Let $\mathcal U\subset W_p^{4-4/p}(\Sigma)$ be an open set such that, for
+every $\rho\in\mathcal U$,
+\begin{equation}
+  X_\rho:\Sigma\longrightarrow\mathbb R^3,
+  \qquad
+  X_\rho(x)=x+\rho(x)\nu_\Sigma(x),
+\end{equation}
+is an embedded normal graph and its induced unit normal $\nu_\rho$, chosen
+compatibly with $\nu_\Sigma$, satisfies
+\begin{equation}
+  \nu_\Sigma\cdot\nu_\rho>0
+  \qquad\text{on }\Sigma.
+\end{equation}
+The boundary $\partial\mathcal U$ is understood with respect to the topology
+of $W_p^{4-4/p}(\Sigma)$.
+
+Let
+\begin{equation}
+  \rho_0\in\mathcal U,
+  \qquad
+  \Gamma_0=X_{\rho_0}(\Sigma).
+\end{equation}
+Let $q_0$ be a scalar field on $\Gamma_0$ such that
+\begin{equation}
+  \widetilde q_0:=q_0\circ X_{\rho_0}
+  \in W_p^{2-2/p}(\Sigma)
+\end{equation}
+and
+\begin{equation}
+  \eta\leq q_0\leq1-\eta
+  \qquad\text{on }\Gamma_0.
+\end{equation}
+
+For an oriented evolving surface $\Gamma(t)$, let $\nu$ denote the unit
+normal compatible with the orientation of $\Gamma_0$, and define
+\begin{equation}
+  H=-\operatorname{div}_\Gamma\nu,
+  \qquad
+  \Delta_\Gamma=\operatorname{div}_\Gamma\nabla_\Gamma.
+\end{equation}
+Let $V$ denote the normal velocity in the direction $\nu$. For a scalar field
+$q$ on $\Gamma(t)$, let $\partial_t^\circ q$ denote its normal time
+derivative. Equivalently, if $\bar q$ is a local space--time extension of
+$q$, then
+\begin{equation}
+  \partial_t^\circ q
+  =
+  \left(
+    \partial_t\bar q+V\nu\cdot\nabla\bar q
+  \right)\big|_{\Gamma(t)}.
+\end{equation}
+
+Consider the system
+\begin{equation}
+  \boxed{
+  \begin{aligned}
+    V
+    &=
+    -\Delta_\Gamma
+    \left[\left(1-\frac{q^2}{2}\right)H\right],\\[0.4em]
+    \partial_t^\circ q
+    &=
+    \Delta_\Gamma q+qHV,\\[0.4em]
+    (\Gamma,q)\big|_{t=0}
+    &=
+    (\Gamma_0,q_0).
+  \end{aligned}}
+  \label{eq:system}
+\end{equation}
+
+For $T>0$, define
+\begin{align}
+  \Erho(T)
+  &:={W_p^1(0,T;L_p(\Sigma))}
+    \cap L_p(0,T;W_p^4(\Sigma)),\\
+  \Eq(T)
+  &:={W_p^1(0,T;L_p(\Sigma))}
+    \cap L_p(0,T;W_p^2(\Sigma)),
+\end{align}
+equipped with their natural sum norms.
+
+Define the admissible phase space
+\begin{equation}
+  \mathcal O
+  :=
+  \left\{
+    (\rho,u)\in
+    \mathcal U\times W_p^{2-2/p}(\Sigma):
+    \lVert u\rVert_{L^\infty(\Sigma)}<\sqrt2
+  \right\}.
+\end{equation}
+
+\section{Problem Formalization}
+
+Prove the following statements.
+
+\begin{enumerate}
+  \item There exists a maximal existence time
+  \begin{equation}
+    T_*\in(0,\infty]
+  \end{equation}
+  and a unique solution $(\Gamma(t),q(t))_{0\leq t<T_*}$ of
+  \eqref{eq:system} such that
+  \begin{equation}
+    \Gamma(t)=X_{\rho(t)}(\Sigma),
+    \qquad
+    \widetilde q(t):=q(t)\circ X_{\rho(t)}.
+  \end{equation}
+  For every $T<T_*$, prove that
+  \begin{equation}
+    \rho\in\Erho(T),
+    \qquad
+    \widetilde q\in\Eq(T),
+  \end{equation}
+  and
+  \begin{equation}
+    \rho\in C\bigl([0,T];W_p^{4-4/p}(\Sigma)\bigr),
+    \qquad
+    \widetilde q\in C\bigl([0,T];W_p^{2-2/p}(\Sigma)\bigr),
+  \end{equation}
+  with
+  \begin{equation}
+    \rho(0)=\rho_0,
+    \qquad
+    \widetilde q(0)=\widetilde q_0.
+  \end{equation}
+  Moreover, prove that
+  \begin{equation}
+    \bigl(\rho(t),\widetilde q(t)\bigr)\in\mathcal O
+    \qquad\text{for every }0\leq t<T_*.
+  \end{equation}
+
+  \item Prove continuous dependence on the initial data in
+  \begin{equation}
+    W_p^{4-4/p}(\Sigma)\times W_p^{2-2/p}(\Sigma)
+  \end{equation}
+  in the following precise sense. If
+  \begin{equation}
+    z_0=(\rho_0,\widetilde q_0)\in\mathcal O
+  \end{equation}
+  and $T<T_*(z_0)$, then there exists a neighborhood
+  $\mathcal N\subset\mathcal O$ of $z_0$ such that
+  \begin{equation}
+    T_*(z_0')>T
+    \qquad\text{for every }z_0'\in\mathcal N,
+  \end{equation}
+  and the solution map
+  \begin{equation}
+    z_0'
+    \longmapsto
+    \bigl(
+      \rho(\,\cdot\,;z_0'),
+      \widetilde q(\,\cdot\,;z_0')
+    \bigr)
+  \end{equation}
+  is continuous from $\mathcal N$ into
+  \begin{equation}
+    \Erho(T)\times\Eq(T).
+  \end{equation}
+
+  Prove geometric uniqueness in the corresponding maximal-regularity class:
+  any two solutions with the same initial oriented surface and the same
+  initial scalar field determine the same evolving oriented surfaces and the
+  same geometric scalar field.
+
+  Consequently, prove uniqueness up to time-dependent reparametrization. More
+  precisely, if $F_i(t,\cdot):M_i\to\mathbb R^3$, $i=1,2$, are two
+  parametrized embedded solutions representing the same initial geometric
+  data, and
+  \begin{equation}
+    u_i(t)=q_i(t)\circ F_i(t),
+  \end{equation}
+  then there exists a family of diffeomorphisms
+  \begin{equation}
+    \phi_t:M_2\longrightarrow M_1
+  \end{equation}
+  such that
+  \begin{equation}
+    F_2(t)=F_1(t)\circ\phi_t,
+    \qquad
+    u_2(t)=u_1(t)\circ\phi_t.
+  \end{equation}
+
+  \item The solution is instantly smooth. More precisely, for every
+  \begin{equation}
+    0<\tau<T'<T_*
+  \end{equation}
+  and every integer $m\geq0$, prove that
+  \begin{equation}
+    \rho
+    \in
+    W_p^1(\tau,T';W_p^m(\Sigma))
+    \cap
+    L_p(\tau,T';W_p^{m+4}(\Sigma))
+  \end{equation}
+  and
+  \begin{equation}
+    \widetilde q
+    \in
+    W_p^1(\tau,T';W_p^m(\Sigma))
+    \cap
+    L_p(\tau,T';W_p^{m+2}(\Sigma)).
+  \end{equation}
+
+  \item Assume that $T_*<\infty$ and that there exist
+  \begin{equation}
+    \rho_*\in W_p^{4-4/p}(\Sigma),
+    \qquad
+    \widetilde q_*\in W_p^{2-2/p}(\Sigma)
+  \end{equation}
+  such that
+  \begin{equation}
+    \rho(t)\longrightarrow\rho_*
+    \quad\text{in }W_p^{4-4/p}(\Sigma),
+  \end{equation}
+  and
+  \begin{equation}
+    \widetilde q(t)\longrightarrow\widetilde q_*
+    \quad\text{in }W_p^{2-2/p}(\Sigma)
+  \end{equation}
+  as $t\uparrow T_*$. Prove that if
+  \begin{equation}
+    \rho_*\in\mathcal U,
+    \qquad
+    \lVert\widetilde q_*\rVert_{L^\infty(\Sigma)}<\sqrt2,
+  \end{equation}
+  then there exists $\varepsilon>0$ such that the solution extends to
+  \begin{equation}
+    [0,T_*+\varepsilon).
+  \end{equation}
+
+  \item Deduce that the solution extends beyond every finite $T_*$ for which
+  there exists $\delta>0$ such that
+  \begin{equation}
+    \inf_{0\leq t<T_*}
+    \operatorname{dist}_{W_p^{4-4/p}(\Sigma)}
+    \bigl(\rho(t),\partial\mathcal U\bigr)
+    \geq\delta,
+  \end{equation}
+  \begin{equation}
+    \sup_{0\leq t<T_*}
+    \lVert\widetilde q(t)\rVert_{L^\infty(\Sigma)}
+    \leq\sqrt2-\delta,
+  \end{equation}
+  and
+  \begin{equation}
+    \lVert\rho\rVert_{\Erho(T_*)}
+    +
+    \lVert\widetilde q\rVert_{\Eq(T_*)}
+    <\infty.
+  \end{equation}
+
+  Equivalently, prove that if $T_*<\infty$ is the maximal existence time,
+  then at least one of the following must occur:
+  \begin{enumerate}
+    \item
+    \begin{equation}
+      \operatorname{dist}_{W_p^{4-4/p}(\Sigma)}
+      \bigl(\rho(t),\partial\mathcal U\bigr)
+      \longrightarrow0
+    \end{equation}
+    along a sequence $t\uparrow T_*$;
+
+    \item
+    \begin{equation}
+      \lVert\widetilde q(t)\rVert_{L^\infty(\Sigma)}
+      \longrightarrow\sqrt2
+    \end{equation}
+    along a sequence $t\uparrow T_*$;
+
+    \item
+    \begin{equation}
+      \lVert\rho\rVert_{\Erho(T_*)}
+      +
+      \lVert\widetilde q\rVert_{\Eq(T_*)}
+      =\infty.
+    \end{equation}
+  \end{enumerate}
+
+  \item Prove conservation of the total mass:
+  \begin{equation}
+    \int_{\Gamma(t)}q(t)\,dA
+    =
+    \int_{\Gamma_0}q_0\,dA
+    \qquad\text{for every }0\leq t<T_*.
+  \end{equation}
+
+  Define the energy
+  \begin{equation}
+    E(t)
+    :=
+    \int_{\Gamma(t)}
+    \left(1+\frac{q(t)^2}{2}\right)dA.
+  \end{equation}
+  Prove that
+  \begin{equation}
+    \frac{d}{dt}E(t)
+    =
+    -\int_{\Gamma(t)}
+    \left(
+      |\nabla_\Gamma q|^2
+      +
+      \left|
+        \nabla_\Gamma
+        \left[\left(1-\frac{q^2}{2}\right)H\right]
+      \right|^2
+    \right)dA
+  \end{equation}
+  for almost every $t\in(0,T_*)$.
+
+  Equivalently, prove that for every $0\leq t<T_*$,
+  \begin{align}
+    E(t)
+    &+
+    \int_0^t\int_{\Gamma(s)}
+    \Bigg(
+      |\nabla_{\Gamma(s)}q|^2
+      +
+      \left|
+        \nabla_{\Gamma(s)}
+        \left[\left(1-\frac{q^2}{2}\right)H\right]
+      \right|^2
+    \Bigg)
+    \,dA\,ds
+    \notag\\
+    &=E(0).
+  \end{align}
+\end{enumerate}
+
+
+\end{document}

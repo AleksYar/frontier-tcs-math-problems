@@ -1,0 +1,99 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amsthm,amssymb}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+
+\title{Resolution over Parity lower bound - Hard}
+\author{Yaroslav Alekseev}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+A \emph{CNF formula} $F$ over Boolean variables $x_1,\ldots,x_n$ is a
+conjunction of clauses, where each clause is a disjunction of literals. We
+write
+\[
+\operatorname{size}(F)
+\]
+for the total number of literal occurrences in $F$.
+
+We identify Boolean values with the field $\mathbb{F}_2$. An affine linear
+form over $\mathbb{F}_2$ is an expression
+\[
+\ell(x)=a_1x_1+\cdots+a_nx_n+b,
+\qquad
+a_1,\ldots,a_n,b\in\mathbb{F}_2.
+\]
+
+\begin{definition}[$\mathrm{Res}(\oplus)$]
+A $\mathrm{Res}(\oplus)$ line is a finite disjunction of affine linear
+equations over $\mathbb{F}_2$.
+
+The inference rule is
+\[
+\frac{
+A\vee(\ell=0)
+\qquad
+B\vee(\ell=1)
+}{
+A\vee B
+},
+\]
+where $A$ and $B$ are $\mathrm{Res}(\oplus)$ lines and $\ell$ is an affine
+linear form. We also allow semantic weakening: from a line $A$ one may derive
+a line $B$ whenever
+\[
+A\models B.
+\]
+
+An ordinary clause is viewed as a $\mathrm{Res}(\oplus)$ line by identifying
+the literal $x_i$ with the equation $x_i=1$ and the literal $\neg x_i$ with
+the equation $x_i=0$.
+
+A $\mathrm{Res}(\oplus)$ refutation of an unsatisfiable CNF formula $F$ is a
+sequence of $\mathrm{Res}(\oplus)$ lines in which every line is either an
+initial clause of $F$ or is derived from previous lines by one of the rules
+above, and whose final line is the empty disjunction.
+
+The \emph{size} of a $\mathrm{Res}(\oplus)$ refutation is its number of lines.
+We write
+\[
+\operatorname{Res}(\oplus)\text{-}\operatorname{size}(F)
+\]
+for the minimum size of a $\mathrm{Res}(\oplus)$ refutation of $F$.
+\end{definition}
+
+\section{Problem formulation}
+
+\begin{problem}
+Does there exist a family of unsatisfiable CNF formulas
+\[
+(F_n)_{n\ge 1}
+\]
+such that, writing
+\[
+S_n:=\operatorname{size}(F_n)
+\]
+and assuming $S_n\to\infty$, we have
+\[
+\operatorname{Res}(\oplus)\text{-}\operatorname{size}(F_n)
+=
+S_n^{\omega(1)}?
+\]
+Equivalently, does there exist such a family for which, for every constant
+$c>0$ and all sufficiently large $n$, every $\mathrm{Res}(\oplus)$
+refutation of $F_n$ has more than
+\[
+S_n^c
+\]
+lines?
+\end{problem}
+
+
+\end{document}

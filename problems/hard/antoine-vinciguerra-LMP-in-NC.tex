@@ -1,0 +1,148 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem*{problem*}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Linear Matroid Parity in NC}
+\end{center}
+\section{Definition Linear Matroid Parity }
+We write $[m]:=\{1,2,\ldots,m\}$.
+
+\begin{definition}[Matroid]
+A \emph{matroid} is a pair $M=(E,\mathcal I)$, where $E$ is a finite
+\emph{ground set} and $\mathcal I\subseteq 2^E$ is a family of subsets,
+called the \emph{independent sets}, satisfying the following axioms:
+\begin{enumerate}
+  \item $\varnothing\in\mathcal I$;
+  \item if $I\in\mathcal I$ and $J\subseteq I$, then $J\in\mathcal I$;
+  \item if $I,J\in\mathcal I$ and $|I|<|J|$, then there exists
+  $e\in J\setminus I$ such that $I\cup\{e\}\in\mathcal I$.
+\end{enumerate}
+A maximal independent subset of $E$ is called a \emph{basis} of $M$.
+\end{definition}
+
+\begin{definition}[Rank function]
+Let $M=(E,\mathcal I)$ be a matroid. For every $X\subseteq E$, the
+\emph{rank} of $X$ in $M$ is
+\begin{equation}
+  \operatorname{rk}_M(X)
+  :=\max\bigl\{|I|:I\subseteq X,\ I\in\mathcal I\bigr\}.
+\end{equation}
+Thus, $X$ is independent if and only if
+$\operatorname{rk}_M(X)=|X|$.
+\end{definition}
+
+\begin{definition}[Linear matroid]
+Let $\mathbb F$ be a field and let
+$A\in\mathbb F^{r\times n}$ be a matrix whose columns are indexed by a
+finite set $E$ of cardinality $n$. The \emph{linear matroid represented by
+$A$}, denoted $M(A)$, is the matroid with ground set $E$ in which
+$X\subseteq E$ is independent if and only if the columns of $A$ indexed by
+$X$ are linearly independent over $\mathbb F$.
+
+For every $X\subseteq E$, its matroid rank is the ordinary matrix rank:
+\begin{equation}
+  \operatorname{rk}_{M(A)}(X)=\operatorname{rank}_{\mathbb F} A[:,X].
+\end{equation}
+A matroid is \emph{linear} or \emph{representable over $\mathbb F$} if it
+is isomorphic to $M(A)$ for some matrix $A$ over $\mathbb F$.
+\end{definition}
+
+Let $\mathbb F$ be a fixed finite field of odd characteristic. We consider a
+matrix
+\begin{equation}
+  A=(a_1,b_1,a_2,b_2,\ldots,a_m,b_m)\in \mathbb F^{r\times 2m},
+\end{equation}
+where the symbols $a_i,b_i$ denote both the corresponding columns and their
+column indices. The ground set of $M(A)$ is therefore
+\begin{equation}
+  E=\{a_1,b_1,a_2,b_2,\ldots,a_m,b_m\},
+\end{equation}
+and it is partitioned into the prescribed pairs
+\begin{equation}
+  \ell_i:=\{a_i,b_i\},\qquad i\in[m].
+\end{equation}
+For $S\subseteq[m]$, write
+\begin{equation}
+  \ell(S):=\bigcup_{i\in S}\ell_i
+  \qquad\text{and}\qquad
+  A[S]:=A[:,\ell(S)].
+\end{equation}
+
+\begin{definition}[Matroid parity]
+Let $M=(E,\mathcal I)$ be a matroid whose ground set is partitioned into
+pairs
+\begin{equation}
+  E=\ell_1\mathbin{\dot\cup}\ell_2\mathbin{\dot\cup}\cdots
+  \mathbin{\dot\cup}\ell_m,
+  \qquad |\ell_i|=2.
+\end{equation}
+A set $S\subseteq[m]$ is a \emph{parity set} if the union
+$\ell(S)=\bigcup_{i\in S}\ell_i$ is independent in $M$. The
+\emph{matroid parity problem} asks for a parity set of maximum cardinality.
+When $M$ is represented by a matrix over a field, this is the
+\emph{linear matroid parity problem}.
+\end{definition}
+
+\begin{definition}[Linear matroid parity value]
+For the represented instance above, a set $S\subseteq[m]$ is a parity set
+if and only if
+\begin{equation}
+  \operatorname{rank}_{\mathbb F} A[S]=2|S|.
+\end{equation}
+The \emph{linear matroid parity value} of $A$ is
+\begin{equation}
+  \nu(A):=\max\bigl\{|S|:S\subseteq[m],\
+  \operatorname{rank}_{\mathbb F}A[S]=2|S|\bigr\}.
+\end{equation}
+\end{definition}
+
+\section{Definition $\mathsf{NC}$}
+\begin{definition}[$\mathsf{NC}$]
+A language belongs to $\mathsf{NC}$ if it is decided by a logspace-uniform
+family of Boolean circuits of polynomial size and depth $(\log n)^{O(1)}$.
+The class $\mathsf{RNC}$ is the corresponding bounded-error randomized class.
+\end{definition}
+
+\section{Current best result}
+
+For every fixed finite field $\mathbb F$ of characteristic different from $2$, linear matroid
+parity has a randomized parallel algorithm of polynomial size and depth
+$O((\log N)^2)$, where $N$ is the input length. Equivalently,
+\begin{equation}
+  \mathsf{LMP}_{\mathbb F}\in\mathsf{RNC}^2.
+\end{equation}
+The open problem is to remove the randomness while retaining polynomial size
+and polylogarithmic depth.
+
+\section{Problem formalization}
+For the fixed field $\mathbb F$, define the threshold language
+\begin{equation}
+  \mathsf{LMP}_{\mathbb F}
+  :=\bigl\{(A,k):A\in\mathbb F^{r\times 2m},\ 0\leq k\leq m,\
+  \nu(A)\geq k\bigr\}.
+\end{equation}
+
+
+\begin{problem*}[Linear matroid parity in $\mathsf{NC}$]
+\textbf{Decision version.}
+Prove that
+\begin{equation}
+  \mathsf{LMP}_{\mathbb F}\in\mathsf{NC}.
+\end{equation}
+Equivalently, construct a deterministic logspace-uniform family of
+polynomial-size, polylogarithmic-depth circuits which, given $(A,k)$, decides
+whether $A$ contains $k$ prescribed pairs whose $2k$ columns are linearly
+independent.
+\end{problem*}
+\end{document}

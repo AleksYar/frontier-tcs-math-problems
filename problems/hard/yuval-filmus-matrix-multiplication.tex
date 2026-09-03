@@ -1,0 +1,38 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+
+\title{Matrix multiplication --- Hard}
+\author{Yuval Filmus}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+One of the well-known open problems in theoretical computer science asks for the complexity of matrix multiplication. The matrix multiplication constant $\omega$ is the infimum over all $\alpha$ such that two $n \times n$ matrices can be multiplied using $C_\alpha n^\alpha$ operations, for some $C_\alpha > 0$. In principle $\omega$ might depend on the field. For definiteness, we will consider the reals.
+
+Coppersmith and Winograd used Strassen's laser method to come up in 1987 with the then-best bound, based on the so-called ``Coppersmith--Winograd identity'' and its square. After a few decades of lull, a flurry of activity pushed the bound further, by milking the identity further in various ways. However, despite intensive effort, no better identity has been found.
+
+The Coppersmith--Winograd identity implies the following bound on the border rank of the Coppersmith--Winograd tensor $\mathit{CW}_q$, for every $q \ge 0$:
+\begin{multline*}
+ \underline{R}(\mathit{CW}_q) \le q + 2, \text{ where }\\
+ \mathit{CW}_q = x_0 y_0 z_{q+1} + x_0 y_{q+1} z_0 + x_{q+1} y_0 z_0 + \sum_{i=1}^q (x_0y_iz_i + x_iy_0z_i + x_iy_iz_0).
+\end{multline*}
+
+This is an example of a \emph{tight partitioned tensor}. This means that we can partition its variables into groups in such a way that the sum of indices of the groups in each triple above is constant. The required partition of the $x$-variables is $X_0 = \{x_0\}$, $X_1 = \{x_1,\dots,x_q\}$, $X_2 = \{x_{q+1}\}$; the $y$- and $z$-variables are partitioned analogously.
+
+This tensor has the additional feature that the ``subtensors'' (corresponding to a choice of groups) are all matrix multiplication tensors (or zero). Let us call such tight partitioned tensors \emph{simple}.
+
+Theorem~4.1 of Alman and Vassilevska-Williams's \emph{A Refined Laser Method and Faster Matrix Multiplication} gives a lower bound on the value of a simple tight partitioned tensor, from which one can obtain a bound on $\omega$, as explained in their Section 2.7. The theorem is in fact more general, not requiring simplicity: it accommodates subtensors which are not matrix multiplication tensors, as long as a lower bound on their value is available. This was used already by Coppersmith and Winograd when they analyzed the square of their identity.
+
+\begin{problem}
+Find a simple tight partitioned tensor and a bound on its border rank that implies, via the work of Alman and Vassilevska-Williams, a bound on $\omega$ which is better than the current record 2.371339.
+\end{problem}
+
+As a fallback, one can remove the assumption of simplicity.
+
+\end{document}

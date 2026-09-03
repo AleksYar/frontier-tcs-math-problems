@@ -1,0 +1,44 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amsthm}
+
+\newtheorem{definition}{Definition}
+
+\title{A Polylogarithmic Deterministic Lower Bound for Triangle Detection in CONGEST -- Hard}
+\author{Keren Censor-Hillel}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+\begin{definition}[CONGEST model]
+An input is a simple undirected graph $G=(V,E)$ with $|V|=n$, which is also
+the communication network. The vertices have distinct $O(\!\log n)$-bit
+identifiers, and computation proceeds in synchronous rounds. In each round,
+the endpoints of every edge can exchange an $O(\!\log n)$-bit message in
+each direction. Initially, each vertex knows $n$, its own identifier, and
+the identifiers of its neighbors in $G$. Local computation is unrestricted.
+\end{definition}
+
+\begin{definition}[Deterministic triangle-detection complexity]
+A triangle in $G$ consists of three distinct vertices $u,v,w$ such that
+$uv,vw,wu\in E$. A deterministic algorithm detects triangles if all vertices
+output $0$ whenever $G$ is triangle-free, while at least one vertex outputs
+$1$ whenever $G$ contains a triangle.
+
+Let $D_{\triangle}(n)$ be the minimum $T$ for which there exists a
+deterministic CONGEST algorithm that terminates within $T$ rounds and is
+correct on every $n$-vertex input graph and every assignment of identifiers.
+\end{definition}
+
+\section{Problem formulation}
+
+Prove that there exists a constant $\alpha>0$ such that
+\[
+D_{\triangle}(n)=\Omega\!\left((\log n)^\alpha\right).
+\]
+
+\end{document}

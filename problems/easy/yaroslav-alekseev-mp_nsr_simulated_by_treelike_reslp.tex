@@ -1,0 +1,79 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+
+\newcommand{\Qinf}{\mathbb{Q}_{\infty}}
+\newcommand{\MPNSR}{\mathrm{MP\text{-}NSR}}
+\newcommand{\ResLP}{\mathrm{Res}(\mathrm{LP})}
+
+\title{Tropical Proof Systems, Open Problem 4(b) -- easy}
+\author{Yaroslav Alekseev}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+A proof system $P$ polynomially simulates a proof system $Q$ if there is a
+polynomial $p$ such that every $Q$-refutation of size $s$ has a
+$P$-refutation of the same formula of size at most $p(s)$.
+
+Let $\Qinf=\mathbb{Q}\cup\{\infty\}$ with
+$a\oplus b=\min\{a,b\}$ and $a\odot b=a+b$.
+For every Boolean variable $x$, introduce tropical variables $x,\bar x$ and
+the equations
+\[
+ x\odot\bar x=1,
+ \qquad
+ x\oplus\bar x=0.
+\]
+A clause $\ell_1\vee\cdots\vee\ell_k$ is encoded by
+$1\leq\ell_1\odot\cdots\odot\ell_k$.
+
+An $\MPNSR$ refutation is an algebraic combination
+\[
+ \bigoplus_j t_j\odot f_j
+ \;\leq\;
+ \bigoplus_j t_j\odot g_j,
+\]
+where $f_j\leq g_j$ ranges over the encoded clauses, both directions of the
+Boolean equations, the axiom $0\leq0$, and inequalities $g\leq\infty$ for
+right-hand sides $g$ of the preceding input inequalities.  It is a refutation
+if every monomial on the left has a strictly larger
+coefficient than the same monomial on the right and the right-hand side has a
+finite constant term.
+
+A $\ResLP$ line is a finite disjunction of integer affine inequalities.  It
+starts from the usual linear encodings of clauses and the Boolean axioms
+\[
+ x\geq0,
+ \qquad
+ 1-x\geq0,
+ \qquad
+ (x-1\geq0)\vee(-x\geq0),
+\]
+and uses
+\[
+\frac{(f_1\geq0)\vee\Gamma\qquad(f_2\geq0)\vee\Gamma}
+     {(\alpha_1f_1+\alpha_2f_2\geq0)\vee\Gamma},
+\qquad
+\frac{\Gamma}{\Gamma\vee(f\geq0)},
+\]
+where $\alpha_1,\alpha_2$ are positive integers.  A refutation derives
+$-1\geq0$.
+A $\ResLP$ refutation is \emph{treelike} if every derived line is used as a
+premise at most once.
+Proof size is the total binary encoding length.
+
+\section{Problem formulation}
+
+Does treelike $\ResLP$ polynomially simulate $\MPNSR$?  Namely, is there a
+polynomial $p$ such that every $\MPNSR$ refutation of size $s$ can be
+converted into a treelike $\ResLP$ refutation of size at most
+\[
+ p(s)?
+\]
+
+\end{document}

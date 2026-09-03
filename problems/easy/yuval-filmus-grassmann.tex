@@ -1,0 +1,38 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+
+\title{Boolean degree one functions on the Grassmann scheme --- easy}
+\author{Yuval Filmus}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+Filmus and Ihringer (Boolean degree 1 functions on some classical association schemes) classified all Boolean degree 1 functions on the Grassmann scheme $J_2(n,k)$ whenever $\min(k,n-k) \ge 2$; here $J_2(n,k)$ is the collection of all $k$-dimensional subspaces of $\mathbb{F}_2^n$. If $f\colon J_2(n,k) \to \mathbb{R}$ is Boolean ($f(L) \in \{0,1\}$ for all $L$) and has degree~$1$ (can be written as a linear combination of functions of the form $p_x(L) = [x \in L]$) then either $f$ or $1-f$ has one of the following forms:
+\[
+ 0, [x \in L], [y \perp L], [x \in L \text{ or } y \perp L],
+\]
+where $x,y \ne 0$, and in the last case, $x \not\perp y$.
+
+\begin{problem}
+Determine all degree~$1$ functions $f\colon J_2(n,k) \to \mathbb{R}$ which are $\{0,1,2\}$-valued, where $\min(k,n-k) \ge 2$.
+
+(If it helps, you can assume that $\min(k,n-k) \ge t$ for some small constant $t$.)
+\end{problem}
+
+If instead of $\mathbb{F}_2$ we work with a larger finite field $\mathbb{F}_q$, then there are strange examples that arise in $J_q(4,2)$. For small $q$, they disappear already in $J_q(5,2)$, and the theorem above extends whenever $\max(k,n-k) \ge 3$ and $\min(k,n-k) \ge 2$. Ihringer shows that this happens for every $q$, with ``$3$'' replaced by a (huge) constant depending on $q$. This explains how $t$ might pop up.
+
+When working over the Boolean cube, the following functions arise:
+\[
+ 0, x_i, x_i + x_j, 1, 1 + x_i, 1 - x_j, 1 + x_i - x_j, 2, 2 - x_i, 2 - x_i - x_j.
+\]
+We suspect that the case of the Grassmann scheme is similar, where we also make use of the fact that if $x \not\perp y$ then $[x \in L]$ and $[y \perp L]$ cannot hold at the same time. (This can be used to guess the answer.)
+
+The recent survey ``Boolean degree one functions on the Grassmann scheme'' of Filmus gives a proof strategy that should succeed here as well, with a little bit of work. (The hard part of that paper is a proof of Ihringer's result, but this won't be needed here.)
+
+\end{document}

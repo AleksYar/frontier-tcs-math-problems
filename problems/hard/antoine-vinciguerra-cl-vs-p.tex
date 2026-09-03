@@ -1,0 +1,155 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem*{definition*}{Definition}
+\newtheorem*{problem*}{Problem}
+
+\newcommand{\CSPACE}{\mathsf{CSPACE}}
+\newcommand{\CTISP}{\mathsf{CTISP}}
+\newcommand{\CL}{\mathsf{CL}}
+\newcommand{\CLP}{\mathsf{CLP}}
+\newcommand{\Lclass}{\mathsf{L}}
+\newcommand{\NL}{\mathsf{NL}}
+\newcommand{\TC}{\mathsf{TC}}
+\newcommand{\Pclass}{\mathsf{P}}
+\newcommand{\ZPP}{\mathsf{ZPP}}
+\newcommand{\LOSSY}{\mathsf{LOSSY}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlength{\emergencystretch}{2em}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Catalytic Logspace versus Polynomial Time}
+\end{center}
+
+\section{Definitions}
+
+\begin{definition*}[Catalytic space and $\CL$]
+A \emph{catalytic Turing machine} is a deterministic Turing machine with a
+read-only input tape, an ordinary read-write work tape, and an additional
+read-write catalytic tape. On input $x$, the catalytic tape initially contains
+an arbitrary string $a$. The machine must halt for every pair $(x,a)$, return
+the same decision for every choice of $a$, and restore the entire catalytic
+tape exactly to $a$ before halting.
+
+For functions $S,S_a:\mathbb N\to\mathbb N$, let
+$\CSPACE(S(n),S_a(n))$ denote the class of languages decided using $O(S(n))$
+work-tape cells and $O(S_a(n))$ catalytic-tape cells. Write
+\begin{equation}
+  \CSPACE(S(n))
+  :=
+  \CSPACE\bigl(S(n),2^{O(S(n))}\bigr)
+\end{equation}
+and define
+\begin{equation}
+  \CL:=\CSPACE(\log n).
+\end{equation}
+Thus a $\CL$ machine has $O(\log n)$ ordinary work space and a polynomial-size
+catalyst. Its definition imposes no polynomial running-time bound.
+\end{definition*}
+
+\begin{definition*}[Polynomial-time catalytic logspace]
+The class
+\begin{equation}
+  \Pclass
+  :=
+  \bigcup_{k\geq1}\mathsf{DTIME}(n^k)
+\end{equation}
+contains the languages decidable by ordinary deterministic Turing machines in
+polynomial time. Let $\CTISP(t,s,c)$ denote catalytic computations with time,
+ordinary-space, and catalytic-space bounds $O(t)$, $O(s)$, and $O(c)$,
+respectively. Define
+\begin{equation}
+  \CLP
+  :=
+  \bigcup_{k\geq1}\CTISP(n^k,k\log n,n^k).
+\end{equation}
+Consequently,
+\begin{equation}
+  \CLP\subseteq\CL\cap\Pclass.
+\end{equation}
+\end{definition*}
+
+\begin{definition*}[Lossy coding]
+An instance of the total search problem $\mathsf{LossyCode}$ is a pair of
+Boolean circuits
+\begin{equation}
+  C:\{0,1\}^m\longrightarrow\{0,1\}^{m-1},
+  \qquad
+  D:\{0,1\}^{m-1}\longrightarrow\{0,1\}^m.
+\end{equation}
+The task is to output a string $z\in\{0,1\}^m$ such that
+\begin{equation}
+  D(C(z))\neq z.
+\end{equation}
+Such a string always exists: the map $D\circ C$ factors through a set of only
+$2^{m-1}$ codewords and therefore cannot fix all $2^m$ inputs. The class
+$\LOSSY$ consists of the languages decidable in deterministic polynomial time
+with oracle access to a function that returns a valid solution to every
+$\mathsf{LossyCode}$ instance.
+\end{definition*}
+
+\newpage
+\section{Best Known Result}
+
+The known lower and upper bounds are
+\begin{equation}
+  \Lclass
+  \subseteq
+  \NL
+  \subseteq
+  \TC^1
+  \subseteq
+  \CLP
+  \subseteq
+  \CL
+  \subseteq
+  \LOSSY
+  \subseteq
+  \ZPP.
+\end{equation}
+At the level of general complexity classes, $\TC^1$ is the strongest circuit
+class stated in the source to be contained in $\CL$. Important individual
+problems beyond this circuit-class frontier are known to belong to $\CLP$,
+including linear matroid intersection, but this does not yield a larger
+standard circuit-class containment.
+
+The best general upper bound is
+\begin{equation}
+  \CL\subseteq\LOSSY\subseteq\ZPP.
+\end{equation}
+The second containment follows because a uniformly random
+$z\in\{0,1\}^m$ is a valid $\mathsf{LossyCode}$ solution with probability at
+least $1/2$, and validity can be checked deterministically. No deterministic
+polynomial-time algorithm is known for the general $\mathsf{LossyCode}$
+problem.
+
+The structural identity
+\begin{equation}
+  \CLP=\CL\cap\Pclass
+\end{equation}
+is known. It follows immediately that
+\begin{equation}
+  \CL\subseteq\Pclass
+  \quad\Longleftrightarrow\quad
+  \CL=\CLP.
+\end{equation}
+Thus proving that every catalytic-logspace language has an ordinary
+polynomial-time algorithm automatically gives it a polynomial-time catalytic
+algorithm as well.
+
+\section{Problem Formalization}
+
+
+Prove or disprove the unconditional deterministic containment
+\begin{equation}
+  \CL\subseteq\Pclass.
+\end{equation}
+
+\end{document}

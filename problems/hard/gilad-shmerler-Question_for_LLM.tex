@@ -1,0 +1,87 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage[colorlinks=true]{hyperref}
+
+\newtheorem{definition}{Definition}[section]
+
+\title{Question for LLM}
+\author{Gilad Shmerler}
+\date{August 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+Let $G=(V,E)$ be an undirected graph. Each edge $e\in E$ has a nonnegative profit $p_e$ and a nonnegative
+cost $c_e$. We are also given a budget $B\in\mathbb{R}_{\geq 0}$.
+
+For a set of edges $M\subseteq E$, we write
+\[
+    p(M):=\sum_{e\in M}p_e
+    \qquad\text{and}\qquad
+    c(M):=\sum_{e\in M}c_e.
+\]
+
+A set $M\subseteq E$ is a \emph{matching} if no two edges in $M$ share an endpoint.
+
+\begin{definition}[Budgeted Matching]
+The \emph{Budgeted Matching} problem is to find a matching $M\subseteq E$ of maximum profit subject to the budget constraint
+\[
+    c(M)\leq B.
+\]
+Equivalently, the objective is
+\[
+    \mathrm{OPT}:=\max\,\{p(M):M\subseteq E\text{ is a matching and }c(M)\leq B\}\,.
+\]
+\end{definition}
+
+\begin{definition}[FPTAS]
+A \emph{fully polynomial-time approximation scheme (FPTAS)} for Budgeted Matching is an algorithm that, for every
+$\varepsilon>0$, returns a matching $M\subseteq E$ satisfying
+\[
+    c(M)\leq B
+\]
+and
+\[
+    p(M)\geq(1-\varepsilon)\,\mathrm{OPT},
+\]
+and whose running time is polynomial in the input size and in $1/\varepsilon$.
+\end{definition}
+
+The problem is known to be NP-hard, see e.g., \cite{doron-arad-shachnai-shmerler-talgam-cohen,doron-arad-kulik-shachnai}.
+
+\section{Problem formulation}
+
+Does the Budgeted Matching problem admit an FPTAS?
+
+That is, does there exist an algorithm which, for every instance $\mathcal{I}=(G,p,c,B)$ and every $\varepsilon>0$, runs in
+time polynomial in $\mathcal{I}$ and $1/\varepsilon$ and returns a matching $M\subseteq E$ such that
+\[
+    c(M)\leq B
+\]
+and
+\[
+    p(M)\geq(1-\varepsilon)\,\mathrm{OPT}?
+\]
+
+\begin{thebibliography}{9}
+
+\bibitem{doron-arad-kulik-shachnai}
+Ilan Doron-Arad, Ariel Kulik, and Hadas Shachnai.
+\newblock An EPTAS for budgeted matching and budgeted matroid intersection via representative sets.
+\newblock In \emph{50th International Colloquium on Automata, Languages, and Programming (ICALP 2023)}, pages 49:1--49:16. Schloss Dagstuhl--Leibniz-Zentrum f\"ur Informatik, 2023.
+
+\bibitem{doron-arad-shachnai-shmerler-talgam-cohen}
+Ilan Doron-Arad, Hadas Shachnai, Gilad Shmerler, and Inbal Talgam-Cohen.
+\newblock An algorithm-to-contract framework without demand queries.
+\newblock \emph{arXiv preprint arXiv:2507.20038}, 2025.
+
+\end{thebibliography}
+
+\end{document}

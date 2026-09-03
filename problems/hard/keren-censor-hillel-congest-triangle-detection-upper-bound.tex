@@ -1,0 +1,51 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amsthm}
+
+\newtheorem{definition}{Definition}
+
+\title{Faster Triangle Detection in CONGEST -- Hard}
+\author{Keren Censor-Hillel}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+\begin{definition}[CONGEST model]
+An input is a simple undirected graph $G=(V,E)$ with $|V|=n$, which is also
+the communication network. The vertices have distinct $O(\!\log n)$-bit
+identifiers, and computation proceeds in synchronous rounds. In each round,
+the endpoints of every edge can exchange an $O(\!\log n)$-bit message in
+each direction. Initially, each vertex knows $n$, its own identifier, and
+the identifiers of its neighbors in $G$. Local computation is unrestricted.
+\end{definition}
+
+\begin{definition}[Triangle detection]
+A triangle in $G$ consists of three distinct vertices $u,v,w$ such that
+$uv,vw,wu\in E$. An algorithm detects triangles if all vertices output $0$
+whenever $G$ is triangle-free, while at least one vertex outputs $1$
+whenever $G$ contains a triangle.
+
+A randomized $T(n)$-round algorithm must terminate within $T(n)$ rounds on
+every execution and satisfy the preceding condition with probability at
+least $2/3$ on every input graph and every assignment of identifiers.
+\end{definition}
+
+The benchmark upper bound for general graphs is
+$\widetilde O(n^{1/3})$ rounds, where $\widetilde O$ suppresses
+polylogarithmic factors in $n$.
+
+\section{Problem formulation}
+
+Prove that there exist constants $0<\varepsilon\leq 1/3$ and $C\geq 0$,
+and a possibly randomized CONGEST algorithm with error at most $1/3$, that
+detects triangles in
+\[
+O\!\left(n^{1/3-\varepsilon}(\log n)^C\right)
+\]
+rounds.
+
+\end{document}

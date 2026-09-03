@@ -1,0 +1,83 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amsthm,amssymb}
+
+\newtheorem{definition}{Definition}
+
+\title{Pseudodeterministic Parity-Query Complexity\\Linear Gavinsky Bound - medium}
+\author{Yaroslav Alekseev}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+For $x\in\{0,1\}^n$, let
+\[
+|x|:=\bigl|\{i\in[n]:x_i=1\}\bigr|
+\]
+denote its Hamming weight.
+
+\begin{definition}[Gap Majority]
+The partial Boolean function
+\[
+\operatorname{GapMaj}_n:\{0,1\}^n\longrightarrow\{0,1,*\}
+\]
+is defined by
+\[
+\operatorname{GapMaj}_n(x):=
+\begin{cases}
+0, & |x|\le n/3,\\
+1, & |x|\ge 2n/3,\\
+*, & n/3<|x|<2n/3.
+\end{cases}
+\]
+\end{definition}
+
+\begin{definition}[Randomized parity-query complexity]
+A \emph{parity query} to an input $x\in\{0,1\}^n$ asks for the value
+\[
+\bigoplus_{i\in S}x_i
+\]
+for some set $S\subseteq[n]$. A deterministic parity decision tree is an
+adaptive algorithm that makes parity queries and outputs a bit.
+
+For a total Boolean function $f:\{0,1\}^n\to\{0,1\}$, let
+$\mathrm{R}^{\oplus}_\varepsilon(f)$ be the minimum $d$ for which there
+exists a randomized parity decision tree of worst-case depth at most $d$
+that satisfies
+\[
+\Pr[T(x)=f(x)]\ge 1-\varepsilon
+\]
+for every $x\in\{0,1\}^n$.
+\end{definition}
+
+\begin{definition}[Pseudodeterministic parity-query complexity]
+A \emph{completion} of a partial Boolean function
+$g:\{0,1\}^n\to\{0,1,*\}$ is a total Boolean function
+$f:\{0,1\}^n\to\{0,1\}$ such that $f(x)=g(x)$ whenever $g(x)\neq *$.
+Define
+\[
+\mathrm{PsR}^{\oplus}_\varepsilon(g)
+:=
+\min\bigl\{\mathrm{R}^{\oplus}_\varepsilon(f):
+             f\text{ is a completion of }g\bigr\}.
+\]
+\end{definition}
+
+\section{Problem formulation}
+
+There exists an absolute constant $c>0$ such that, for all sufficiently
+large $n$,
+\[
+\mathrm{PsR}^{\oplus}_{1/3}(\operatorname{GapMaj}_n)\ge cn.
+\]
+Equivalently, every completion $f:\{0,1\}^n\to\{0,1\}$ of
+$\operatorname{GapMaj}_n$ satisfies
+\[
+\mathrm{R}^{\oplus}_{1/3}(f)\ge cn.
+\]
+
+\end{document}

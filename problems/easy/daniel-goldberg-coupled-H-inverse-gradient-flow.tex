@@ -1,0 +1,119 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem*{problem*}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries A Coupled $H^{-1}$ Gradient Flow}
+\end{center}
+
+\section{Definitions}
+
+Let
+\[
+  \mathbb T=\mathbb R/(2\pi\mathbb Z).
+\]
+For real periodic functions $u$ and $v$, define
+\begin{equation}
+  \mu_u=-u_{xx}+u(u^2+v^2)+(u-v),
+  \qquad
+  \mu_v=-v_{xx}+v(u^2+v^2)+(v-u).
+\end{equation}
+Consider
+\begin{equation}
+  u_t=\partial_x^2\mu_u,
+  \qquad
+  v_t=\partial_x^2\mu_v,
+  \qquad
+  (u,v)|_{t=0}=(u_0,v_0),
+\end{equation}
+where
+\begin{equation}
+  u_0,v_0\in H^2(\mathbb T),
+  \qquad
+  \int_{\mathbb T}u_0\,dx
+  =
+  \int_{\mathbb T}v_0\,dx
+  =0.
+\end{equation}
+For every integrable periodic function $g\in L^1(\mathbb T)$, the angular
+brackets denote its normalized spatial average over $\mathbb T$:
+\begin{equation}
+  \langle g\rangle
+  :=
+  \frac{1}{|\mathbb T|}\int_{\mathbb T}g(x)\,dx
+  =
+  \frac{1}{2\pi}\int_{\mathbb T}g(x)\,dx,
+  \qquad |\mathbb T|=2\pi.
+\end{equation}
+Using this notation, define
+\begin{equation}
+  \mathcal E(u,v)
+  =
+  \left\langle
+    \frac{u_x^2+v_x^2}{2}
+    +\frac{(u^2+v^2)^2}{4}
+    +\frac{(u-v)^2}{2}
+  \right\rangle.
+\end{equation}
+
+\section{Problem Formalization}
+
+Prove all of the following assertions, or identify the first false assertion
+and give a counterexample.
+
+\begin{enumerate}
+  \item There is a unique global solution satisfying
+  \begin{equation}
+    (u,v)\in
+    C([0,\infty);H^2(\mathbb T))^2
+    \cap
+    L^2_{\mathrm{loc}}([0,\infty);H^4(\mathbb T))^2,
+  \end{equation}
+  and
+  \begin{equation}
+    (u_t,v_t)\in
+    L^2_{\mathrm{loc}}([0,\infty);L^2(\mathbb T))^2.
+  \end{equation}
+
+  \item On every bounded interval $[0,T]$, the solution map is locally
+  Lipschitz from $H^2\times H^2$ into
+  \begin{equation}
+    C([0,T];H^2\times H^2).
+  \end{equation}
+
+  \item For every $t\geq 0$,
+  \begin{equation}
+    \mathcal E(t)
+    +
+    \int_0^t
+    \left\langle
+      |\partial_x\mu_u|^2+|\partial_x\mu_v|^2
+    \right\rangle d\tau
+    =
+    \mathcal E(0).
+  \end{equation}
+
+  \item The prefactor-one estimate
+  \begin{equation}
+    \mathcal E(t)\leq e^{-2t}\mathcal E(0)
+  \end{equation}
+  holds, and the exponent $2$ cannot be uniformly increased.
+
+  \item For $t\geq 1$,
+  \begin{equation}
+    \|u(t)\|_{H^2}+\|v(t)\|_{H^2}
+    \leq C(u_0,v_0)e^{-t}.
+  \end{equation}
+\end{enumerate}
+
+
+\end{document}

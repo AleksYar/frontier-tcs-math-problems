@@ -1,0 +1,67 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Davenport--Schinzel Sequences: The Pigeonhole Threshold}
+\end{center}
+
+\section{Definition}
+\begin{definition}[Order-$s$ Davenport--Schinzel sequence]
+Let $n,s\geq 1$ and $[n]=\{1,\ldots,n\}$. A sequence
+$U=(u_1,\ldots,u_m)$ over $[n]$ is an order-$s$ Davenport--Schinzel sequence if
+\begin{enumerate}
+  \item $u_i\neq u_{i+1}$ for every $i$; and
+  \item for every two distinct symbols $a,b$, the sequence $U$ contains no
+  alternating subsequence
+  \[
+    a,b,a,b,\ldots
+  \]
+  of length $s+2$.
+\end{enumerate}
+We write $U\in\mathrm{DS}(n,s)$.
+\end{definition}
+
+\begin{definition}[Extremal function]
+\begin{equation}
+  \lambda_s(n)
+  =\max\bigl\{|U|:U\in\mathrm{DS}(n,s)\bigr\}.
+\end{equation}
+\end{definition}
+
+For all $n$ and $s$, the pigeonhole argument gives
+\begin{equation}
+  \lambda_s(n)\leq\binom{n}{2}(s+1).
+\end{equation}
+
+\section{Current best result}
+This bound is asymptotically tight when
+\begin{equation}
+  \frac{s}{\sqrt n}\longrightarrow\infty.
+\end{equation}
+In this regime,
+\begin{equation}
+  \lambda_s(n)\sim\binom{n}{2}s.
+\end{equation}
+
+\section{Problem Formulation}
+
+Determine the smallest growth rate of $s=s(n)$ for which
+\begin{equation}
+  \lambda_s(n)\sim\binom{n}{2}s.
+\end{equation}
+In particular, determine whether this equivalence can hold for some
+$s=o(\sqrt n)$.
+\end{document}

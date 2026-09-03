@@ -1,0 +1,66 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amsthm,amssymb}
+
+\newtheorem{definition}{Definition}
+
+\title{Faster Triangle Detection in the Congested Clique -- Hard}
+\author{Keren Censor-Hillel}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+\begin{definition}[Congested Clique]
+An input is a simple undirected graph $G=(V,E)$ with $|V|=n$. There is one
+processor for each vertex of $G$. The processors have distinct
+$O(\!\log n)$-bit identifiers and communicate over the complete graph on
+$V$ in synchronous rounds. In each round, every ordered pair of processors
+can exchange an $O(\!\log n)$-bit message. Initially, every processor
+knows $n$ and all processor identifiers, and processor $v$ knows all edges of
+$G$ incident to $v$. Local computation is unrestricted.
+\end{definition}
+
+\begin{definition}[Triangle detection]
+A triangle in $G$ consists of three distinct vertices $u,v,w$ such that
+$uv,vw,wu\in E$. An algorithm detects triangles if all processors output
+$0$ whenever $G$ is triangle-free, while at least one processor outputs
+$1$ whenever $G$ contains a triangle.
+
+A randomized $T(n)$-round algorithm must terminate within $T(n)$ rounds on
+every execution and satisfy the preceding condition with probability at
+least $2/3$ on every input graph and every assignment of identifiers.
+\end{definition}
+
+\begin{definition}[Matrix-multiplication exponent]
+Let $M(N)$ be the minimum number of arithmetic operations over $\mathbb{Q}$
+needed to multiply two matrices in $\mathbb{Q}^{N\times N}$. The
+\emph{matrix-multiplication exponent} is
+\[
+\omega:=\inf\bigl\{\tau\geq 0:M(N)=O(N^\tau)\bigr\}.
+\]
+Consequently, $M(N)=O(N^{\omega+\delta})$ for every constant $\delta>0$.
+It is known that $2\leq\omega<3$, and it is open whether $\omega=2$.
+\end{definition}
+
+The matrix-multiplication approach gives triangle detection in
+$n^{1-2/\omega+o(1)}$ Congested Clique rounds.
+
+\section{Problem formulation}
+
+Prove that there exist constants $\varepsilon>0$ and $C\geq 0$, and a
+possibly randomized Congested Clique algorithm with error at most $1/3$,
+that detects triangles in
+\[
+O\!\left(
+ n^{\max\{0,\,1-2/\omega-\varepsilon\}}(\log n)^C
+\right)
+\]
+rounds. For $\omega>2$, this is a fixed polynomial improvement over the
+exponent $1-2/\omega$; for $\omega=2$, the requested bound is
+polylogarithmic.
+
+\end{document}

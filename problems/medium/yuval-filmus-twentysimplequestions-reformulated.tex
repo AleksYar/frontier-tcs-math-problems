@@ -1,0 +1,44 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+
+\title{Twenty (simple) questions --- moderate}
+\author{Yuval Filmus}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+For every distribution $\mu$ on $[n]$, we can find a prefix code whose average codeword length is less than $H(\mu) + 1$ (where we use base~2 logarithms in the definition of entropy), known as Shannon--Fano coding. We can think of the prefix code as a strategy for determining a random $x \sim \mu$ using Yes/No questions which uses fewer than $H(\mu) + 1$ questions in average.
+
+What happens if we restrict the set of allowed questions? For questions of the form ``$x < m$'' (corresponding to binary search trees), the bound becomes $H(\mu) + 2$.
+
+The paper ``Twenty (simple) questions'' asks whether we can recover the bound $H(\mu) + 1$ using a small inventory of questions, and answers this in the affirmative: it suffices to consider questions of the form ``$x < m$'' and ``$x = m$''.
+
+What happens when we consider questions with at most $c$ possible answers for some $c > 2$? Shannon--Fano coding still works: there is a strategy that uses fewer than $H_c(\mu) + 1$ questions in average, where
+\[
+H_c(\mu)=-\sum_{x\in[n]}\mu(x)\log_c\mu(x)
+\]
+is the base-$c$ entropy of $\mu$.
+
+The natural generalization of ``$x < m$'' to the $c$-ary setting is to consider partitions of $[n]$ into at most $c$ intervals. This results in the bound $H_c(\mu) + \log_c 2$ (one can see this using the Gilbert--Moore algorithm, for example).
+
+\begin{problem}
+Fix an integer $c\geq 2$. Let $k(c)$ be the infimum of all real numbers $k\geq 0$ for which there exists a family of inventories of $c$-way questions $\{\mathcal{I}_n\}_{n\geq 1}$ satisfying
+\[
+    |\mathcal{I}_n|=O_c(n^k),
+\]
+such that, for every probability distribution $\mu$ on $[n]$, there is an adaptive strategy which identifies $x\sim\mu$, uses only questions from $\mathcal{I}_n$, and asks at most
+\[
+    H_c(\mu)+1
+\]
+questions on average. Determine $k(c)$. In the binary case, $k(2)=1$.
+\end{problem}
+
+A natural guess is to generalize the inventory of ``Twenty (simple) questions'' to the $c$-way setting.
+
+\end{document}

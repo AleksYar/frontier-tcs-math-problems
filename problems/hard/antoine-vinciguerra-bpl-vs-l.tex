@@ -1,0 +1,148 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem*{definition*}{Definition}
+\newtheorem*{problem*}{Problem}
+
+\newcommand{\Lclass}{\mathsf{L}}
+\newcommand{\BPL}{\mathsf{BPL}}
+\newcommand{\BPSPACE}{\mathsf{BPSPACE}}
+\newcommand{\DSPACE}{\mathsf{DSPACE}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlength{\emergencystretch}{2em}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries BPL versus Deterministic Logspace}
+\end{center}
+
+\section{Definitions}
+
+\begin{definition*}[Deterministic logspace]
+$\Lclass$ is the class of languages decided by deterministic Turing machines
+using $O(\log n)$ cells of read-write work tape on inputs of length $n$. The
+input tape is read only, and the machine halts on every input.
+\end{definition*}
+
+\begin{definition*}[Bounded-error probabilistic logspace]
+A probabilistic logspace machine has a read-only input tape, an $O(\log n)$-cell
+work tape, and a one-way read-once random tape containing independent unbiased
+bits. A language $A$ is in $\BPL$ if there are such a machine $M$ and a
+polynomial $p$ such that, for every $x\in\{0,1\}^n$ and every random string
+$r\in\{0,1\}^{p(n)}$, the computation $M(x;r)$ halts within $p(n)$ steps and
+outputs one bit, with
+\begin{align}
+  x\in A
+  &\Longrightarrow
+  \Pr_{r\leftarrow U_{p(n)}}[M(x;r)=1]\geq\frac{2}{3},\\
+  x\notin A
+  &\Longrightarrow
+  \Pr_{r\leftarrow U_{p(n)}}[M(x;r)=1]\leq\frac{1}{3}.
+\end{align}
+The constants $2/3$ and $1/3$ can be replaced by any two fixed constants
+separated from $1/2$: independent repetition and majority preserve logarithmic
+space and polynomial time. Plainly,
+\begin{equation}
+  \Lclass\subseteq\BPL.
+\end{equation}
+More generally, $\BPSPACE(S)$ denotes the analogous bounded-error class with
+$O(S(n))$ work space and with every random computation path required to halt;
+the polynomial-time restriction is not imposed on this larger class.
+\end{definition*}
+
+\begin{definition*}[Read-once branching programs and generators]
+A length-$T$, width-$W$ read-once branching program is a layered directed
+graph with layers $V_0,\ldots,V_T$, at most $W$ vertices in each layer, a
+start vertex in $V_0$, and two edges labelled $0$ and $1$ leaving every vertex
+outside $V_T$. A string $r\in\{0,1\}^T$ selects one edge at each layer and
+therefore determines an accept-reject output $B(r)\in\{0,1\}$.
+
+A generator $G:\{0,1\}^d\to\{0,1\}^T$ $\varepsilon$-fools this class of
+programs if every such $B$ satisfies
+\begin{equation}
+  \left|
+    \Pr[B(U_T)=1]
+    -
+    \Pr[B(G(U_d))=1]
+  \right|
+  \leq\varepsilon.
+\end{equation}
+Fixing an input $x$ to a polynomial-time probabilistic logspace machine gives
+a read-once branching program whose vertices are the machine configurations.
+Thus, for input length $N$, both $T$ and $W$ are $N^{O(1)}$.
+\end{definition*}
+
+\newpage
+\section{Best Known Result}
+
+There is an explicit generator for length-$T$, width-$W$ read-once branching
+programs with seed length
+\begin{equation}
+  O\left(
+    \log T\cdot\log\frac{TW}{\varepsilon}
+  \right).
+\end{equation}
+For $T,W=N^{O(1)}$ and constant error, this is $O(\log^2N)$. Enumerating all
+seeds gives a deterministic $O(\log^2N)$-space simulation of $\BPL$. This
+remains the best ordinary pseudorandom generator stated in the source for
+general polynomial-length, polynomial-width branching programs in the
+constant-error regime.
+
+The landmark general simulation is
+\begin{equation}
+  \BPSPACE(S)
+  \subseteq
+  \DSPACE\bigl(O(S^{3/2})\bigr).
+\end{equation}
+Using weighted pseudorandom generators, the best general unconditional space
+bound stated in the source is
+\begin{equation}
+  \BPSPACE(S)
+  \subseteq
+  \DSPACE\left(
+    O\left(\frac{S^{3/2}}{\sqrt{\log S}}\right)
+  \right),
+\end{equation}
+and consequently
+\begin{equation}\label{eq:bpl-bound}
+  \BPL
+  \subseteq
+  \DSPACE\left(
+    O\left(\frac{\log^{3/2}N}{\sqrt{\log\log N}}\right)
+  \right).
+\end{equation}
+
+A weighted generator estimates the uniform acceptance probability using a
+short signed or weighted combination of pseudorandom outputs; unlike an
+ordinary pseudorandom generator, it need not induce a genuine probability
+distribution. Error reduction can achieve optimal dependence on the branching
+program's alphabet size while matching the best other weighted-generator
+parameters. This identifies deweightization as a route toward an ordinary
+$o(\log^2N)$-seed generator, but it does not itself improve
+the deterministic-space bound in~\eqref{eq:bpl-bound}.
+
+\section{Problem Formalization}
+
+\begin{problem*}[$\BPL$ versus $\Lclass$]
+Prove
+\begin{equation}
+  \BPL=\Lclass.
+\end{equation}
+Major intermediate progress would include improving the general simulation
+to
+\begin{equation}
+  \BPL
+  \subseteq
+  \DSPACE\left(
+    o\left(\frac{\log^{3/2}N}{\sqrt{\log\log N}}\right)
+  \right).
+\end{equation}
+\end{problem*}
+
+\end{document}

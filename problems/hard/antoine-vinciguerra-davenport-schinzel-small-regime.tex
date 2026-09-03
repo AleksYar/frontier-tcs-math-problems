@@ -1,0 +1,83 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Davenport--Schinzel Sequences: Growing Order Below the Critical Scale}
+\end{center}
+
+
+\section{Definition}
+\begin{definition}[Order-$s$ Davenport--Schinzel sequence]
+Let $n,s\geq 1$ and $[n]=\{1,\ldots,n\}$. A sequence
+$U=(u_1,\ldots,u_m)$ over $[n]$ is an order-$s$ Davenport--Schinzel sequence if
+\begin{enumerate}
+  \item $u_i\neq u_{i+1}$ for every $i$; and
+  \item for every two distinct symbols $a,b$, the sequence $U$ contains no
+  alternating subsequence
+  \[
+    a,b,a,b,\ldots
+  \]
+  of length $s+2$.
+\end{enumerate}
+We write $U\in\mathrm{DS}(n,s)$.
+\end{definition}
+
+\begin{definition}[Extremal function]
+\begin{equation}
+  \lambda_s(n)
+  =\max\bigl\{|U|:U\in\mathrm{DS}(n,s)\bigr\}.
+\end{equation}
+\end{definition}
+
+For all $n$ and $s$, the pigeonhole argument gives
+\begin{equation}
+  \lambda_s(n)\leq\binom{n}{2}(s+1).
+\end{equation}
+
+\section{Current best result}
+The first values are exact:
+\begin{equation}\label{eq:small-orders}
+ \lambda_1(n)=n,\qquad \lambda_2(n)=2n-1,\qquad
+ \lambda_3(n)=2n\alpha(n)+O(n),
+\end{equation}
+where $\alpha$ denotes the inverse-Ackermann function.  The fixed-order problem is
+now essentially settled.  In particular,
+\begin{equation}\label{eq:fixed-order}
+ \lambda_4(n)=\Theta\!\bigl(n2^{\alpha(n)}\bigr),\qquad
+ \lambda_5(n)=\Theta\!\bigl(n\alpha(n)2^{\alpha(n)}\bigr),
+\end{equation}
+
+The known fixed-order
+constructions remain effective up to $s=O(\alpha(n))$.
+
+On the other hand,
+\begin{equation}
+  \lambda_s(n)\sim\binom{n}{2}s
+\end{equation}
+is known when $s/\sqrt n\to\infty$. There are no matching asymptotic bounds
+between these two ranges.
+
+\section{Problem formulation}
+Determine the asymptotic behavior of $\lambda_s(n)$ when
+\begin{equation}
+  s=s(n)\longrightarrow\infty,
+  \qquad
+  s=o(\sqrt n),
+  \qquad
+  s=\omega(\alpha(n)).
+\end{equation}
+
+\end{document}

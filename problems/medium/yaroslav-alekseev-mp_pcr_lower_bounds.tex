@@ -1,0 +1,80 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+
+\newcommand{\Qinf}{\mathbb{Q}_{\infty}}
+\newcommand{\MPPCR}{\mathrm{MP\text{-}PCR}}
+
+\title{Tropical Proof Systems, Open Problem 1(a) -- medium}
+\author{Yaroslav Alekseev}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+Let
+\[
+\Qinf:=\mathbb{Q}\cup\{\infty\},
+\qquad
+ a\oplus b:=\min\{a,b\},
+\qquad
+ a\odot b:=a+b,
+\]
+with $a\oplus\infty=a$ and $a\odot\infty=\infty$.
+A \emph{tropical term} is an expression
+\[
+ c\odot x_1^{\odot d_1}\odot\cdots\odot x_n^{\odot d_n},
+\]
+where $c\in\Qinf$ and $d_1,\ldots,d_n\in\mathbb{N}_0$.
+A \emph{tropical polynomial} is a finite tropical sum of tropical terms.
+A \emph{min-plus inequality} is an inequality $f\leq g$ between tropical
+polynomials.
+
+For every Boolean variable $x$, introduce two tropical variables $x$ and
+$\bar x$, together with the equations
+\[
+ x\odot\bar x=1,
+ \qquad
+ x\oplus\bar x=0.
+\]
+Each equation is treated as the two opposite inequalities.  A Boolean clause
+$\ell_1\vee\cdots\vee\ell_k$ is encoded by
+\[
+ 1\leq \ell_1\odot\cdots\odot\ell_k,
+\]
+where the tropical variable corresponding to the literal $\neg x$ is $\bar x$.
+
+An $\MPPCR$ derivation is a sequence of min-plus inequalities.  Every line is
+an encoded input clause, a Boolean axiom, an axiom $0\leq0$ or $p\leq\infty$,
+or follows from earlier lines by one of the rules
+\[
+\frac{p\leq q\qquad p'\leq q'}{p\oplus p'\leq q\oplus q'},
+\qquad
+\frac{p\leq q}{p\odot t\leq q\odot t},
+\qquad
+\frac{p\leq h\qquad h\leq r}{p\leq r},
+\]
+where $t$ is a tropical term.
+
+For tropical polynomials $p,q$, write $p\succ q$ if, for every monomial
+occurring in $p$, the coefficient of that monomial in $p$ is strictly larger
+than its coefficient in $q$.  An $\MPPCR$ refutation ends with an inequality
+$p\leq q$ such that $p\succ q$ and $q$ has a finite constant term.
+The size of a derivation is the total binary encoding length of all its lines.
+
+A family $(F_n)_{n\geq1}$ of CNF formulas is \emph{explicit} if $F_n$ can be
+constructed in time polynomial in $n$.
+
+\section{Problem formulation}
+
+Construct an explicit family $(F_n)_{n\geq1}$ of unsatisfiable CNF formulas
+of size $n^{O(1)}$ such that every $\MPPCR$ refutation of $F_n$ has
+superpolynomial size:
+\[
+ \operatorname{size}_{\MPPCR}(F_n)=n^{\omega(1)}.
+\]
+
+\end{document}

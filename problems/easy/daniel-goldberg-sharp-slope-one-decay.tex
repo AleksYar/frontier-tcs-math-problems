@@ -1,0 +1,71 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem*{problem*}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries The Sharp Slope-One Decay Constant}
+\end{center}
+
+\section{Definitions}
+
+Let
+\[
+  \mathbb T=\mathbb R/(2\pi\mathbb Z).
+\]
+Define
+\begin{equation}
+  \mathcal A
+  =
+  \left\{
+    f\in W^{1,\infty}(\mathbb T):
+    \int_{\mathbb T}f\,dx=0,
+    \ \|f_x\|_{L^\infty}\leq 1
+  \right\}.
+\end{equation}
+Then
+\begin{equation}
+  \lambda_*
+  =
+  \inf_{\substack{f\in\mathcal A\\f\not\equiv 0}}
+  \frac{\displaystyle\int_{\mathbb T} f_x\arctan(f_x)\,dx}
+       {\displaystyle\int_{\mathbb T} f^2\,dx}.
+\end{equation}
+
+\section{Best Known Result}
+
+For $|p|\leq 1$,
+\begin{equation}
+  p\arctan p\geq \frac{\pi}{4}p^2.
+\end{equation}
+Together with the sharp mean-zero Poincar\'e inequality on $\mathbb T$, this
+gives
+\begin{equation}
+  \lambda_*\geq \frac{\pi}{4}.
+\end{equation}
+Testing with $f(x)=\sin x$ gives
+\begin{equation}
+  \lambda_*
+  \leq
+  \frac{\displaystyle\int_{\mathbb T}\cos x\,\arctan(\cos x)\,dx}
+       {\displaystyle\int_{\mathbb T}\sin^2x\,dx}
+  =2(\sqrt 2-1).
+\end{equation}
+Hence the elementary certified bracket is
+\begin{equation}
+  \frac{\pi}{4}\leq\lambda_*\leq 2(\sqrt 2-1).
+\end{equation}
+The exact value, or a certified enclosure meeting the precision requested
+below, is not currently supplied by these estimates.
+
+\section{Problem Formalization}
+Determine $\lambda_*$ as accurately as possible.
+\end{document}

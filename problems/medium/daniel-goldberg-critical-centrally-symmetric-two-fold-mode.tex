@@ -1,0 +1,83 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem*{problem*}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries The Critical Centrally Symmetric Two-Fold Mode}
+\end{center}
+
+\section{Definitions}
+
+Let $N$ be the inward normal and let $k>0$ on the unit circle. Consider
+the length-normalized critical curve flow
+\begin{equation}
+  \partial_t\gamma
+  =
+  -\left(k_{ss}+\frac{3}{2}k^3\right)N
+  +\lambda(t)\gamma,
+\end{equation}
+where
+\begin{equation}
+  \lambda(t)
+  =
+  \frac{1}{2\pi}
+  \left(
+    \int_\gamma k_s^2\,ds
+    -
+    \frac{3}{2}\int_\gamma k^4\,ds
+  \right).
+\end{equation}
+The flow is restricted to smooth embedded curves of length $2\pi$ that are
+centrally symmetric about the origin:
+\begin{equation}
+  \gamma(\theta+\pi)=-\gamma(\theta).
+\end{equation}
+Assume that the initial curve is a sufficiently small $H^4$ normal graph over
+the unit circle.
+
+\section{Best Known Result}
+
+Length normalization removes the scaling mode, and central symmetry removes
+the translation modes. The linearized operator damps all remaining modes
+except
+\begin{equation}
+  \operatorname{span}\{\cos(2\theta),\sin(2\theta)\}.
+\end{equation}
+On a local center manifold, the full $O(2)$ symmetry forces the corresponding
+complex amplitude to satisfy
+\begin{equation}
+  \dot A=A\,\Phi(|A|^2),
+\end{equation}
+where $\Phi$ is real-valued. Thus the local classification reduces to the
+first nonzero coefficient in the Taylor expansion of $\Phi$. The source does
+not compute this coefficient; it only indicates that this scalar computation,
+together with a center-manifold theorem, should decide the classification.
+
+\section{Problem Formalization}
+
+
+Determine the complete local dynamics of the unit circle.
+
+Derive the first nonzero term in the center-manifold amplitude equation for
+the Fourier $n=2$ mode and decide whether the circle is:
+
+\begin{enumerate}
+  \item asymptotically stable, and if so determine the leading decay law;
+  \item Lyapunov unstable; or
+  \item contained in a local branch of noncircular normalized equilibria.
+\end{enumerate}
+
+Lift the normal-form conclusion to the geometric flow modulo
+reparametrization.
+
+
+\end{document}

@@ -1,0 +1,74 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+
+\newcommand{\A}{A}
+\newcommand{\klarner}{\lambda}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Full Asymptotic Enumeration}
+\end{center}
+\section{Definition}
+\begin{definition}[Polyomino]
+A \emph{polyomino} is a finite set $P\subset \mathbb Z^2$ of unit square cells that is
+connected by edge adjacency.  Its \emph{area} (or size) is $|P|$; a polyomino of
+area $n$ is called an $n$-omino.
+\end{definition}
+
+\begin{definition}[Fixed and free polyominoes]
+Two polyominoes are \emph{fixed-equivalent} if they differ by a translation.  Let
+$\A(n)$ be the number of fixed $n$-ominoes.  
+\end{definition}
+
+If rotations and reflections are also
+identified, one obtains \emph{free polyominoes}.  Since every free class contains at
+most eight fixed classes, fixed and free polyominoes have the same exponential growth
+constant.  We focus on $\A(n)$.
+
+\begin{definition}[Klarner's constant]
+The \emph{Klarner constant} is
+\begin{equation}\label{eq:klarner}
+ \klarner
+ =\lim_{n\to\infty}\A(n)^{1/n}
+ =\lim_{n\to\infty}\frac{\A(n+1)}{\A(n)}.
+\end{equation}
+\end{definition}
+
+\section{Current best result.}
+There exist constants $c,T>0$ such that
+\begin{equation}
+  c\,n^{-T\log n}\klarner^n
+  \leq \A(n)
+  \leq \klarner^n.
+\end{equation}
+These bounds determine the exponential growth rate, but not the subexponential
+factor multiplying $\klarner^n$.
+
+\section{Problem Formulation}
+
+Prove or disprove that there exist constants $C,\theta>0$ such that
+\begin{equation}
+  \A(n)\sim Cn^{-\theta}\klarner^n,
+\end{equation}
+and determine the values of $C$ and $\theta$.
+
+Here, $\A(n)\sim Cn^{-\theta}\klarner^n$ means that
+\begin{equation}
+  \lim_{n\to\infty}
+  \frac{\A(n)}{Cn^{-\theta}\klarner^n}
+  =1.
+\end{equation}
+
+\end{document}

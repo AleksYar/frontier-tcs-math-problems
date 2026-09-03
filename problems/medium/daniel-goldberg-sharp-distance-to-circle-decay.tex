@@ -1,0 +1,200 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{microtype}
+
+\theoremstyle{definition}
+\newtheorem*{problem*}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries The sharp distance-to-circle decay rate for curve
+diffusion - single number}
+\end{center}
+
+\section{Definitions}
+
+Let $\Omega\subset\mathbb R^2$ be a smooth domain whose boundary
+$\partial\Omega$ represents a fixed wall. For $t\geq0$, let
+\begin{equation}
+  \Gamma_i(t)=X_i([0,1],t),
+  \qquad i=1,2,3,
+\end{equation}
+be three immersed curves. They meet at a common triple junction:
+\begin{equation}
+  X_1(0,t)=X_2(0,t)=X_3(0,t)=q(t),
+\end{equation}
+and their other endpoints lie on the wall:
+\begin{equation}
+  X_i(1,t)\in\partial\Omega,
+  \qquad i=1,2,3.
+\end{equation}
+
+Orient each curve away from the triple junction. Let
+\begin{equation}
+  \tau_i,
+  \qquad
+  n_i,
+  \qquad
+  \kappa_i,
+  \qquad
+  V_i=\partial_tX_i\cdot n_i
+\end{equation}
+denote, respectively, the unit tangent, unit normal, scalar curvature, and
+normal velocity of $\Gamma_i(t)$. Let $\sigma_i>0$ be the surface tensions
+and $m_i>0$ the mobilities. Define the chemical potentials by
+\begin{equation}
+  \mu_i=\sigma_i\kappa_i.
+\end{equation}
+Here $\partial_{s_i}$ denotes differentiation with respect to arclength on
+$\Gamma_i(t)$.
+
+The first two curves evolve by surface diffusion, while the third curve
+evolves by mean curvature flow:
+\begin{equation}
+  \begin{aligned}
+    V_i
+    &= -m_i\partial_{s_i}^2\mu_i,
+    && i=1,2,
+    && \text{on }\Gamma_i(t),\\
+    V_3
+    &= m_3\mu_3=m_3\sigma_3\kappa_3,
+    &&
+    && \text{on }\Gamma_3(t).
+  \end{aligned}
+  \label{eq:evolution}
+\end{equation}
+
+At the triple junction, impose the concurrency condition
+\begin{equation}
+  X_1(0,t)=X_2(0,t)=X_3(0,t)=q(t),
+  \label{eq:concurrency}
+\end{equation}
+the kinematic compatibility conditions
+\begin{equation}
+  q_t(t)\cdot n_i(0,t)=V_i(0,t),
+  \qquad i=1,2,3,
+  \label{eq:kinematic}
+\end{equation}
+and Herring's law
+\begin{equation}
+  \sigma_1\tau_1(0,t)
+  +\sigma_2\tau_2(0,t)
+  +\sigma_3\tau_3(0,t)=0.
+  \label{eq:herring}
+\end{equation}
+Assume in addition that
+\begin{equation}
+  \sigma_1=\sigma_2,
+  \qquad
+  2\sigma_1>\sigma_3.
+\end{equation}
+
+Continuity of chemical potential is imposed only between the two
+surface-diffusion curves:
+\begin{equation}
+  \mu_1(0,t)=\mu_2(0,t).
+  \label{eq:chemical-continuity}
+\end{equation}
+Mass-flux balance at the triple junction is likewise imposed only on these
+two curves:
+\begin{equation}
+  m_1\partial_{s_1}\mu_1(0,t)
+  +m_2\partial_{s_2}\mu_2(0,t)=0.
+  \label{eq:flux-balance}
+\end{equation}
+Both arclength coordinates are oriented away from the triple junction. No
+chemical-potential continuity or mass-flux condition is imposed on the
+mean-curvature-flow branch $\Gamma_3(t)$.
+
+Let $\nu_{\partial\Omega}$ denote the unit normal to the wall. All three
+curves meet the wall at a right angle:
+\begin{equation}
+  n_i(1,t)\cdot
+  \nu_{\partial\Omega}\bigl(X_i(1,t)\bigr)=0,
+  \qquad i=1,2,3.
+  \label{eq:contact-angle}
+\end{equation}
+The no-flux condition at the wall is imposed only on the two
+surface-diffusion curves:
+\begin{equation}
+  \partial_{s_i}\mu_i(1,t)=0,
+  \qquad i=1,2.
+  \label{eq:wall-no-flux}
+\end{equation}
+
+The initial conditions are
+\begin{equation}
+  \Gamma_i(0)=\Gamma_i^0,
+  \qquad i=1,2,3.
+  \label{eq:initial-data}
+\end{equation}
+The initial network consists of immersed curves with a single common triple
+junction. It satisfies Herring's law, the orthogonal wall-contact
+conditions, and the chemical-potential and flux compatibility conditions
+associated with the two surface-diffusion branches.
+
+\section{Problem Formalization}
+
+Initially parametrize each curve by its arclength coordinate $s_i$. A
+counterexample purporting to disprove uniqueness solely through a choice of
+parametrization is not admissible unless an explicit gauge map has first been
+fixed. As part of the solution, develop a method for explicitly imposing such
+a gauge map and use it in the analysis of the rest of the problem.
+
+Prove the following statements.
+
+\begin{enumerate}
+  \item Establish short-time existence, uniqueness, continuous dependence on
+  the initial data, and maximal $L^p$-regularity for the coupled system
+  \eqref{eq:evolution}--\eqref{eq:initial-data}, for $p>5$ with the lower
+  restriction on $p$ made as weak as possible, and under suitable initial
+  compatibility conditions.
+
+  More precisely, after expressing the evolving curves as normal graphs over
+  a suitable reference network using the gauge developed above, prove that
+  there exists $T>0$ such that
+  \begin{equation}
+    X_i
+    \in
+    W_p^1\bigl((0,T);L_p(0,1;\mathbb R^2)\bigr)
+    \cap
+    L_p\bigl((0,T);W_p^4(0,1;\mathbb R^2)\bigr),
+    \qquad i=1,2,
+  \end{equation}
+  and
+  \begin{equation}
+    X_3
+    \in
+    W_p^1\bigl((0,T);L_p(0,1;\mathbb R^2)\bigr)
+    \cap
+    L_p\bigl((0,T);W_p^2(0,1;\mathbb R^2)\bigr).
+  \end{equation}
+
+  Show that the corresponding natural initial trace spaces are
+  \begin{equation}
+    X_i^0\in W_p^{4-4/p}(0,1;\mathbb R^2),
+    \qquad i=1,2,
+  \end{equation}
+  and
+  \begin{equation}
+    X_3^0\in W_p^{2-2/p}(0,1;\mathbb R^2),
+  \end{equation}
+  subject to precisely those compatibility conditions whose traces are well
+  defined in these spaces. In particular, verify the
+  Lopatinskii--Shapiro complementing condition for the coupled junction and
+  wall boundary operators.
+
+  \item Find nontrivial assumptions on the initial network that guarantee
+  global well-posedness.
+\end{enumerate}
+
+
+\end{document}

@@ -1,0 +1,120 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amsthm,amssymb}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Open Problem}
+
+\title{Polylogarithmic Resolution Width for the Jordan-Curve Contradiction - medium}
+\author{Yaroslav Alekseev, Kilian Risse}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+For an integer $q\ge 1$, write
+\[
+[q]:=\{1,\ldots,q\},
+\qquad
+[q]_0:=\{0,\ldots,q-1\}.
+\]
+Fix integers $d,m\ge 1$, and let
+\[
+D:=2^d,
+\qquad
+M:=2^m,
+\qquad
+M\ge 2D.
+\]
+For each timestamp $t\in[M]$, introduce two blocks $R_t$ and $B_t$ of
+$2d$ Boolean variables, interpreted as binary encodings of points in
+$[D]_0^2$.  Thus the total number of variables is
+\[
+N:=4Md.
+\]
+
+For a $2d$-bit block $Z=(z_1,\ldots,z_{2d})$ and a point
+$p\in[D]_0^2$, let $\operatorname{bin}(p)\in\{0,1\}^{2d}$ be the binary
+encoding of $p$, and define the clause
+\[
+\operatorname{NEQ}(Z,p)
+:=
+\bigvee_{k:\,\operatorname{bin}(p)_k=0} z_k
+\;\vee\!
+\bigvee_{k:\,\operatorname{bin}(p)_k=1} \neg z_k.
+\]
+This clause is falsified exactly when $Z$ encodes $p$.
+
+\begin{definition}[Jordan-curve contradiction]
+Let $\mathrm{JC}_{D,M}$ be the CNF consisting of the following clauses.
+
+\begin{enumerate}
+    \item Unit clauses fixing the endpoints
+    \[
+    R_1=(0,0),
+    \qquad
+    R_M=(D-1,D-1),
+    \]
+    \[
+    B_1=(0,D-1),
+    \qquad
+    B_M=(D-1,0).
+    \]
+
+    \item For every $C\in\{R,B\}$, every $t\in[M-1]$, and every
+    $p,q\in[D]_0^2$ with $\lVert p-q\rVert_1>1$, the continuity clause
+    \[
+    \operatorname{NEQ}(C_t,p)
+    \;\vee\;
+    \operatorname{NEQ}(C_{t+1},q).
+    \]
+
+    \item For every $i,j\in[M]$ and every $p\in[D]_0^2$, the
+    disjointness clause
+    \[
+    \operatorname{NEQ}(R_i,p)
+    \;\vee\;
+    \operatorname{NEQ}(B_j,p).
+    \]
+\end{enumerate}
+
+Thus $\mathrm{JC}_{D,M}$ asserts that two continuous grid curves joining
+opposite pairs of corners never meet.  This CNF is unsatisfiable.
+\end{definition}
+
+\begin{definition}[Resolution width]
+The Resolution rule is
+\[
+\frac{C\vee x \qquad E\vee\neg x}{C\vee E}.
+\]
+A Resolution refutation of an unsatisfiable CNF $F$ is a sequence of
+clauses ending with the empty clause, where every clause is either a clause
+of $F$ or is obtained from earlier clauses by the Resolution rule.
+The width of a clause is its number of literals, and
+\[
+\operatorname{ResWidth}(F)
+:=
+\min_{\Pi}
+\max_{C\in\Pi}|C|,
+\]
+where the minimum is over all Resolution refutations $\Pi$ of $F$.
+\end{definition}
+
+\section{Problem formulation}
+
+\begin{problem}[Polylogarithmic Resolution width]
+Does there exist a constant $c>0$ such that, for all $d,m\ge 1$ with
+$M=2^m\ge 2D=2^{d+1}$,
+\[
+\operatorname{ResWidth}(\mathrm{JC}_{D,M})
+\le
+(\log N)^c,
+\qquad
+N=4Md?
+\]
+\end{problem}
+
+\end{document}

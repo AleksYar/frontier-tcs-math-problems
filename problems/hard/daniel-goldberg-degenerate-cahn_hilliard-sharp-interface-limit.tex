@@ -1,0 +1,170 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem*{problem*}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Degenerate Cahn--Hilliard Convergence to Surface Diffusion}
+\end{center}
+
+\section{Definitions}
+
+Let $\mathbb T:=\mathbb R/(2\pi\mathbb Z)$.
+
+Let
+\begin{equation}
+  \Omega=\mathbb T^2,
+\end{equation}
+and let $E_0\Subset\Omega$ have smooth embedded boundary
+\begin{equation}
+  \Gamma_0=\partial E_0.
+\end{equation}
+Let
+\begin{equation}
+  \Gamma(t)=\partial E(t),
+  \qquad
+  0\leq t<T_*,
+\end{equation}
+be the maximal smooth surface-diffusion flow
+\begin{equation}
+  V=-\Delta_\Gamma H,
+  \qquad
+  H=-\operatorname{div}_\Gamma\nu,
+\end{equation}
+where $\nu$ is outward. Fix $T<T_*$. Define
+\begin{equation}
+  F(u)=\frac{1}{2}(1-u^2)^2,
+  \qquad
+  q(z)=\tanh z,
+  \qquad
+  m_\varepsilon(u)=(1-u^2)^2+\varepsilon^6.
+\end{equation}
+On the slow surface-diffusion time scale, consider
+\begin{equation}\label{eq:ch}
+  \varepsilon^2\partial_tu_\varepsilon
+  =
+  \frac{9}{4}
+  \operatorname{div}
+  \bigl(m_\varepsilon(u_\varepsilon)\nabla\mu_\varepsilon\bigr),
+  \qquad
+  \mu_\varepsilon
+  =
+  -\varepsilon^2\Delta u_\varepsilon+F'(u_\varepsilon).
+\end{equation}
+Let $d_0$ be a smooth truncation of the signed distance to $\Gamma_0$,
+positive in $E_0$. Let $H_0^e$ be a smooth normal extension of $H_0$ in a
+fixed tubular neighborhood, cut off outside that neighborhood. Take
+\begin{equation}
+  u_\varepsilon^0(x)
+  =
+  q\left(\frac{d_0(x)-a_\varepsilon}{\varepsilon}\right)
+  -\frac{\varepsilon}{6}H_0^e(x),
+\end{equation}
+where the unique small shift $a_\varepsilon$ is chosen so that
+\begin{equation}
+  \int_\Omega u_\varepsilon^0\,dx
+  =
+  2|E_0|-|\Omega|.
+\end{equation}
+
+\section{Best Known Result}
+
+The matched expansion of the well-prepared initial layer gives
+\begin{equation}
+  \mu_\varepsilon^0
+  =
+  -\frac{2}{3}\varepsilon H_0+O(\varepsilon^2)
+\end{equation}
+inside the interfacial region. Together with the factor $9/4$, this formally
+selects the surface-diffusion law $V=-\Delta_\Gamma H$. For every classical
+phase-field solution, the normalized energy obeys the exact identity
+\begin{equation}
+\begin{split}
+  \frac{d}{dt}
+  \left[
+    \frac{3}{4}\int_\Omega
+    \left(
+      \frac{\varepsilon}{2}|\nabla u_\varepsilon|^2
+      +\frac{1}{\varepsilon}F(u_\varepsilon)
+    \right)dx
+  \right]
+  ={}&
+  -\frac{27}{16\varepsilon^3}
+  \int_\Omega
+  m_\varepsilon(u_\varepsilon)|\nabla\mu_\varepsilon|^2\,dx.
+\end{split}
+\end{equation}
+A flat transition layer already has an $L^1$ error of order
+$2(\log2)\varepsilon$ per unit interface length, so an $O(\varepsilon)$
+phase-field estimate has the optimal natural order.
+
+\newpage
+\section{Problem Formalization}
+
+\begin{problem*}[Degenerate Cahn--Hilliard limit]
+Prove that, for every $T<T_*$ and all sufficiently small $\varepsilon$,
+equation~\eqref{eq:ch} has a classical solution on $[0,T]$ and that its zero
+level set
+\begin{equation}
+  \Gamma_\varepsilon(t)
+  =
+  \{u_\varepsilon(t)=0\}
+\end{equation}
+is a single embedded normal graph over $\Gamma(t)$.
+
+Prove the optimal-order phase-field estimate
+\begin{equation}
+  \sup_{0\leq t\leq T}
+  \left\|
+    u_\varepsilon(t)
+    -
+    \bigl(2\chi_{E(t)}-1\bigr)
+  \right\|_{L^1(\Omega)}
+  \leq C_T\varepsilon,
+\end{equation}
+and the Hausdorff convergence
+\begin{equation}
+  \sup_{0\leq t\leq T}
+  d_H\bigl(\Gamma_\varepsilon(t),\Gamma(t)\bigr)
+  \longrightarrow 0.
+\end{equation}
+
+Define the normalized energy measures
+\begin{equation}
+  \lambda_\varepsilon^t
+  =
+  \frac{3}{4}
+  \left(
+    \frac{\varepsilon}{2}|\nabla u_\varepsilon(t)|^2
+    +
+    \frac{1}{\varepsilon}F(u_\varepsilon(t))
+  \right)dx.
+\end{equation}
+Prove that
+\begin{equation}
+  \lambda_\varepsilon^t
+  \stackrel{*}{\rightharpoonup}
+  \mathcal H^1\!\llcorner\Gamma(t)
+\end{equation}
+uniformly for $t\in[0,T]$ against every fixed continuous test function.
+
+Finally, prove convergence of the total dissipation:
+\begin{equation}
+  \frac{27}{16\varepsilon^3}
+  \int_0^T\int_\Omega
+  m_\varepsilon(u_\varepsilon)|\nabla\mu_\varepsilon|^2\,dx\,dt
+  \longrightarrow
+  \int_0^T\int_{\Gamma(t)}
+  |\nabla_\Gamma H|^2\,ds\,dt.
+\end{equation}
+\end{problem*}
+
+\end{document}

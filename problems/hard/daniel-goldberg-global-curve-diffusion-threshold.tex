@@ -1,0 +1,82 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem*{problem*}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries The Sharp Curvature-Oscillation Radius}
+\end{center}
+
+\section{Definitions}
+
+For a smooth regular immersed closed planar curve $\gamma$, let $L$ be
+its length, $A$ its signed area, $k$ its signed curvature, and $s$ its
+arclength parameter. Define
+\begin{equation}
+  N(\gamma)
+  =
+  \frac{1}{2\pi}\int_\gamma k\,ds,
+  \qquad
+  \overline k
+  =
+  \frac{1}{L}\int_\gamma k\,ds,
+\end{equation}
+and
+\begin{equation}
+  K_{\mathrm{osc}}(\gamma)
+  =
+  L\int_\gamma(k-\overline k)^2\,ds.
+\end{equation}
+For a curve $\gamma_0$ satisfying $N(\gamma_0)=1$, let
+\begin{equation}
+  T_{\max}(\gamma_0)\in(0,\infty]
+\end{equation}
+be its maximal smooth existence time under curve diffusion, with the sign
+chosen so that length decreases. Define
+\begin{equation}
+  \varepsilon_{\mathrm{CD}}
+  =
+  \sup\left\{
+    \varepsilon>0:
+    K_{\mathrm{osc}}(\gamma_0)<\varepsilon
+    \Longrightarrow
+    T_{\max}(\gamma_0)=\infty
+    \text{ for every such }\gamma_0
+  \right\}.
+\end{equation}
+
+\section{Best Known Result}
+
+The sharp inequality
+\begin{equation}
+  1-\frac{4\pi A}{L^2}
+  \leq
+  \frac{K_{\mathrm{osc}}}{8\pi^2}
+\end{equation}
+shows that sufficiently small curvature oscillation forces $A>0$.
+Existing small-data theory therefore gives
+$\varepsilon_{\mathrm{CD}}>0$.
+Conversely, any smooth rotation-one curve with $A\leq 0$ has finite maximal
+time, so such curves give a finite upper bound for
+$\varepsilon_{\mathrm{CD}}$.
+
+\section{Problem Formalization}
+
+Determine the exact value of $\varepsilon_{\mathrm{CD}}$.
+
+An exact value is ideal. Until it is known, a valid result must provide a
+theorem-certified bracket
+\begin{equation}
+  L\leq\varepsilon_{\mathrm{CD}}\leq U.
+\end{equation}
+Unsupported point estimates are not sufficient.
+
+\end{document}

@@ -1,0 +1,74 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{definition}
+\newtheorem*{problem*}{Problem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Relative-Periodic Coupled Graphs}
+\end{center}
+
+\section{Definitions}
+
+Let
+\[
+  \mathbb T=\mathbb R/(2\pi\mathbb Z).
+\]
+Let smooth periodic functions $u,v$ solve
+\begin{equation}
+  u_t
+  =
+  \partial_x\left(\frac{u_x}{\sqrt{1+u_x^2}}\right)
+  -(u-v),
+  \qquad
+  v_t
+  =
+  \partial_x\left(\frac{v_x}{\sqrt{1+v_x^2}}\right)
+  +(u-v).
+\end{equation}
+Suppose that, for some
+\begin{equation}
+  T>0,
+  \qquad
+  a\in\mathbb T,
+  \qquad
+  b\in\mathbb R,
+\end{equation}
+one has
+\begin{equation}
+  u(x,T)=u(x+a,0)+b,
+  \qquad
+  v(x,T)=v(x+a,0)+b.
+\end{equation}
+
+\section{Best Known Result}
+
+Horizontal translations and common vertical translations are symmetries of
+the functional
+\begin{equation}
+  \mathcal L(u,v)
+  =
+  \int_{\mathbb T}
+  \left(
+    \sqrt{1+u_x^2}
+    +\sqrt{1+v_x^2}
+    +\frac{1}{2}(u-v)^2
+  \right)dx.
+\end{equation}
+The source indicates that an exact Lyapunov identity, together with rigidity
+of the critical points, should determine the classification. It does not
+provide the resulting classification.
+
+\section{Problem Formalization}
+
+
+Classify all such smooth solutions and all possible triples $(a,b,T)$.
+
+\end{document}
