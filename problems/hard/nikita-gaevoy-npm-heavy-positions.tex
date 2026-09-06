@@ -1,0 +1,469 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{url}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\dE}{\delta_E}
+\newcommand{\Occ}{\operatorname{Occ}^E}
+\newcommand{\PILLAR}{\textnormal{PILLAR}}
+\newcommand{\PMwE}{\textnormal{PMwith\hspace{0pt}Edits}}
+\newcommand{\NPM}{\textnormal{New\hspace{0pt}Periodic\hspace{0pt}Matches}}
+\newcommand{\DPM}{\textnormal{Dynamic\hspace{0pt}Puzzle\hspace{0pt}Matching}}
+\newcommand{\val}{\operatorname{val}}
+\newcommand{\Ot}{\widetilde{O}}
+\newcommand{\per}{\operatorname{per}}
+
+\hyphenation{Mo-zes}
+
+\title{The Heavy-Position Bottleneck in Near-Periodic Pattern Matching - Hard}
+\author{Nikita Gaevoy}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+Everything in this section is a summary of published work. Subsections
+\ref{sec:strings}--\ref{sec:pillar} follow Charalampopoulos, Kociumaka and
+Wellnitz~\cite{CKW20,CKW22}; Subsections
+\ref{sec:npm}--\ref{sec:seaweed} follow~\cite{CKW22} and, through it,
+Tiskin's framework~\cite{Tiskin08,Tiskin15,TiskinArXiv}. Nothing in it is new.
+
+\subsection{Strings and edit distance}\label{sec:strings}
+
+We work with strings over an arbitrary alphabet $\Sigma$. A string $X$ has
+length $|X|$ and consists of the characters $X[0]$, $X[1]$, \ldots,
+$X[|X|-1]$; for $0\le i\le j\le|X|$ we write
+\[
+X[\,i\mathinner{.\,.}j\,) := X[i]X[i+1]\cdots X[j-1]
+\]
+for its \emph{fragment} of length $j-i$. A string $S$ is \emph{primitive} if
+$S=U^y$ holds for no string $U$ and no integer $y>1$; $\per(S)$ denotes the
+shortest period of $S$; $S^\infty$ denotes the infinite repetition
+$S\cdot S\cdots$.
+
+\begin{definition}[Edit distance]
+The \emph{edit distance} $\dE(X,Y)$ of two strings $X,Y$ is the minimum number
+of insertions, deletions and substitutions of single characters required to
+transform $X$ into $Y$.
+\end{definition}
+
+For strings $U,V$ we further write, following~\cite[Section 1.3]{CKW22},
+\[
+\begin{aligned}
+\dE(U,V^*)&:=\min\bigl\{\dE\bigl(U,V^\infty[\,0\mathinner{.\,.}j\,)\bigr):j\in\mathbb{Z}_{\ge0}\bigr\},\\
+\dE(U,{*}V^*)&:=\min\bigl\{\dE\bigl(U,V^\infty[\,i\mathinner{.\,.}j\,)\bigr):0\le i\le j\bigr\}
+\end{aligned}
+\]
+for the minimum edit distance between $U$ and a prefix, respectively a
+substring, of $V^\infty$.
+
+\subsection{Pattern matching with edits}\label{sec:pmwe}
+
+\begin{definition}[$k$-error occurrences, {\cite[Section 1.3]{CKW22}}]\label{def:occ}
+Let $P$ be a string (the \emph{pattern}), let $T$ be a string (the \emph{text})
+and let $k>0$ be an integer (the \emph{threshold}). The pattern $P$ has a
+\emph{$k$-error occurrence} in $T$ at position $v$ if $\dE(P,T[\,v\mathinner{.\,.}w\,))\le k$
+for some $w\ge v$. We write
+\[
+\Occ_k(P,T):=\bigl\{v:\exists_{w\ge v}\ \dE\bigl(P,T[\,v\mathinner{.\,.}w\,)\bigr)\le k\bigr\}
+\]
+for the set of starting positions of $k$-error occurrences of $P$ in $T$.
+\end{definition}
+
+\begin{definition}[\PMwE{}, {\cite[Section 1.3]{CKW22}}]\label{def:pmwe}
+The \emph{pattern matching with edits} problem \PMwE$(P,T,k)$ takes as input a
+pattern $P$ of length $m$, a text $T$ of length $n$, and a positive integer
+$k\le m$, and asks for the set $\Occ_k(P,T)$.
+\end{definition}
+
+Throughout, $m$, $n$ and $k$ denote these three quantities, and $m\le n$.
+
+\begin{remark}\label{rem:report}
+A $k$-error occurrence is a \emph{starting position} $v$; the problem does not
+ask for the corresponding endpoints $w$, nor for the alignments. Landau, Myers
+and Schmidt~\cite{LMS98} show that all the fragments of $T$ at edit distance
+at most $k$ from $P$ can be listed in $O(nk)$ time; see
+Remark~\ref{rem:variants} for the status of this stronger output requirement in
+the regime considered here.
+\end{remark}
+
+\begin{remark}\label{rem:output}
+For the running times considered below, the output has to be represented
+implicitly. Charalampopoulos, Kociumaka and Wellnitz~\cite[Main Theorem
+7]{CKW20} show that $\Occ_k(P,T)$ always decomposes into $O(n/m\cdot k^3)$
+disjoint arithmetic progressions with a common difference, and this is the
+representation used by all the results quoted below. Unless $P$ is
+approximately periodic, $|\Occ_k(P,T)|=O(n/m\cdot k^2)$ and the set may be
+reported explicitly~\cite[Section 1]{CKW22}.
+\end{remark}
+
+\subsection{The \PILLAR{} model}\label{sec:pillar}
+
+\begin{definition}[\PILLAR{} model, {\cite{CKW20}}, {\cite[Section 2.1]{CKW22}}]\label{def:pillar}
+In the \PILLAR{} model one maintains a collection $\mathcal X$ of strings and
+operates on fragments of the strings in $\mathcal X$, each represented by a
+handle. The running time of an algorithm is the number of calls to the
+following \emph{primitive \PILLAR{} operations}, plus any extra computation,
+which is accounted for separately:
+\begin{itemize}
+    \item $\mathrm{Extract}(S,\ell,r)$: given a fragment $S$ and
+    $0\le\ell\le r\le|S|$, return a handle to $S[\,\ell\mathinner{.\,.}r\,)$;
+    \item $\mathrm{LCP}(S,T)$ and $\mathrm{LCP}^R(S,T)$: the length of the
+    longest common prefix, respectively suffix, of $S$ and $T$;
+    \item $\mathrm{IPM}(P,T)$: assuming $|T|\le2|P|$, the set of exact
+    occurrences of $P$ in $T$, represented as an arithmetic progression with
+    difference $\per(P)$;
+    \item $\mathrm{Access}(S,i)$ and $\mathrm{Length}(S)$.
+\end{itemize}
+\end{definition}
+
+In the standard setting, where $P$ and $T$ are given explicitly, each primitive
+operation is implemented in $O(1)$ time after an $O(n)$-time
+preprocessing~\cite[Section 7.1]{CKW22}; the same implementation serves the
+internal setting of~\cite{KRRW15}. Implementations are also available in the
+fully compressed setting, where the strings are given as straight-line
+programs, and in the dynamic setting, where a collection of strings is
+maintained under creation, splitting and concatenation~\cite[Sections 7.2,
+7.3]{CKW22}. A \PILLAR{}-model bound therefore yields an algorithm in each of
+these settings at once.
+
+Of the derived operations of the \PILLAR{} toolbox of~\cite{CKW20} we shall
+need only the following one.
+
+\begin{theorem}[$\mathrm{Verify}(P,T,k,I)$, {\cite[Section 5]{CH02}},
+{\cite[Fact 2.9]{CKW22}}]\label{thm:verify}
+Let $P$ be a string of length $m$, let $T$ be a string, let $k\le m$ be a
+positive integer and let $I$ be an interval of positions. Using
+$O\bigl(k(k+|I|)\bigr)$ \PILLAR{} operations one can compute
+\[
+\bigl\{\bigl(\ell,\ \textstyle\min_{r}\dE(P,T[\,\ell\mathinner{.\,.}r\,))\bigr):
+\ell\in\Occ_k(P,T)\cap I\bigr\}.
+\]
+\end{theorem}
+
+\subsection{The periodic bottleneck}\label{sec:npm}
+
+The structural analysis of~\cite{CKW20} reduces \PMwE{} to the case in which
+both the pattern and the text are approximately periodic. That case is
+isolated in~\cite{CKW22} as follows.
+
+\begin{definition}[\NPM{}, {\cite[Section 1.3]{CKW22}}]\label{def:npm}
+An instance of \NPM$(P,T,k,d,Q,\mathcal A_P,\mathcal A_T)$ consists of
+\begin{itemize}
+    \item a pattern $P$ of length $m$ and a threshold $k\in[\,0\mathinner{.\,.}m\,]$;
+    \item a positive integer $d\ge 2k$;
+    \item a text $T$ of length $n\in[\,m-k\mathinner{.\,.}3/2\,m+k\,)$;
+    \item a primitive string $Q$ of length $q:=|Q|\le m/8d$;
+    \item edit-distance alignments
+    \[
+    \mathcal A_P:P\rightsquigarrow Q^\infty[\,0\mathinner{.\,.}y_P\,)
+    \qquad\text{and}\qquad
+    \mathcal A_T:T\rightsquigarrow Q^\infty[\,x_T\mathinner{.\,.}y_T\,)
+    \]
+    with $x_T\in[\,0\mathinner{.\,.}q\,)$, of respective costs
+    \[
+    d_P:=\dE(P,{*}Q^*)=\dE(P,Q^*)\le d
+    \qquad\text{and}\qquad
+    d_T:=\dE(T,{*}Q^*)\le3d.
+    \]
+\end{itemize}
+The output is the set $\Occ_k(P,T)$, represented as $O(d^3)$ disjoint
+arithmetic progressions with difference $q$.
+\end{definition}
+
+\begin{theorem}[{\cite[Fact 1.1]{CKW22}}, after {\cite{CKW20}}]\label{thm:reduction}
+Let $P$ be a pattern of length $m$, let $T$ be a text of length $n$ and let
+$k\le m$ be a positive integer. One can compute a representation of
+$\Occ_k(P,T)$ as $O(n/m\cdot k^3)$ disjoint arithmetic progressions with the
+same difference in time $O(n/m\cdot k^3)$ in the \PILLAR{} model, plus the time
+required to solve several instances
+\[
+\NPM(P_i,T_i,k_i,d_i,Q_i,\mathcal A_{P_i},\mathcal A_{T_i})
+\]
+with $\sum_i|P_i|=O(n)$ and, for each $i$, $|P_i|\le m$ and
+$d_i=\lceil 8k/m\cdot|P_i|\rceil$.
+\end{theorem}
+
+\begin{remark}\label{rem:npmscaling}
+Theorem~\ref{thm:reduction} is what makes \NPM{} the right subproblem to
+optimise: since $d_i=\Theta(k/m\cdot|P_i|)$ and $\sum_i|P_i|=O(n)$, an
+$O(d^{c})$-time algorithm for \NPM{} yields an $O(n/m\cdot k^{c})$-time
+algorithm for \PMwE{} for every $c\ge1$, and polylogarithmic factors carry over
+unchanged~\cite[proof of Main Theorem 2]{CKW22}.
+\end{remark}
+
+The heavy\slash light dichotomy of~\cite[Sections 5, 6]{CKW22} splits the positions
+of $T$ according to a threshold $\eta$. Its definition rests on the
+\emph{locked fragments} of~\cite[Lemma 6.9]{CKW20} and on a marking scheme
+whose details~\cite[Definitions 5.5, 5.8]{CKW22} are not needed to state the
+problems below; what is needed is the following interface.
+
+\begin{theorem}[$\mathrm{Heavy}$, {\cite[Lemmas 5.9, 5.10]{CKW22}}]\label{thm:heavy}
+Consider an instance of \NPM{} and an integer threshold $\eta\ge1$. The
+associated set $H_\eta\subseteq[\,0\mathinner{.\,.}n-m+k\,]$ of \emph{heavy positions} can
+be computed in $O(d^2\log\log d)$ time in the \PILLAR{} model and is
+represented as the union of $O(d^2)$ disjoint integer ranges. Its size
+satisfies
+\[
+|H_\eta|=O\bigl((d^2/\eta+d)(d+q)\bigr).
+\]
+The positions in $[\,0\mathinner{.\,.}n-m+k\,]\setminus H_\eta$ are called \emph{light}.
+\end{theorem}
+
+\subsection{Puzzles, seaweeds and dynamic puzzle matching}\label{sec:seaweed}
+
+The material of this subsection is not needed to state the problem below; it
+is used in the remarks that follow it, and it is the apparatus in which the
+known approaches to the problem are expressed.
+
+\begin{definition}[$\Delta$-puzzle, {\cite[Definition 1.4]{CKW22}}]\label{def:puzzle}
+For $\Delta\in\mathbb{Z}_{\ge0}$, strings $S_1,\ldots,S_z$ with $z\ge2$ form a
+\emph{$\Delta$-puzzle} if $|S_i|\ge\Delta$ for each $i\in[\,1\mathinner{.\,.}z\,]$ and
+$S_i[\,|S_i|-\Delta\mathinner{.\,.}|S_i|\,)=S_{i+1}[\,0\mathinner{.\,.}\Delta\,)$ for each
+$i\in[\,1\mathinner{.\,.}z\,)$. Its \emph{value} is
+\[
+\val_\Delta(S_1,\ldots,S_z):=S_1\cdot S_2[\,\Delta\mathinner{.\,.}|S_2|\,)\cdots
+S_z[\,\Delta\mathinner{.\,.}|S_z|\,).
+\]
+\end{definition}
+
+\begin{definition}[\DPM{}, {\cite[Section 1.3]{CKW22}}]\label{def:dpm}
+An instance \DPM$(k,\Delta,\mathcal S_\beta,\mathcal S_\mu,\mathcal S_\varphi)$
+is given by positive integers $k$ and $\Delta$ and by families
+$\mathcal S_\beta$, $\mathcal S_\mu$, $\mathcal S_\varphi$ of \emph{leading},
+\emph{internal} and \emph{trailing} pieces. The maintained object is a
+sequence $\mathcal I=(U_1,V_1)\cdots(U_z,V_z)$ of pairs of strings such that
+$U_1,V_1\in\mathcal S_\beta$, $U_z,V_z\in\mathcal S_\varphi$, and
+$U_i,V_i\in\mathcal S_\mu$ for $i\in(\,1\mathinner{.\,.}z\,)$, and such that the
+\emph{torsion} $\operatorname{tor}(\mathcal I):=\sum_{i=1}^{z}|U_i|-|V_i|$
+satisfies $\operatorname{tor}(\mathcal I)\le\Delta/2-k$. The updates are the
+deletion of a pair, the insertion of a pair, and the substitution of a pair.
+A query returns
+\[
+\Occ_k(\mathcal I):=\Occ_k\bigl(\val_\Delta(U_1,\ldots,U_z),\
+\val_\Delta(V_1,\ldots,V_z)\bigr)
+\]
+under the promise that $U_1,\ldots,U_z$ and $V_1,\ldots,V_z$ are
+$\Delta$-puzzles.
+\end{definition}
+
+For a family $\mathcal S$ of strings, its \emph{median edit distance} is
+\[
+\dE(\mathcal S):=\min_{\hat S\in\Sigma^*}\sum_{S\in\mathcal S}\dE(S,\hat S).
+\]
+
+\begin{theorem}[{\cite[Theorem 1.5]{CKW22}}]\label{thm:dpm}
+There is a data structure for the problem
+\[
+\DPM(k,\Delta,\mathcal S_\beta,\mathcal S_\mu,\mathcal S_\varphi)
+\]
+with $O(\Delta\log z\log\Delta)$-time updates and queries,
+$O(\Delta z\log\Delta)$-time initialisation and
+$O\bigl((d^3+\Delta^2d)\log^2(d+\Delta)\bigr)$-time preprocessing, where
+$d=\dE(\mathcal S_\beta)+\dE(\mathcal S_\mu)+\dE(\mathcal S_\varphi)$ and $z$
+is the length of the maintained sequence.
+\end{theorem}
+
+The data structure of Theorem~\ref{thm:dpm} is built on the seaweed monoid of
+permutation matrices, also known as the monoid of sticky
+braids~\cite{Tiskin08,Tiskin15,TiskinArXiv}. For strings $X,Y$ one considers
+the alignment graph on $[\,0\mathinner{.\,.}|Y|\,]\times[\,0\mathinner{.\,.}|X|\,]$ in which horizontal
+and vertical edges have weight $1$ and a diagonal edge has weight $0$ for a
+match and $1$ for a substitution; then $\dE(X,Y[\,v\mathinner{.\,.}w\,))$ is the distance
+from $(v,0)$ to $(w,|X|)$. All these distances are encoded in linear space by a
+permutation matrix $P_{Y,X}$, the \emph{seaweed matrix}, and seaweed matrices
+compose under concatenation of either argument by the \emph{seaweed product}
+$\odot$, which is the implicit $(\min,+)$ product of the corresponding
+unit-Monge matrices~\cite[Lemma 9.2]{CKW22}.
+
+\begin{theorem}[{\cite[Theorem 8.2]{CKW22}}, after {\cite{Tiskin15,TiskinArXiv}}]\label{thm:steadyant}
+For any two bounded permutation matrices $A,B$ of size $n$, the seaweed product
+$A\odot B$ can be computed in $O(n\log n)$ time.
+\end{theorem}
+
+Since $P_{Y,X}$ encodes $\dE(X,Y)$, it cannot be computed in truly subquadratic
+time. The contribution of~\cite[Section 8]{CKW22} is that, when only alignments
+of cost at most $k$ matter, the relevant paths stay inside a diagonal band
+$I=[\,-k\mathinner{.\,.}|Y|-|X|+k\,]$ of the alignment graph, and the seaweed matrix of the
+graph restricted to that band admits an encoding of size $O(|I|)$; this defines
+a \emph{restriction} operation $P\mapsto P|_I$ on bounded permutation matrices
+that is computable in linear time and commutes with $\odot$~\cite[Lemmas 8.16,
+8.20, 8.21]{CKW22}. The \DPM{} data structure expresses the restricted seaweed
+matrix of $\val_\Delta(V_1,\ldots,V_z)$ against $\val_\Delta(U_1,\ldots,U_z)$
+as a seaweed product of $z$ restricted matrices of size $O(\Delta)$, one per
+pair, and maintains that product in a balanced binary tree; an update
+recomputes $O(\log z)$ partial products by Theorem~\ref{thm:steadyant}, and a
+query applies the SMAWK algorithm~\cite{AKMSW87} to the matrix at the
+root~\cite[Lemma 9.5, Section 9]{CKW22}.
+
+\section{Problem formulation}
+
+\begin{problem}[The heavy-position bottleneck]\label{prob:heavy}
+Consider an instance of \NPM{} and let $H_1$ be its set of heavy positions for
+the threshold $\eta=1$, as in Theorem~\ref{thm:heavy}. Compute
+\[
+\Occ_k(P,T)\cap H_1
+\]
+in time $\Ot(d^3)$ in the \PILLAR{} model.
+\end{problem}
+
+\begin{remark}\label{rem:heavyimplies}
+A solution to Problem~\ref{prob:heavy} solves the whole of \NPM{} in time
+$\Ot(d^3)$ in the \PILLAR{} model, which by
+Theorem~\ref{thm:reduction} and Remark~\ref{rem:npmscaling} computes
+$\Occ_k(P,T)$ in time $\Ot\bigl(n+k^3\cdot n/m\bigr)$. This is a matter of
+setting $\eta:=1$ in the proof of~\cite[Lemma 1.3]{CKW22} and
+checking that every step other than the call to $\mathrm{HeavyMatches}$ already
+runs in time $\Ot(d^3)$ for that value of $\eta$:
+\begin{itemize}
+    \item computing the locked fragments takes $O(d^2)$ time, and separating
+    the heavy positions from the light ones takes $O(d^2\log\log d)$
+    time~\cite[Lemmas 5.4, 5.9]{CKW22};
+    \item the light positions are handled by
+    $\mathrm{TrimmedPM}$~\cite[Lemma 4.36]{CKW22} with trimming parameter
+    $\alpha=2\eta+30=32$, which uses $O(d^2\alpha)=O(d^2)$ updates and queries
+    of a \DPM{} structure with $\Delta=O(d)$ and $z=O(d\alpha)=O(d)$; by
+    Theorem~\ref{thm:dpm} these cost $O(d\log^2d)$ each, for a total of
+    $O(d^3\log^2d)$, on top of $O(d^3\log^2d)$ preprocessing and $O(d^2\log n)$
+    \PILLAR{} operations;
+    \item the surplus candidates are removed in $O(d^3\log d)$
+    time~\cite[Claims 6.26, 6.27, 6.28]{CKW22}, the relevant sets having size
+    $O(d^3/\eta)=O(d^3)$ and $O(d^3\alpha)=O(d^3)$.
+\end{itemize}
+The only remaining term is $\mathrm{HeavyMatches}$, which
+by~\cite[Lemma 6.1]{CKW22} costs $O(d^3+d^4/\eta)=O(d^4)$ at $\eta=1$ and which
+Problem~\ref{prob:heavy} replaces by $\Ot(d^3)$. This is a sufficient
+condition, not an equivalent one.
+\end{remark}
+
+\begin{remark}\label{rem:otherroutes}
+Problem~\ref{prob:heavy} fixes $\eta=1$ because that is the only value at which
+the light side of the argument is already within budget. A solver who prefers to attack the
+light side instead may equally well aim at any pair of improvements that makes
+\[
+\underbrace{O(d^3+d^4/\eta)}_{\text{heavy}}+\underbrace{\Ot(d^3\eta)}_{\text{light}}
+\]
+into $\Ot(d^3)$ for some admissible $\eta$; the two summands are
+Lemma 6.1 and Lemma 4.36 of~\cite{CKW22} respectively. Problem~\ref{prob:heavy}
+is the instance $\eta=1$ of this, and is singled out because at $\eta=1$ only
+one of the two summands is out of budget.
+\end{remark}
+
+\begin{remark}\label{rem:scope}
+The scope stops at $k^3$, rather than at the conditional lower bound
+$k^{2-\Omega(1)}$ that follows from SETH~\cite{BI18},~\cite[Section 1]{CKW22}, because $k^3$ is where the output
+representation used throughout~\cite{CKW20,CKW22} runs out: that
+representation writes $\Occ_k(P,T)$ using $\Ot(n/m\cdot k^3)$ bits
+(Remark~\ref{rem:output}), and, as observed by Kociumaka, Nogler and
+Wellnitz~\cite[Section 1]{KNW26}, it is therefore ``fundamentally incompatible
+with reaching the lower bound''. Going below $k^3$ requires a different
+encoding of the output; that such an encoding exists at all is the content
+of~\cite{KNW24,KNW26}, which show that $O(n/m\cdot k\log(m|\Sigma|/k))$ bits
+suffice, but no algorithm is known to exploit it.
+\end{remark}
+
+\begin{remark}\label{rem:variants}
+Two variants are equally interesting and are not settled by the problems above.
+First, the decision version, which asks only whether the set $\Occ_k(P,T)$ is
+empty, and the approximate version, which allows reporting an arbitrary subset
+of
+$\Occ_{(1+\varepsilon)k}(P,T)\setminus\Occ_k(P,T)$, are proposed
+in~\cite[Section 1.2]{CKW22} as possibly easier relaxations. Second, the
+reporting version of Remark~\ref{rem:report}, which asks for all fragments of
+$T$ at edit distance at most $k$ from $P$ rather than for their starting
+positions only: the authors of~\cite{CKW22} write that the $O(k^4\cdot n/m)$
+\PILLAR{} algorithm of~\cite{CKW20} can be generalised to report all such
+fragments, whereas their own $\Ot(k^{3.5}\cdot n/m)$ solution ``does not seem to
+generalise''~\cite[Section 1.2]{CKW22}. A solution for starting positions alone is a
+solution to the problem as posed.
+\end{remark}
+
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{KRRW15}
+
+\bibitem[AKM{\etalchar{+}}87]{AKMSW87}
+Alok Aggarwal, Maria~M. Klawe, Shlomo Moran, Peter~W. Shor, and Robert~E.
+  Wilber.
+\newblock Geometric applications of a matrix-searching algorithm.
+\newblock {\em Algorithmica}, 2:195--208, 1987.
+
+\bibitem[BI18]{BI18}
+Arturs Backurs and Piotr Indyk.
+\newblock Edit distance cannot be computed in strongly subquadratic time
+  (unless {SETH} is false).
+\newblock {\em SIAM Journal on Computing}, 47(3):1087--1097, 2018.
+
+\bibitem[CH02]{CH02}
+Richard Cole and Ramesh Hariharan.
+\newblock Approximate string matching: A simpler faster algorithm.
+\newblock {\em SIAM Journal on Computing}, 31(6):1761--1782, 2002.
+
+\bibitem[CKW20]{CKW20}
+Panagiotis Charalampopoulos, Tomasz Kociumaka, and Philip Wellnitz.
+\newblock Faster approximate pattern matching: A unified approach.
+\newblock In {\em 61st Annual IEEE Symposium on Foundations of Computer Science
+  (FOCS 2020)}, pages 978--989, 2020.
+\newblock Full version: arXiv:2004.08350.
+
+\bibitem[CKW22]{CKW22}
+Panagiotis Charalampopoulos, Tomasz Kociumaka, and Philip Wellnitz.
+\newblock Faster pattern matching under edit distance: A reduction to dynamic
+  puzzle matching and the seaweed monoid of permutation matrices.
+\newblock In {\em 63rd Annual IEEE Symposium on Foundations of Computer Science
+  (FOCS 2022)}, pages 698--707, 2022.
+\newblock Full version: arXiv:2204.03087.
+
+\bibitem[KNW24]{KNW24}
+Tomasz Kociumaka, Jakob Nogler, and Philip Wellnitz.
+\newblock On the communication complexity of approximate pattern matching.
+\newblock In {\em 56th Annual ACM Symposium on Theory of Computing (STOC
+  2024)}, 2024.
+\newblock arXiv:2403.18812.
+
+\bibitem[KNW26]{KNW26}
+Tomasz Kociumaka, Jakob Nogler, and Philip Wellnitz.
+\newblock The communication complexity of pattern matching with edits
+  revisited.
+\newblock In {\em 37th Annual Symposium on Combinatorial Pattern Matching (CPM
+  2026)}, 2026.
+\newblock arXiv:2604.15601.
+
+\bibitem[KRRW15]{KRRW15}
+Tomasz Kociumaka, Jakub Radoszewski, Wojciech Rytter, and Tomasz Wale{\'n}.
+\newblock Internal pattern matching queries in a text and applications.
+\newblock In {\em 26th Annual ACM-SIAM Symposium on Discrete Algorithms (SODA
+  2015)}, pages 532--551, 2015.
+
+\bibitem[LMS98]{LMS98}
+Gad~M. Landau, Eugene~W. Myers, and Jeanette~P. Schmidt.
+\newblock Incremental string comparison.
+\newblock {\em SIAM Journal on Computing}, 27(2):557--582, 1998.
+
+\bibitem[Tis08]{Tiskin08}
+Alexander Tiskin.
+\newblock Semi-local string comparison: Algorithmic techniques and
+  applications.
+\newblock {\em Mathematics in Computer Science}, 1(4):571--603, 2008.
+
+\bibitem[Tis13]{TiskinArXiv}
+Alexander Tiskin.
+\newblock Semi-local string comparison: algorithmic techniques and
+  applications, 2013.
+\newblock arXiv:0707.3619v21.
+
+\bibitem[Tis15]{Tiskin15}
+Alexander Tiskin.
+\newblock Fast distance multiplication of unit-{M}onge matrices.
+\newblock {\em Algorithmica}, 71(4):859--888, 2015.
+
+\end{thebibliography}
+
+\end{document}

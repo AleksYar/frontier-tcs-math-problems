@@ -1,0 +1,216 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\LQD}{\text{LQD}}
+\newcommand{\LQDf}{\text{LQD}^{f}}
+\newcommand{\LateQD}{\text{LateQD}}
+\newcommand{\ALG}{\text{ALG}}
+\newcommand{\OPT}{\text{OPT}}
+
+\hyphenation{Niko-lenko}
+
+\title{A Better Upper Bound for the Shared Memory Switch - Medium}
+\author{Nikita Gaevoy}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+\subsection{The model}
+
+A \emph{shared memory switch} has one input port and $N$ output ports. Each
+output port $i\in\{1,\ldots,N\}$ has its own queue $Q^{(i)}$ of unbounded
+individual size, subject to the single global constraint that the queues share
+a common buffer of size $B$:
+\[
+\sum_{i=1}^{N}\bigl|Q^{(i)}\bigr|\ \le\ B .
+\]
+Packets are \emph{uniform}: they all have the same size and the same value, and
+each packet is labelled with the index of the output port it is destined for.
+Since packets are uniform, a queue is fully described by the number of packets
+it holds, and we identify $Q^{(i)}$ with that number.
+
+Packets arrive at discrete slotted time. Each time slot $t$ consists of two
+phases.
+\begin{enumerate}
+    \item \textbf{Arrival phase.} A multiset $A_t$ of packets arrives; the
+    input port may deliver arbitrarily many packets in one slot. Writing $B_t$
+    for the set of packets in the buffer at the beginning of slot $t$ and
+    $B_t'$ for the set after the arrival phase, a \emph{buffer management
+    policy} is free to accept any subset of $A_t$ and to push out any subset of
+    the buffer, subject to
+    \[
+    B_t'\subseteq B_t\cup A_t
+    \qquad\text{and}\qquad
+    |B_t'|\le B .
+    \]
+    \item \textbf{Transmission phase.} Every nonempty output queue transmits
+    one packet, so that
+    \[
+    \bigl|Q^{(i)}\bigr|
+    \ :=\
+    \max\bigl\{0,\ \bigl|Q^{(i)}\bigr|-1\bigr\}
+    \qquad\text{for every } i,
+    \]
+    and $B_{t+1}=\bigcup_{i=1}^{N}Q^{(i)}$.
+\end{enumerate}
+
+An \emph{instance} is a sequence $\tau:\mathbb{N}\to\mathbb{N}^{N}$, where
+$\tau(t)_i$ is the number of packets arriving at slot $t$ destined for
+$Q^{(i)}$. The instance has \emph{duration} $T(\tau)$ if no packets arrive
+after slot $T(\tau)$. For an instance of finite duration and a policy $\ALG$,
+we write $\ALG(\tau)$ for the total number of packets transmitted by $\ALG$ on
+$\tau$; since at most $B$ packets remain in the buffer after the last arrival,
+this is a finite quantity determined by the slots up to $T(\tau)+B$.
+
+We denote by $\OPT$ the optimal offline (clairvoyant) policy, which knows the
+entire instance in advance and has unbounded computational power. The goal is
+throughput maximisation, so the competitive ratio is defined as
+
+\begin{definition}[Competitive ratio]
+For a policy $\ALG$,
+\[
+\alpha_{\ALG}
+:=\sup_{\tau\,:\,T(\tau)<\infty}\alpha_{\ALG}(\tau),
+\qquad\text{where}\qquad
+\alpha_{\ALG}(\tau):=\frac{\OPT(\tau)}{\ALG(\tau)} .
+\]
+Thus $\alpha_{\ALG}\ge 1$, and smaller is better. A policy is
+\emph{$\alpha$-competitive} if $\alpha_{\ALG}\le\alpha$.
+\end{definition}
+
+It is convenient to allow instances of infinite duration. If
+$\tau_1\subseteq\tau_2\subseteq\cdots$ is an increasing sequence of instances,
+with $\tau_n$ of length $n$ and the first $n$ slots of $\tau_{n+1}$ coinciding
+with $\tau_n$, then $\tau=\bigcup_{n\ge 1}\tau_n$ is an \emph{infinite
+instance} and we set
+$\alpha_{\ALG}(\tau)=\lim_{n\to\infty}\alpha_{\ALG}(\tau_n)$. An infinite
+instance may use an infinite number of output queues; if every queue receives
+packets only during a finite window, such an instance can always be emulated
+with finitely many queues by reusing queues that have been empty for more than
+$B$ slots.
+
+Throughout, $\alpha^{*}$ denotes the infimum of $\alpha_{\ALG}$ over all
+deterministic online policies $\ALG$, i.e.\ the best competitive ratio
+achievable online.
+
+\subsection{The policies}
+
+\begin{definition}[Longest Queue Drop]
+The \emph{Longest Queue Drop} policy $\LQD$ accepts every arriving packet. If
+this makes the total occupancy exceed $B$, then $\LQD$ repeatedly drops a
+packet from a queue that is currently longest, breaking ties arbitrarily, until
+the occupancy is again at most $B$.
+\end{definition}
+
+$\LQD$ is the natural online policy for this model: it equalises queue lengths,
+and thereby keeps as many queues as possible nonempty and transmitting.
+
+\begin{definition}[$\LateQD$]
+Run the switch with an unlimited buffer, processing packets in LIFO order. In
+that run each packet $p$ occupies the buffer over a time interval
+$[b_p,e_p]$, where $e_p$ may be infinite. When the buffer overflows, the
+clairvoyant policy $\LateQD$ pushes out a packet $p$ whose expected
+transmission moment $e_p$ is latest; in particular packets with $e_p=\infty$
+are pushed out first.
+\end{definition}
+
+\begin{theorem}[\cite{BDGN19}]\label{thm:lateqd}
+$\LateQD$ is optimal, i.e.\ $\LateQD(\tau)=\OPT(\tau)$ for every instance
+$\tau$. It is computable in linear time, and it remains optimal in the
+fractional model.
+\end{theorem}
+
+Theorem~\ref{thm:lateqd} is what makes the offline side of a competitive ratio
+effectively computable, and hence what makes hard instances searchable by
+simulation.
+
+\section{Problem formulation}
+
+\begin{problem}[Upper bound]\label{prob:upper}
+Prove that $\alpha^{*}<1.6918$, improving on the best upper bound known for
+this problem~\cite{AEMV21,AEMV24}. Either of the following is a solution:
+\begin{itemize}
+    \item prove
+    \[
+    \alpha_{\LQD}\ \le\ c
+    \]
+    for an explicit constant $c<1.6918$, with no restriction on the number of
+    output ports $N$ or on the buffer size $B$; or
+    \item exhibit a deterministic online policy $\ALG$ with
+    \[
+    \alpha_{\ALG}\ <\ 1.6918 ,
+    \]
+    or, more ambitiously, with $\alpha_{\ALG}<\alpha_{\LQD}$ once the latter is
+    known.
+\end{itemize}
+\end{problem}
+
+\begin{remark}\label{rem:secondpolicy}
+The first form solves the second, with $\ALG=\LQD$ itself. The second is worth
+stating separately because $\LQD$ is at present the only policy for this
+problem that is known to be competitive at all~\cite{AEMV24}, so even a second
+competitive policy, with a worse constant, would be informative.
+\end{remark}
+
+\begin{remark}\label{rem:implies}
+The most ambitious form of Problem~\ref{prob:upper}, a policy with
+$\alpha_{\ALG}<\alpha_{\LQD}$, contradicts the complementary statement that
+$\LQD$ is optimal among deterministic online policies,
+$\alpha^{*}=\alpha_{\LQD}$; the other forms do not. Exactly one of that form
+and that statement is true, and both are open.
+\end{remark}
+
+\begin{remark}\label{rem:uniform}
+Bounds are asked for as absolute constants, uniform in $N$ and $B$. Bounds that
+degrade to the trivial value $2$ as $N$ and $B$ grow are known, as are better
+bounds for a fixed small number of output ports~\cite{KMO07,Matsakis15}.
+Neither kind answers the problem above.
+\end{remark}
+
+\begin{thebibliography}{AEMV24}
+
+\bibitem[AEMV21]{AEMV21}
+Antonios Antoniadis, Matthias Englert, Nicolaos Matsakis, and Pavel Vesel{\'y}.
+\newblock Breaking the barrier of 2 for the competitiveness of longest queue
+  drop.
+\newblock In {\em 48th International Colloquium on Automata, Languages, and
+  Programming (ICALP 2021)}, volume 198 of {\em LIPIcs}, pages 17:1--17:20,
+  2021.
+
+\bibitem[AEMV24]{AEMV24}
+Antonios Antoniadis, Matthias Englert, Nicolaos Matsakis, and Pavel Vesel{\'y}.
+\newblock Breaking the barrier of 2 for the competitiveness of longest queue
+  drop, 2024.
+\newblock Full version of~\cite{AEMV21}; journal version in ACM Transactions on
+  Algorithms, doi:10.1145/3676887.
+
+\bibitem[BDGN19]{BDGN19}
+Ivan Bochkov, Alex Davydow, Nikita Gaevoy, and Sergey~I. Nikolenko.
+\newblock New competitiveness bounds for the shared memory switch, 2019.
+\newblock arXiv:1907.04399.
+
+\bibitem[KMO07]{KMO07}
+Koji~M. Kobayashi, Shuichi Miyazaki, and Yasuo Okabe.
+\newblock A tight bound on online buffer management for two-port shared-memory
+  switches.
+\newblock In {\em Proceedings of the 19th ACM Symposium on Parallelism in
+  Algorithms and Architectures (SPAA)}, pages 358--364, 2007.
+
+\bibitem[Mat15]{Matsakis15}
+Nicolaos Matsakis.
+\newblock {\em Approximation Algorithms for Packing and Buffering Problems}.
+\newblock PhD thesis, University of Warwick, UK, 2015.
+
+\end{thebibliography}
+
+\end{document}

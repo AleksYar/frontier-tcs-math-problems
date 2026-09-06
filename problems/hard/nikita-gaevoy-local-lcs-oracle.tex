@@ -1,0 +1,239 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{url}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\lcs}{\operatorname{lcs}}
+\newcommand{\poly}{\log^{O(1)}}
+
+\title{A Local LCS Oracle with Polylogarithmic Queries - Hard}
+\author{Nikita Gaevoy}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+\subsection{Strings and the LCS score}
+
+We work with strings over an arbitrary alphabet $\Sigma$. A string
+$a=a_1a_2\cdots a_m$ has length $m$, and for $0\le i\le j\le m$ we write
+\[
+a\langle i:j\rangle:=a_{i+1}a_{i+2}\cdots a_j
+\]
+for its substring of length $j-i$; thus $a\langle 0:m\rangle=a$ and
+$a\langle i:i\rangle$ is the empty string. A \emph{subsequence} of $a$ is any
+string of the form $a_{i_1}a_{i_2}\cdots a_{i_k}$ with
+$1\le i_1<i_2<\cdots<i_k\le m$. For strings $x,y$ we write
+\[
+\lcs(x,y)
+\]
+for the length of a longest string that is a subsequence of both $x$ and $y$.
+
+Throughout, $a$ and $b$ are the two input strings, of lengths $m$ and $n$
+respectively, and we put $N:=mn$. All algorithms are stated for the word RAM
+with words of $\Theta(\log N)$ bits.
+
+Following Tiskin~\cite{Tiskin08,TiskinArXiv}, string comparison problems are
+classified by which substrings of the two inputs are compared. The
+\emph{global} problem asks for the single score $\lcs(a,b)$, and is solved in
+time $O(N)$ by the textbook dynamic program. The \emph{semi-local} problem
+asks for the score of the whole of $a$ against every substring of $b$
+(string-substring), of every prefix of $a$ against every suffix of $b$
+(prefix-suffix), and the two symmetric variants~\cite[Definition 4.3]{TiskinArXiv}.
+The \emph{local}, or \emph{fully local}, problem asks for the score of every
+substring of $a$ against every substring of $b$; it is the subject of this
+document.
+
+The fully local problem has $\Theta(m^2n^2)$ output values, so it is posed as
+a data structure problem rather than as a batch computation.
+
+\begin{definition}[Local LCS oracle]\label{def:oracle}
+A \emph{local LCS oracle} for a pair of strings $a,b$ of lengths $m,n$ is a
+data structure that, after preprocessing $a$ and $b$, answers queries of the
+following form: given $0\le i\le j\le m$ and $0\le k\le l\le n$, return
+\[
+\lcs\bigl(a\langle i:j\rangle,\ b\langle k:l\rangle\bigr).
+\]
+We say that the oracle has \emph{complexity} $\langle P,Q\rangle$ if it can be
+constructed in time $P=P(m,n)$ and answers a query in time $Q=Q(m,n)$.
+\end{definition}
+
+\begin{remark}\label{rem:timeonly}
+Only time is measured. The number of cells the oracle occupies is not
+constrained; it is in any case at most $P$, since the preprocessing has to
+write them. A lower bound on that number is therefore a lower bound on $P$,
+and is used as such below.
+\end{remark}
+
+\begin{remark}
+A query returns the \emph{length} of a longest common subsequence, not the
+subsequence itself. This is the standard convention for this problem; in the
+known constructions an optimal alignment can additionally be reported in time
+proportional to the total length of the two queried substrings~\cite[Remark
+13]{CGMW21}.
+\end{remark}
+
+\begin{remark}\label{rem:planar}
+Equivalently, a local LCS oracle is an exact distance oracle for the
+\emph{alignment graph} of $a$ and $b$: the planar directed acyclic graph on the
+nodes $v_{l,i}$, $l\in[0:m]$, $i\in[0:n]$, with horizontal edges
+$v_{l,i-1}\to v_{l,i}$ and vertical edges $v_{l-1,i}\to v_{l,i}$ of weight $0$,
+and a diagonal edge $v_{l-1,i-1}\to v_{l,i}$ of weight $1$ whenever
+$a_l=b_i$~\cite[Definitions 4.4, 4.5]{TiskinArXiv}. The highest-scoring path
+from $v_{i,k}$ to $v_{j,l}$ has weight exactly
+$\lcs(a\langle i:j\rangle,b\langle k:l\rangle)$. The graph has $N$ nodes, which
+is why $N$, rather than $m+n$, is the natural size parameter.
+\end{remark}
+
+\subsection{Seaweeds}\label{sec:seaweeds}
+
+The following material is not needed to state Problem~\ref{prob:upper}. It is
+the algebra in which one of the two known approaches to it is expressed, and it
+is used in the remarks below.
+
+Matrix indices range over integers and half-integers; for integers
+$i_0\le i_1$ we write $[i_0:i_1]$ for the set of integers and
+$\langle i_0:i_1\rangle$ for the set of half-integers strictly between $i_0$
+and $i_1$.
+
+\begin{definition}[Distribution matrix, {\cite[Definition 2.1]{TiskinArXiv}}]
+Let $D$ be a matrix over $\langle i_0:i_1\mid j_0:j_1\rangle$. Its
+\emph{distribution matrix} $D^{\Sigma}$ over $[i_0:i_1\mid j_0:j_1]$ is
+\[
+D^{\Sigma}(i,j)=\sum_{\hat\imath\in\langle i:i_1\rangle,\ \hat\jmath\in\langle j_0:j\rangle}D(\hat\imath,\hat\jmath).
+\]
+For a (sub)permutation matrix $P$, the value $P^{\Sigma}(i,j)$ is the number of
+nonzeros of $P$ dominated by the point $(i,j)$ in this sense; computing it is a
+\emph{dominance counting} query.
+\end{definition}
+
+\begin{definition}[String-substring score matrix]\label{def:H}
+For a string $x$ and the string $b$ of length $n$, the
+\emph{string-substring score matrix} $H_{x,b}$ over $[0:n\mid 0:n]$ is
+\[
+H_{x,b}(k,l):=
+\begin{cases}
+\lcs\bigl(x,\ b\langle k:l\rangle\bigr) & \text{if } k\le l,\\
+l-k & \text{if } k>l.
+\end{cases}
+\]
+\end{definition}
+
+\begin{theorem}[{\cite[Theorem 4.10, Definition 4.11]{TiskinArXiv}}]\label{thm:seaweed}
+For every $x$ and $b$ there is a subpermutation matrix $P_{x,b}$ of size $n$,
+the \emph{string-substring seaweed matrix} of $x$ against $b$, such that
+\[
+H_{x,b}(k,l)=(l-k)-P^{\Sigma}_{x,b}(k,l)
+\qquad\text{for all } k,l\in[0:n].
+\]
+\end{theorem}
+
+Thus the whole family of scores $\lcs(x,b\langle k:l\rangle)$, $0\le k\le l\le
+n$, is represented implicitly by the $O(n)$ nonzeros of a single
+subpermutation matrix. The nonzeros are called \emph{seaweeds}, and the
+resulting algebraic structure is the monoid of \emph{seaweed braids}, also
+known as \emph{sticky braids}~\cite[Chapter 3]{TiskinArXiv}.
+
+\begin{theorem}[{\cite[Theorem 2.15]{TiskinArXiv}}]\label{thm:rangetree}
+A subpermutation matrix $P$ of size $n$ can be preprocessed in time
+$O(n\log n)$ into a data structure that answers dominance counting queries
+$P^{\Sigma}(i,j)$ in time $O(\log^2 n)$.
+\end{theorem}
+
+The crucial property of seaweed matrices is that they compose under
+concatenation of the first argument.
+
+\begin{theorem}[{\cite[Theorems 4.19, 4.21]{TiskinArXiv}}, \cite{Tiskin15}]\label{thm:steadyant}
+For strings $x',x''$ we have
+\[
+P_{x'x'',b}=P_{x',b}\odot P_{x'',b},
+\]
+where $\odot$ denotes the implicit distance (that is, $(\min,+)$) product of
+the corresponding unit-Monge matrices. Given the nonzeros of $P_{x',b}$ and
+$P_{x'',b}$, the nonzeros of the product can be computed in time
+$O(n\log n)$ by the \emph{steady ant} algorithm.
+\end{theorem}
+
+\begin{definition}[Canonical substrings, {\cite[Algorithm 11.2]{TiskinArXiv}}]\label{def:canonical}
+A substring $a\langle i:j\rangle$ is \emph{canonical} if $j-i=s$ for a power of
+two $s$ with $1\le s\le m$, and both $i$ and $j$ are multiples of $s$. There
+are $O(m)$ canonical substrings, and every substring of $a$ can be written as a
+concatenation of $O(\log m)$ of them.
+\end{definition}
+
+\section{Problem formulation}
+
+\begin{problem}[Upper bound]\label{prob:upper}
+Construct a local LCS oracle of complexity
+\[
+\bigl\langle\, O(n^2\poly n),\ O(\poly n)\,\bigr\rangle .
+\]
+That is, exhibit constants $c,d>0$ and a data structure which, for every pair
+of strings $a,b$ of length $n$, can be built in time $O(n^2\log^c n)$ and which
+answers every query of Definition~\ref{def:oracle} in time $O(\log^d n)$.
+\end{problem}
+
+\begin{remark}\label{rem:dichotomy}
+The complementary statement --- that no such oracle exists --- is a separate
+problem. Exactly one of the two is true, and both are open, and the gap
+between them is subpolynomial: an oracle of complexity
+$\langle n^{2+o(1)},\ \log^{2+o(1)}n\rangle$ is known~\cite{CGMW21}, and the question is whether the factor $n^{o(1)}$ in
+the preprocessing time can be reduced to $\poly n$ while keeping the query time
+polylogarithmic.
+\end{remark}
+
+\begin{remark}\label{rem:unbalanced}
+If $m\ne n$ the target of Problem~\ref{prob:upper} is
+$\langle O(N\poly N),O(\poly N)\rangle$ with $N=mn$, matching the
+parametrisation of~\cite{CGMW21}. Nothing in the discussion below depends on
+$m=n$.
+\end{remark}
+
+\begin{remark}\label{rem:editdistance}
+The problem is equally interesting for edit distance and, more generally, for
+rational-weighted alignment scores in place of the LCS score. The known upper
+bounds were proved in that generality~\cite{CGMW21}, whereas the seaweed
+technique of Section~\ref{sec:seaweeds} natively handles
+unweighted LCS and reaches weighted scores through a blow-up
+reduction~\cite[Chapter 6]{TiskinArXiv}. A solution to
+Problem~\ref{prob:upper} for LCS alone is a solution to the problem as posed.
+\end{remark}
+
+\begin{thebibliography}{CGMW21}
+
+\bibitem[CGMW21]{CGMW21}
+Panagiotis Charalampopoulos, Pawe{\l} Gawrychowski, Shay Mozes, and Oren
+  Weimann.
+\newblock An almost optimal edit distance oracle.
+\newblock In {\em 48th International Colloquium on Automata, Languages, and
+  Programming (ICALP 2021)}, volume 198 of {\em LIPIcs}, pages 48:1--48:20.
+  Schloss Dagstuhl -- Leibniz-Zentrum f\"{u}r Informatik, 2021.
+
+\bibitem[Tis08]{Tiskin08}
+Alexander Tiskin.
+\newblock Semi-local string comparison: Algorithmic techniques and
+  applications.
+\newblock {\em Mathematics in Computer Science}, 1(4):571--603, 2008.
+
+\bibitem[Tis13]{TiskinArXiv}
+Alexander Tiskin.
+\newblock Semi-local string comparison: algorithmic techniques and
+  applications, 2013.
+\newblock arXiv:0707.3619v21.
+
+\bibitem[Tis15]{Tiskin15}
+Alexander Tiskin.
+\newblock Fast distance multiplication of unit-{M}onge matrices.
+\newblock {\em Algorithmica}, 71(4):859--888, 2015.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,299 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\SRI}{\text{SR-I}}
+\newcommand{\SRII}{\text{SR-II}}
+\newcommand{\SRIII}{\text{SR-III}}
+\newcommand{\SRCI}{\text{SRC-I}}
+\newcommand{\SRCII}{\text{SRC-II}}
+\newcommand{\SRCIII}{\text{SRC-III}}
+\newcommand{\Res}{\text{Res}}
+
+\hyphenation{Boo-le-an}
+
+\title{Eliminating Weakening in Resolution with Dynamic Symmetries - Hard}
+\author{Nikita Gaevoy}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+We work with propositional formulas in conjunctive normal form over the
+Boolean variables $x_1,\ldots,x_n$. A \emph{literal} is a variable $x$ or a
+negated variable $\lnot x$, a \emph{clause} is a finite disjunction of
+literals, identified with the set of the literals it contains, and a
+\emph{CNF formula} is a finite conjunction of clauses, identified with the
+set of the clauses it contains. We write
+\[
+\operatorname{size}(\Phi)
+\]
+for the total number of literal occurrences in $\Phi$. The empty clause is
+denoted by $\bot$.
+
+The \emph{resolution rule} is
+\[
+\frac{
+A\lor x
+\qquad
+B\lor\lnot x
+}{
+A\lor B
+},
+\]
+and the variable $x$ is called the \emph{pivot} of the inference. A
+\emph{Resolution refutation} of an unsatisfiable CNF formula $\Phi$ is a
+sequence of clauses in which every clause is either a clause of $\Phi$ or is
+obtained from two earlier clauses by the resolution rule, and whose last
+clause is $\bot$.
+
+\subsection{Small symmetries}
+
+\begin{definition}[$k$-symmetry]\label{def:ksym}
+Let $k\ge 1$ be either a constant or a function of the number of variables
+$n$. A mapping $\varphi$ of literals into literals is a \emph{$k$-symmetry} if
+and only if it satisfies the following two conditions:
+\begin{enumerate}
+    \item $\varphi(\lnot x)=\lnot\varphi(x)$ for every variable $x$;
+    \item all variables except for at most $k$ are mapped into themselves,
+    i.e.\ $\varphi(x)=x$ for all but at most $k$ variables $x$.
+\end{enumerate}
+A $k$-symmetry is \emph{positive} if it maps variables into variables without
+negation. Symmetries that are not necessarily positive are called
+\emph{complementary} symmetries.
+
+A $k$-symmetry is extended to clauses and to sets of clauses pointwise:
+\[
+\varphi(C):=\{\varphi(l):l\in C\},
+\qquad
+\varphi(\Phi):=\{\varphi(C):C\in\Phi\}.
+\]
+\end{definition}
+
+\begin{remark}
+As usual for symmetries, $\varphi$ is required to be a bijection of the set of
+literals; by condition~2 of Definition~\ref{def:ksym} it is therefore given by
+a permutation of at most $k$ variables together with a choice of a sign for
+each of them. Dropping the bijectivity requirement yields the notion of a
+$k$-homomorphism and the corresponding proof systems
+$\text{HR-I}$, $\text{HR-II}$, $\text{HR-III}$ of~\cite{Szeider05}, which we
+do not consider here.
+\end{remark}
+
+When $k$ is equal to the number of variables, condition~2 is vacuous and one
+recovers the classical notion of a symmetry of~\cite{Krishnamurthy85,Urquhart99};
+in this case the parameter $k$ is omitted from the notation.
+
+\begin{definition}[Resolution with dynamic $k$-symmetries]\label{def:srciii}
+Let $k\ge 1$ be a constant or a function of the number of variables.
+\emph{Resolution with dynamic $k$-symmetries}, denoted $k$-$\SRCIII$, is the
+proof system with the following two rules.
+\begin{enumerate}
+    \item \textbf{Resolution rule.}
+    \[
+    \frac{
+    A\lor x
+    \qquad
+    B\lor\lnot x
+    }{
+    A\lor B
+    }.
+    \]
+    \item \textbf{Symmetry rule.}
+    \[
+    \frac{
+    \varphi(B_1)
+    \qquad
+    \varphi(B_2)
+    \qquad
+    \cdots
+    \qquad
+    \varphi(B_l)
+    }{
+    \varphi(A)
+    }\ \varphi,
+    \]
+    where $\varphi$ is a $k$-symmetry and $A$ was inferred from
+    $B_1,B_2,\ldots,B_l$ earlier in the proof. Each time this rule is applied,
+    the symmetry $\varphi$ is written down as a part of the proof, for the
+    purposes of verification. We call the inference of $A$ from
+    $B_1,\ldots,B_l$ the \emph{justification} of the symmetry rule and
+    $\varphi(A)$ the \emph{resulting clause}.
+\end{enumerate}
+As in Resolution, a proof is a sequence of clauses in which every clause is
+either an input clause or is inferred from previous clauses by one of the two
+rules above, and the last clause is $\bot$.
+\end{definition}
+
+The motivation behind the symmetry rule is the following. If $A$ was inferred
+from $B_1,\ldots,B_l$, and $\varphi$ is a $k$-symmetry mapping all the premises
+to clauses that have already been derived, then applying $\varphi$ to that
+inference yields a valid derivation of $\varphi(A)$ from
+$\varphi(B_1),\ldots,\varphi(B_l)$. Hence, instead of repeating the derivation, one
+may infer $\varphi(A)$ in a single step.
+
+The system of Definition~\ref{def:srciii} is \emph{dynamic}: the premises
+$B_i$ of the symmetry rule are arbitrary clauses of the proof and need not
+belong to the input formula. Restricting them to the input formula gives the
+\emph{static} systems.
+
+\begin{definition}[Static systems]
+\emph{Resolution with local $k$-symmetries} ($k$-$\SRCII$) is
+$k$-$\SRCIII$ with the additional requirement that in every application of
+the symmetry rule all $B_i$ and all $\varphi(B_i)$ are clauses of the input
+formula.
+
+\emph{Resolution with global $k$-symmetries} ($k$-$\SRCI$) is
+$k$-$\SRCIII$ with the additional requirement that in every application of
+the symmetry rule both sets $\{B_i\}$ and $\{\varphi(B_i)\}$ are equal to the set
+of all input clauses.
+
+\emph{$k$-$\SRI$, $k$-$\SRII$, and $k$-$\SRIII$} are the systems
+$k$-$\SRCI$, $k$-$\SRCII$, and $k$-$\SRCIII$, respectively, with the
+additional requirement that all symmetries used are positive.
+\end{definition}
+
+If $n$ is the number of variables, then $n$-$\SRCIII$, $n$-$\SRIII$ are the
+systems $\SRCIII$, $\SRIII$ of Szeider~\cite{Szeider05}, while $n$-$\SRCI$,
+$n$-$\SRCII$ are the systems $\SRCI$, $\SRCII$ of Urquhart~\cite{Urquhart99}
+and $n$-$\SRI$, $n$-$\SRII$ are the systems of
+Krishnamurthy~\cite{Krishnamurthy85} and of Arai and Urquhart~\cite{AU00}.
+
+All of the systems above are Cook--Reckhow proof systems~\cite{CR79}:
+completeness follows from the fact that they extend Resolution, polynomial-time
+verification is possible because the symmetry used is written down at every
+application of the symmetry rule, and soundness follows from the requirement
+that the justification be derived before the symmetry rule is applied.
+
+\begin{definition}[Proof size]
+For a proof system $\Pi$ and an unsatisfiable CNF formula $\Phi$, we write
+\[
+S_{\Pi}(\Phi)
+\]
+for the number of steps in the shortest $\Pi$-proof of $\Phi$. (For all the
+systems considered here, the number of steps and the total bit length of a
+proof differ by at most a polynomial factor.)
+\end{definition}
+
+Note that, because of the symmetry rule, $S_{\Pi}(\Phi)$ may be smaller than
+the number of clauses of $\Phi$.
+
+Following~\cite{Gaevoy26}, the definition of $k$-$\SRCIII$ above does not
+include the weakening rule
+\[
+\frac{A}{A\lor x}.
+\]
+We write $k$-$\SRCIII^{w}$ for the system obtained from $k$-$\SRCIII$ by
+adding this rule. For the static systems the analogous distinction is
+immaterial: weakening can be eliminated exactly as in
+Resolution~\cite{Szeider05}, so for all $k$ the systems $k$-$\SRI$,
+$k$-$\SRCI$, $k$-$\SRII$, and $k$-$\SRCII$ are unaffected by its addition. For
+the dynamic systems no such elimination is known, and the addition of
+weakening may potentially make the system stronger.
+
+\begin{definition}[p-simulation]\label{def:psim}
+A proof system $\Pi_1$ \emph{p-simulates} a proof system $\Pi_2$ if there is a
+polynomial $q$ such that
+\[
+S_{\Pi_1}(\Phi)
+\ \le\
+q\bigl(S_{\Pi_2}(\Phi)+\operatorname{size}(\Phi)\bigr)
+\]
+for every unsatisfiable CNF formula $\Phi$, and the two systems are
+\emph{p-equivalent} if each p-simulates the other. Since every
+$k$-$\SRCIII$-proof is a $k$-$\SRCIII^{w}$-proof, the system
+$k$-$\SRCIII^{w}$ p-simulates $k$-$\SRCIII$ for trivial reasons; the content
+of the notion here is the converse direction, that is, the elimination of the
+weakening rule.
+\end{definition}
+
+\section{Problem formulation}
+
+\begin{problem}[Elimination]\label{prob:elim}
+Prove that $k$-$\SRCIII$ p-simulates $k$-$\SRCIII^{w}$, i.e.\ that every
+application of the weakening rule can be eliminated with at most a polynomial
+increase in proof size, as is the case for Resolution and for all the static
+systems $k$-$\SRI$, $k$-$\SRCI$, $k$-$\SRII$, $k$-$\SRCII$~\cite{Szeider05}.
+\end{problem}
+
+\begin{remark}\label{rem:dichotomy}
+The complementary statement --- that the two systems are separated, i.e.\ that
+there is a family $(\Psi_n)_{n\ge 1}$ with
+$S_{k\text{-}\SRCIII^{w}}(\Psi_n)=\operatorname{poly}(\operatorname{size}(\Psi_n))$
+and $S_{k\text{-}\SRCIII}(\Psi_n)=\operatorname{size}(\Psi_n)^{\omega(1)}$
+--- is a separate problem. Exactly one of the two
+is true for a given $k$, and both are open: for every $k\ge 1$, including
+$k=1$, and also for the unrestricted system $\SRCIII$, that is, for $k$ equal
+to the number of variables.
+\end{remark}
+
+\begin{remark}\label{rem:independent}
+Problem~\ref{prob:elim} asks for a transformation of proofs, not for a hard
+formula, and a solution to it neither uses nor implies any lower bound. The
+separating family of Remark~\ref{rem:dichotomy} is the opposite case: it
+witnesses a superpolynomial lower bound for $k$-$\SRCIII$, and no such bound is
+known for any $k$.
+
+The implication runs the useful way. A solution to Problem~\ref{prob:elim}
+makes the two readings of a proof-size lower bound for $k$-$\SRCIII$ coincide:
+a bound proved without the weakening rule would then transfer to
+$k$-$\SRCIII^{w}$ for free, so a solver could assume without loss of
+generality that no weakening occurs.
+\end{remark}
+
+\begin{remark}\label{rem:scope}
+The scope is the dynamic system only. For the static systems the question does
+not arise: weakening can be eliminated there exactly as in Resolution, so for
+all $k$ the systems $k$-$\SRI$, $k$-$\SRCI$, $k$-$\SRII$ and $k$-$\SRCII$ are
+unaffected by its addition~\cite{Szeider05}. What breaks in the dynamic case is
+that the premises of the symmetry rule are arbitrary clauses of the proof, so
+a weakening applied to a justification cannot simply be pushed to the leaves.
+\end{remark}
+
+\begin{thebibliography}{Gae26}
+
+\bibitem[AU00]{AU00}
+Noriko~H. Arai and Alasdair Urquhart.
+\newblock Local symmetries in propositional logic.
+\newblock In {\em Automated Reasoning with Analytic Tableaux and Related
+  Methods (TABLEAUX 2000)}, pages 40--51. Springer, 2000.
+
+\bibitem[CR79]{CR79}
+Stephen~A. Cook and Robert~A. Reckhow.
+\newblock The relative efficiency of propositional proof systems.
+\newblock {\em Journal of Symbolic Logic}, 44(1):36--50, 1979.
+
+\bibitem[Gae26]{Gaevoy26}
+Nikita Gaevoy.
+\newblock The power of small symmetries.
+\newblock In {\em 51st International Symposium on Mathematical Foundations of
+  Computer Science (MFCS 2026)}, LIPIcs. Schloss Dagstuhl -- Leibniz-Zentrum
+  f\"{u}r Informatik, 2026.
+\newblock To appear.
+
+\bibitem[Kri85]{Krishnamurthy85}
+Balakrishnan Krishnamurthy.
+\newblock Short proofs for tricky formulas.
+\newblock {\em Acta Informatica}, 22(3):253--275, 1985.
+
+\bibitem[Sze05]{Szeider05}
+Stefan Szeider.
+\newblock The complexity of resolution with generalized symmetry rules.
+\newblock {\em Theory of Computing Systems}, 38(2):171--188, 2005.
+
+\bibitem[Urq99]{Urquhart99}
+Alasdair Urquhart.
+\newblock The symmetry rule in propositional logic.
+\newblock {\em Discrete Applied Mathematics}, 96--97:177--193, 1999.
+
+\end{thebibliography}
+
+\end{document}

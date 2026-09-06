@@ -1,0 +1,219 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{url}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\lcs}{\operatorname{lcs}}
+\newcommand{\lis}{\operatorname{lis}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\poly}{\log^{O(1)}}
+\newcommand{\core}{\operatorname{core}}
+
+\hyphenation{mono-chro-matic}
+
+\title{A Sub-Logarithmic Product of Simple Unit-Monge Matrices - Hard}
+\author{Nikita Gaevoy}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+\subsection{Sequences and the LIS score}
+
+Let $s=s[0]s[1]\cdots s[n-1]$ be a sequence of $n$ integers. For
+$0\le i\le j\le n$ we write $s[\,i\mathinner{.\,.}j\,)$ for the contiguous
+subsequence $s[i]s[i+1]\cdots s[j-1]$, which we call a \emph{sub-array}. An
+\emph{increasing subsequence} of $s$ is a sequence
+$s[i_1],s[i_2],\ldots,s[i_\ell]$ with $i_1<i_2<\cdots<i_\ell$ and
+$s[i_1]<s[i_2]<\cdots<s[i_\ell]$.
+
+\begin{definition}[LIS score, {\cite[Definition 8.1]{TiskinArXiv}}]\label{def:lis}
+The \emph{longest increasing subsequence} (LIS) problem asks, for a sequence
+$s$, for the length of a longest increasing subsequence of $s$. We denote this
+length by $\lis(s)$ and call it the \emph{LIS score} of $s$.
+\end{definition}
+
+Throughout, and without loss of generality, $s$ is a permutation of
+$[\,0\mathinner{.\,.}n\,)$: an arbitrary integer sequence of length $n$ may be replaced by
+a permutation of the same length with the same LIS scores on all sub-arrays, by
+sorting~\cite[Section 5]{GGK25}. All algorithms are stated for the word RAM
+with words of $\Theta(\log n)$ bits.
+
+The problem below concerns the family of all $\binom{n+1}{2}$ scores
+$\lis(s[\,i\mathinner{.\,.}j\,))$, and is therefore posed as a data structure problem.
+
+\begin{definition}[Range LIS oracle]\label{def:oracle}
+A \emph{range LIS oracle} for a sequence $s$ of length $n$ is a data structure
+that, after preprocessing $s$, answers queries of the following form: given
+$0\le i\le j\le n$, return
+\[
+\lis\bigl(s[\,i\mathinner{.\,.}j\,)\bigr).
+\]
+We say that the oracle has \emph{complexity} $\langle P,Q\rangle$ if it can be
+constructed in time $P=P(n)$ and answers a query in time $Q=Q(n)$.
+\end{definition}
+
+\begin{remark}\label{rem:timeonly}
+Only time is measured. The space the oracle occupies is at most $P$, since the
+preprocessing has to write it, so a lower bound on the space is a lower bound
+on $P$.
+\end{remark}
+
+\begin{remark}\label{rem:report}
+A query returns the \emph{length} of a longest increasing subsequence, not the
+subsequence itself. The reporting variant, in which the query must also output
+an increasing subsequence attaining the score, is a strictly stronger
+requirement for which the known bounds are different~\cite[Theorem 1.3]{GGK25}.
+\end{remark}
+
+\subsection{Range LIS as a semi-local LCS problem}\label{sec:seaweed}
+
+For strings $x,y$ we write $\lcs(x,y)$ for the length of a longest string that
+is a subsequence of both. Let $\id$ denote the identity string
+$0\,1\,2\cdots(n-1)$ over the alphabet $[\,0\mathinner{.\,.}n\,)$. Since a string is an
+increasing subsequence of $s$ if and only if it is a common subsequence of $s$
+and $\id$, we have
+\begin{equation}\label{eq:lislcs}
+\lis\bigl(s[\,i\mathinner{.\,.}j\,)\bigr)=\lcs\bigl(\id,\ s[\,i\mathinner{.\,.}j\,)\bigr)
+\qquad\text{for all }0\le i\le j\le n;
+\end{equation}
+that is, the range LIS problem is the string-substring component of the
+semi-local LCS problem on the pair of permutation strings
+$\id,s$~\cite[Section 8.1]{TiskinArXiv}. We recall the apparatus that this
+identification makes available.
+
+Matrix indices range over integers and half-integers; for integers
+$i_0\le i_1$ we write $[i_0:i_1]$ for the set of integers and
+$\langle i_0:i_1\rangle$ for the set of half-integers strictly between $i_0$
+and $i_1$.
+
+\begin{definition}[Distribution matrix, {\cite[Definition 2.1]{TiskinArXiv}}]\label{def:dist}
+Let $D$ be a matrix over $\langle i_0:i_1\mid j_0:j_1\rangle$. Its
+\emph{distribution matrix} $D^{\Sigma}$ over $[i_0:i_1\mid j_0:j_1]$ is
+\[
+D^{\Sigma}(i,j)=\sum_{\hat\imath\in\langle i:i_1\rangle,\ \hat\jmath\in\langle j_0:j\rangle}D(\hat\imath,\hat\jmath).
+\]
+For a permutation matrix $P$, the value $P^{\Sigma}(i,j)$ is the number of
+nonzeros of $P$ dominated by the point $(i,j)$ in this sense; computing it is a
+\emph{dominance counting} query. A matrix of the form $D^\Sigma$ for a
+permutation matrix $D$ is called \emph{simple unit-Monge}.
+\end{definition}
+
+\begin{theorem}[{\cite[Theorem 4.10, Definition 4.11]{TiskinArXiv}}]\label{thm:kernel}
+For every pair of strings $x,b$ with $|b|=n$ there is a subpermutation matrix
+$P_{x,b}$ of size $n$, the \emph{string-substring seaweed matrix}, or
+\emph{kernel}, of $x$ against $b$, such that
+\[
+\lcs\bigl(x,\ b[\,k\mathinner{.\,.}l\,)\bigr)=(l-k)-P^{\Sigma}_{x,b}(k,l)
+\qquad\text{for all }0\le k\le l\le n.
+\]
+\end{theorem}
+
+Combining Theorem~\ref{thm:kernel} with~\eqref{eq:lislcs}, the whole family of
+range LIS scores of $s$ is encoded by the $O(n)$ nonzeros of the single
+permutation matrix $P_{\id,s}$, and a query is one dominance counting query on
+it. The nonzeros are called \emph{seaweeds}, and the resulting algebraic
+structure is the monoid of \emph{seaweed braids}, also known as \emph{sticky
+braids}~\cite[Chapter 3]{TiskinArXiv}.
+
+\begin{theorem}[{\cite[Fact 4.1]{GGK25}}; see also {\cite[Theorem 2.15]{TiskinArXiv}}]\label{thm:domcount}
+A permutation matrix $P$ of size $n$ can be preprocessed in $O(n\log n)$ time
+into a data structure that answers dominance counting queries $P^{\Sigma}(i,j)$
+in $O(\log n)$ time.
+\end{theorem}
+
+\begin{theorem}[Steady ant, {\cite[Theorems 4.19, 4.21]{TiskinArXiv}}, {\cite{Tiskin15}}]\label{thm:steadyant}
+The $(\min,+)$ product of two simple unit-Monge matrices of size $n$, given by
+the nonzeros of the corresponding permutation matrices, can be computed --- in
+the same representation --- in $O(n\log n)$ time.
+\end{theorem}
+
+\begin{theorem}[{\cite[Theorem 1.2]{GGK25}}]\label{thm:coresparse}
+Let $A$ be a $p\times q$ Monge matrix and let $B$ be a $q\times r$ Monge
+matrix, and let $\delta(\cdot)$ denote the number of nonzeros of the density
+matrix. Given the condensed representations of $A$ and $B$, the condensed
+representation of the $(\min,+)$ product $A\otimes B$ can be computed
+deterministically in time
+\[
+O\bigl(p+q+r+(\delta(A)+\delta(B))\log(1+\delta(A)+\delta(B))\bigr).
+\]
+\end{theorem}
+
+Theorem~\ref{thm:coresparse} generalises Theorem~\ref{thm:steadyant} outside the
+seaweed braid formalism and matches it in the simple unit-Monge case, where
+$p=q=r=\delta=\Theta(n)$~\cite[Section 1]{GGK25}.
+
+\section{Problem formulation}
+
+\begin{problem}[The product]\label{prob:product}
+Compute the $(\min,+)$ product of two simple unit-Monge matrices of size $n$,
+in the representation of Theorem~\ref{thm:steadyant}, in time $O(n\cdot f(n))$
+for some $f(n)=o(\log n)$; in particular, in time $O(n)$.
+\end{problem}
+
+\begin{remark}\label{rem:productimplies}
+A solution to Problem~\ref{prob:product} gives a range LIS oracle of
+complexity
+\[
+\bigl\langle\, O(n f(n)\log n),\ O(\log n)\,\bigr\rangle .
+\]
+For $f(n)=O(1)$ this is the target
+$\bigl\langle O(n\log n),\ O(\poly n)\bigr\rangle$ that the range LIS
+problem asks for and that has been open since 2010; for every
+$f(n)=o(\log n)$ it improves on the state of the art
+$O(n\log^2n)$~\cite{Tiskin15,TiskinArXiv,GGK25}. Indeed, the divide-and-conquer of~\cite[Section
+5]{GGK25} recurses on a split of $s$ by value into two halves and, at a node
+handling $s'$ of length $n'$, performs one product of two matrices of size and
+core size $O(n')$ together with transformations costing $O(n')$; substituting
+the hypothetical algorithm for Theorem~\ref{thm:coresparse} makes a node cost
+$O(n'f(n'))$, hence $O(nf(n))$ per level of the recursion and
+$O(nf(n)\log n)$ in total. The same substitution applies to
+Theorem~\ref{thm:steadyant} inside Tiskin's seaweed doubling
+algorithm~\cite[Algorithm 8.2]{TiskinArXiv}, whose cost analysis has the same
+shape.
+\end{remark}
+
+\begin{remark}\label{rem:productstatus}
+Problem~\ref{prob:product} is of independent interest: the $O(n\log n)$ bound of
+Theorem~\ref{thm:steadyant} is the running time of essentially every
+application of the seaweed monoid, and the output of the product has only
+$\Theta(n)$ nonzeros, so $\Omega(n)$ is all that the output size forces.
+Whether the logarithm can be removed is, to the author's knowledge, not settled
+in the literature; a negative answer is a natural companion problem, and by
+Remark~\ref{rem:productimplies} a positive one is a prerequisite for
+approaching the range LIS problem along this route.
+\end{remark}
+
+\begin{thebibliography}{GGK25}
+
+\bibitem[GGK25]{GGK25}
+Pawe{\l} Gawrychowski, Egor Gorbachev, and Tomasz Kociumaka.
+\newblock Core-sparse {M}onge matrix multiplication: Improved algorithm and
+  applications.
+\newblock In {\em 33rd Annual European Symposium on Algorithms (ESA 2025)},
+  LIPIcs, pages 74:1--74:17. Schloss Dagstuhl -- Leibniz-Zentrum f\"{u}r
+  Informatik, 2025.
+\newblock arXiv:2408.04613.
+
+\bibitem[Tis13]{TiskinArXiv}
+Alexander Tiskin.
+\newblock Semi-local string comparison: algorithmic techniques and
+  applications, 2013.
+\newblock arXiv:0707.3619v21.
+
+\bibitem[Tis15]{Tiskin15}
+Alexander Tiskin.
+\newblock Fast distance multiplication of unit-{M}onge matrices.
+\newblock {\em Algorithmica}, 71(4):859--888, 2015.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,559 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{url}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\lcs}{\operatorname{lcs}}
+\newcommand{\Zh}{\widehat{\mathbb{Z}}}
+\newcommand{\stick}{\boxdot}
+\newcommand{\red}{\operatorname{red}}
+\newcommand{\repl}{\operatorname{repl}}
+\newcommand{\dom}{\operatorname{dom}}
+\newcommand{\ran}{\operatorname{ran}}
+\newcommand{\BSP}{\text{BSP}}
+
+\title{Doubly-Periodic LCS in the BSP Model - Easy}
+\author{Nikita Gaevoy}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+The whole of this section is a summary of published work: Subsections
+\ref{sec:strings}--\ref{sec:sequential} follow Gaevoy, Zolotov and
+Tiskin~\cite{GZT25} and, through it, Tiskin's
+framework~\cite{Tiskin08,TiskinArXiv,Tiskin15,Tiskin09}; Subsections
+\ref{sec:bsp}--\ref{sec:bspsticky} follow Valiant~\cite{Valiant90} and
+Krusche and Tiskin~\cite{KT07,KT10,KruscheThesis}. Nothing in it is new.
+
+\subsection{Strings, repeats and the LCS score}\label{sec:strings}
+
+We work with strings over an arbitrary alphabet. Given a string $a$, we write
+$a\langle i:j\rangle$ for its substring of length $j-i$, and we distinguish
+between contiguous \emph{substrings} and not necessarily contiguous
+\emph{subsequences}.
+
+\begin{definition}[LCS score, {\cite[Definition 1]{GZT25}}]
+The \emph{longest common subsequence} (LCS) score for a pair of strings,
+denoted $\lcs(a,b)$, is the length of the longest string that is a
+subsequence of both $a$ and $b$. Given strings $a,b$, the \emph{LCS problem}
+asks for their LCS score.
+\end{definition}
+
+\begin{definition}[Repeats, {\cite[Definition 2]{GZT25}}]
+A string of the form $a^k=\text{``}aa\ldots a\text{''}$ ($k$ times) is called
+a \emph{$k$-repeat}, or simply a \emph{repeat}. More generally, a string of
+the form $a^ka'$, where $a'$ is a prefix of $a$, is called \emph{periodic}. A
+doubly infinite string $a^\infty=\text{``}\ldots aaaa\ldots\text{''}$ is
+called an \emph{infinite repeat}.
+\end{definition}
+
+Throughout, $a$ and $b$ are strings of length $m$ and $n$ respectively, and
+$k,\ell\ge 1$ are integers. The \emph{doubly-periodic LCS problem} asks for
+the score $\lcs(a^k,b^\ell)$, given $a$, $b$, $k$ and $\ell$; the input size
+is thus $O(m+n+\log k+\log\ell)$, while the two compared strings have lengths
+$mk$ and $n\ell$.
+
+Half-integers are denoted by hatted letters ($\hat\imath$, $\hat\jmath$,
+\ldots), and the set of all half-integers is denoted $\Zh$. We write
+$\langle m:n\rangle$ for the set of half-integers strictly between the
+integers $m,n$, and $[m:n]$ for the usual integer interval. Matrix elements
+are written $M\langle\hat\imath;\hat\jmath\rangle$ when indexed by
+half-integers and $M[i;j]$ when indexed by integers.
+
+\subsection{Semi-local LCS and its kernel}
+
+\begin{definition}[Semi-local LCS, {\cite[Definition 3]{GZT25}}]
+Given strings $a,b$, the \emph{semi-local LCS} (SLCS) problem asks for the LCS
+scores of the whole of $a$ against every substring of $b$ (string-substring
+LCS), of every prefix of $a$ against every suffix of $b$ (prefix-suffix LCS),
+and of the two symmetric variants.
+\end{definition}
+
+\begin{definition}[LCS grid, {\cite[Definition 4]{GZT25}}]\label{def:grid}
+The \emph{LCS grid} $G_{a,b}[0:m;0:n]$ for strings $a,b$ is a directed acyclic
+graph on the node set $[0:m;0:n]$ containing, for all $i\in[0:m]$,
+$\hat\imath\in\langle 0:m\rangle$, $j\in[0:n]$,
+$\hat\jmath\in\langle 0:n\rangle$, the horizontal edge
+$[i;\hat\jmath^-]\to[i;\hat\jmath^+]$ and the vertical edge
+$[\hat\imath^-;j]\to[\hat\imath^+;j]$; and, whenever
+$a\langle\hat\imath\rangle$ matches $b\langle\hat\jmath\rangle$, the diagonal
+\emph{match edge} $[\hat\imath^-;\hat\jmath^-]\to[\hat\imath^+;\hat\jmath^+]$.
+A cell carrying a match edge is a \emph{match cell}, and otherwise a
+\emph{mismatch cell}.
+\end{definition}
+
+Padding $b$ with $m$ wildcard characters on either side, so that
+$b_{\mathrm{pad}}\langle-m:m+n\rangle=\text{?}^m b\,\text{?}^m$, the
+semi-local scores are collected in a single matrix.
+
+\begin{definition}[SLCS matrix, {\cite[Definition 5]{GZT25}}]
+The \emph{SLCS matrix} for strings $a,b$ is the matrix
+$H_{a,b}[-m:n;0:m+n]$ with $H_{a,b}[i;j]=
+\lcs\bigl(a,b_{\mathrm{pad}}\langle i:j\rangle\bigr)$ for $i\le j$ and
+$H_{a,b}[i;j]=j-i$ for $i\ge j$.
+\end{definition}
+
+\begin{definition}[Dominance sums, {\cite[Definition 10]{GZT25}}]
+Let $D\langle I;J\rangle$ be a matrix. Its \emph{dominance-sum matrix}
+$D^\Sigma[I;J]$ is defined by
+$D^\Sigma[i;j]=\sum D\langle i:;\,:j\rangle$ for all $i\in[I]$, $j\in[J]$.
+\end{definition}
+
+\begin{theorem}[SLCS matrix canonical representation,
+{\cite[Theorem 33]{GZT25}}]\label{thm:canon}
+The SLCS matrix $H_{a,b}$ is unit-anti-Monge:
+\[
+H_{a,b}[i;j]=-i+j+m-P^\Sigma_{a,b}[i;j]
+\]
+for all $i,j$, where $P_{a,b}$ is a permutation matrix.
+\end{theorem}
+
+\begin{definition}[SLCS kernel, {\cite[Definition 34]{GZT25}}]
+The \emph{SLCS kernel} for strings $a,b$ is the permutation matrix
+$P_{a,b}\langle-m:n;0:m+n\rangle$ determined by Theorem~\ref{thm:canon}. The
+\emph{string-substring LCS subkernel} is the subpermutation matrix
+$P^{\nearrow}_{a,b}=P_{a,b}\langle 0:;\,:n\rangle$.
+\end{definition}
+
+\subsection{Sticky multiplication}
+
+\begin{definition}[Tropical and sticky multiplication,
+{\cite[Definitions 11, 12]{GZT25}}]
+For matrices $A[I;J]$, $B[J;K]$, the \emph{tropical} (that is, $(\min,+)$)
+product is
+$(A\odot B)[i;k]=\min_{j\in[J]}\bigl(A[i;j]+B[j;k]\bigr)$. For matrices
+$D,E,F$, the \emph{implicit tropical}, or \emph{sticky}, product is defined by
+\[
+D\stick E=F
+\qquad\text{iff}\qquad
+D^\Sigma\odot E^\Sigma=F^\Sigma .
+\]
+\end{definition}
+
+\begin{definition}[{\cite[Definition 13]{GZT25}}]
+The \emph{sticky multiplication monoid of permutation matrices} $H_n$ is the
+set of all $n\times n$ permutation matrices under sticky multiplication.
+\end{definition}
+
+The monoid $H_n$ is isomorphic to the \emph{sticky braid monoid} of degree
+$n$, presented by generators $\tau_1,\ldots,\tau_{n-1}$ subject to
+$\tau_i^2=\tau_i$, far commutativity and the braid
+relations~\cite[Definition 15, Theorem 19]{GZT25}. The algorithmic content of
+the framework is the following theorem.
+
+\begin{theorem}[Tiskin--Sakai, {\cite{Tiskin15,Sakai11}},
+{\cite[Theorem 14]{GZT25}}]\label{thm:tiskinsakai}
+Let $P\stick Q=R$, where $P,Q,R$ are (sub)permutation matrices with at most
+$n$ nonzeros each. Given the nonzeros of $P,Q$, the nonzeros of $R$ can be
+obtained in time $O(n\log n)$.
+\end{theorem}
+
+\begin{theorem}[SLCS kernel composition, {\cite[Theorem 35]{GZT25}}]
+Let $a=a'a''$, where $a',a''$ are of length $m',m''$. Then
+$P^{\nearrow}_{a,b}=P^{\nearrow}_{a',b}\stick P^{\nearrow}_{a'',b}$, and the
+product can be obtained in time $O(n\log N)$, where
+$N=\min\{m',m'',n\}$.
+\end{theorem}
+
+\subsection{The affine extension}\label{sec:affine}
+
+\begin{definition}[{\cite[Definition 20]{GZT25}}]\label{def:affineperm}
+A \emph{skew-affine permutation} of degree $n$ and \emph{skew} $s$ is a
+bijection $\tilde P:\Zh\to\Zh$ such that $\tilde P(\hat\imath+n)=
+\tilde P(\hat\imath)+n$ for all $\hat\imath\in\Zh$, and
+$\sum_{\hat\imath\in\langle 0:n\rangle}\tilde P(\hat\imath)
+=\sum_{\hat\imath\in\langle 0:n\rangle}\hat\imath+s$. A skew-affine
+permutation with skew $0$ is called \emph{affine}.
+\end{definition}
+
+Permutation matrices, dominance sums, tropical multiplication and sticky
+multiplication all extend from the finite to the affine
+case~\cite{Pflueger22}, yielding the monoid $\tilde H_n$ of affine
+permutation matrices of degree $n$ under sticky multiplication, isomorphic to
+the affine sticky braid monoid of degree
+$n$~\cite[Definitions 22, 24, Theorem 25]{GZT25}. Sticky multiplication is
+well defined on skew-affine permutations as well: the skew of a product is
+the sum of the skews of the multiplicands, and applying the skews commutes
+with taking the product~\cite[Remark 23]{GZT25}. Throughout, an affine
+permutation is represented by the images of a single period, that is, by the
+restriction of $\tilde P$ to $\langle 0:n\rangle$, taken as a mapping into
+$\Zh$~\cite[Section 4.1]{GZT25}.
+
+\begin{definition}[{\cite[Definitions 26, 28]{GZT25}}]\label{def:phigamma}
+Let $f:\langle 0:n\rangle\to\Zh$ be an injection whose $n$ images are pairwise
+non-congruent modulo $n$. The \emph{affine replication} $\repl_n f$ is the
+unique affine permutation of degree $n$ whose restriction to
+$\langle 0:n\rangle$ equals $f$. An affine permutation $\tilde\Phi$ is
+\emph{finite-type} if $\tilde\Phi|_{\langle 0:N\rangle}$ is a finite
+permutation; an affine permutation $\tilde\Gamma$ is \emph{Grassmannian} if
+$\tilde\Gamma|_{\langle 0:N\rangle}$ is monotone increasing.
+\end{definition}
+
+\begin{theorem}[{\cite[Proposition 29]{GZT25}}]\label{thm:decomp}
+Any affine permutation $\tilde P$ can be represented as a product
+$\tilde P=\tilde\Phi\cdot\tilde\Gamma$ with $\tilde\Phi$ finite-type and
+$\tilde\Gamma$ Grassmannian. Such a \emph{$\Phi\Gamma$-decomposition} can be
+computed in time $O(N\log N)$ and linear space; the symmetric
+\emph{$\Gamma\Phi$-decomposition}
+$\tilde P=\tilde\Gamma'^{\,-1}\cdot\tilde\Phi'$ is computed in the same time.
+\end{theorem}
+
+The proof of Theorem~\ref{thm:decomp} consists of sorting the elements of
+$\langle 0:N\rangle$ by the order of their $\tilde P$-images, and one
+composition of affine permutations; the $O(N\log N)$ term is the sort.
+
+Given strings $a$ of length $m$ and $b$ of length $n$, the string-substring
+component of the semi-local problem for the pair $a$, $b^\infty$ again admits
+a kernel, denoted $P_{a,b^\infty}$. Provided that every character of $a$
+occurs in $b$ at least once --- which can be assumed without loss of
+generality, since a character of $a$ absent from $b$ is never matched --- the
+kernel $P_{a,b^\infty}$ is a skew-affine permutation of degree $n$ and skew
+$m$~\cite[Section 3.3]{GZT25}.
+
+\begin{theorem}[Affine kernel composition,
+{\cite[Theorem 40]{GZT25}}]\label{thm:affinecompose}
+Let $a=a'a''$. Then
+$P_{a,b^\infty}=P_{a',b^\infty}\stick P_{a'',b^\infty}$, the sticky product
+being taken on skew-affine permutations as above.
+\end{theorem}
+
+\begin{theorem}[Wraparound combing, \cite{Tiskin09},
+{\cite[Section 3.3]{GZT25}}]\label{thm:combing}
+Given two strings $a,b$ of lengths $m,n$, the kernel $P_{a,b^\infty}$ can be
+computed in time $O(mn)$ and space $O(n)$.
+\end{theorem}
+
+Wraparound combing initialises a saturated affine embedded braid on the
+infinite periodic LCS grid and iterates over its cells: the outer loop runs
+over the characters of $a$, north to south; the inner loop runs over one whole
+period of $b^\infty$, beginning at a match cell in the current row, with an
+entanglement check that respects the periodic structure of the
+grid~\cite[Section 3.3]{GZT25}. The choice of the starting period may differ
+between iterations of the outer loop, and the inner loop is a single
+left-to-right sweep across a period.
+
+\subsection{The sequential doubly-periodic algorithm}\label{sec:sequential}
+
+\begin{theorem}[Affine sticky multiplication,
+{\cite[Theorems 42, 44, Remark 43]{GZT25}}]\label{thm:affinesticky}
+Let $\tilde P,\tilde Q$ be skew-affine permutations of degree $n$. The
+following procedure computes $\tilde P\stick\tilde Q$, in time
+$O(n\log n)$ and space $O(n)$.
+\begin{enumerate}
+\item Compute the $\Gamma\Phi_{3n}$-decomposition
+$\tilde P=\tilde\Gamma\cdot\tilde\Phi$ and the
+$\Phi\Gamma_{3n}$-decomposition $\tilde Q=\tilde\Phi'\cdot\tilde\Gamma'$. Put
+$P=\tilde\Phi|_{\langle 0:3n\rangle}$,
+$Q=\tilde\Phi'|_{\langle 0:3n\rangle}$.
+\item Compute the finite sticky product $P\stick Q$, and from it the
+relative reduction $\red(P,Q):=P^{-1}\cdot(P\stick Q)$.
+\item Compute $S=\red(P,Q)|_{\langle n:2n\rangle}\cdot\tilde\Gamma'$, which is
+an injection $\langle n:2n\rangle\to\Zh$; then
+$\red(\tilde P,\tilde Q)=\repl_n S$.
+\item Output $\tilde P\cdot\red(\tilde P,\tilde Q)$.
+\end{enumerate}
+\end{theorem}
+
+Thus a single affine sticky multiplication of degree $n$ costs two
+decompositions as in Theorem~\ref{thm:decomp} (that is, two sorts of $3n$
+keys), one finite sticky multiplication of order $3n$ as in
+Theorem~\ref{thm:tiskinsakai}, and a constant number of compositions and
+inversions of permutations of order $O(n)$.
+
+\begin{theorem}[{\cite[Theorem 45]{GZT25}}]\label{thm:kernelpower}
+Given strings $a,b$ of lengths $m,n$, the kernel $P_{a^k,b^\infty}$ can be
+computed in time $O(mn+n\log n\log k)$ and space $O(n)$.
+\end{theorem}
+
+The proof of Theorem~\ref{thm:kernelpower} is: build $P_{a,b^\infty}$ by
+wraparound combing (Theorem~\ref{thm:combing}), then raise it to the power $k$
+in $\tilde H_n$ by binary exponentiation, using
+Theorem~\ref{thm:affinecompose} for correctness and
+Theorem~\ref{thm:affinesticky} as the subroutine.
+
+\begin{theorem}[{\cite[Theorem 46]{GZT25}}]\label{thm:score}
+Given the kernel $P_{u,b^\infty}$ for a string $u$ and a string $b$ of length
+$n$, the score $\lcs(u,b^\ell)$ can be computed in time $O(n)$ by
+\[
+\lcs\bigl(u,b^\ell\bigr)
+=\sum_{0<\hat\jmath<n}
+\min\left\{\ell,\ \left\lfloor
+\frac{P_{u,b^\infty}(\hat\jmath)}{n}\right\rfloor\right\}.
+\]
+\end{theorem}
+
+\begin{theorem}[{\cite[Corollary 47]{GZT25}}]\label{thm:sequential}
+The score $\lcs(a^k,b^\ell)$ can be computed in time
+$O(mn+n\log n\log k)$ and space $O(n+m)$.
+\end{theorem}
+
+\subsection{The BSP model}\label{sec:bsp}
+
+\begin{definition}[BSP computer, \cite{Valiant90}]
+A \emph{BSP computer} is described by three parameters $(p,g,l)$: the number
+$p$ of processors, each with its own local memory; the \emph{communication
+gap} $g$, describing the rate at which data can be transmitted continuously by
+the network relative to the computation speed of a single processor; and the
+\emph{latency} $l$, the overhead of starting up communication. A BSP
+computation is divided into \emph{supersteps}, each consisting of a phase of
+local computation followed by a communication phase, and terminated by a
+barrier synchronisation of all processors.
+\end{definition}
+
+Following~\cite[Section 2.2]{KruscheThesis}, a BSP algorithm on input of size
+$N$ is measured by four quantities: the \emph{local computation}
+$W(N,p)$, the sum over all supersteps of the maximum number of local
+operations performed by a processor in that superstep; the
+\emph{communication} $H(N,p)$, the sum over all supersteps of the maximum
+number of data units sent or received by a processor in that superstep; the
+\emph{memory} $M(N,p)$, the maximum amount of local storage used by a
+processor at any point; and the \emph{synchronisation} $S$, the number of
+supersteps. The cost of the computation is $W+g\cdot H+l\cdot S$.
+
+\begin{definition}[{\cite[Definitions 2.3.1, 2.3.3, 2.3.4, 2.3.5]{KruscheThesis}}]
+\label{def:scalable}
+Let the sequential reference algorithm run in time $\mathcal W(N)$ and space
+$\mathcal M(N)$, and let $\mathcal I(N)$ be the maximum of the input and
+output size. A BSP algorithm is \emph{work-optimal} if
+$W(N,p)=O\bigl(\mathcal W(N)/p\bigr)$; it has \emph{scalable communication}
+if $H(N,p)=O\bigl(\mathcal I(N)/p^c\bigr)$ for some constant $c>0$; it has
+\emph{scalable memory} if $M(N,p)=O\bigl(\mathcal M(N)/p^c\bigr)$ for some
+constant $c>0$; and it is \emph{synchronisation-efficient} if $S$ is not a
+function of $N$.
+\end{definition}
+
+\begin{remark}\label{rem:slackness}
+As usual in the BSP model, the bounds of Definition~\ref{def:scalable} are
+attainable only under a \emph{slackness} condition relating $N$ and $p$; for
+instance, BSP parallel prefix runs in $W=O(N/p)$, $H=O(p)$, $S=O(1)$ provided
+$N\ge p^2$~\cite[Example 2.3.6]{KruscheThesis}. All the bounds stated below
+carry such conditions explicitly.
+\end{remark}
+
+We use two standard BSP primitives. Sorting $N$ keys can be performed in
+$W=O\bigl((N\log N)/p\bigr)$, $H=M=O(N/p)$ and $S=O(1)$ supersteps under
+polynomial slackness~\cite{Goodrich99,GV94}. Applying a permutation of
+$[0:N]$ that is distributed evenly across the processors --- equivalently,
+composing or inverting two such permutations --- is a balanced $h$-relation
+with $h=O(N/p)$, and thus costs $W=H=O(N/p)$ in $S=O(1)$ supersteps.
+
+\subsection{Sticky multiplication in parallel}\label{sec:bspsticky}
+
+Sticky multiplication of \emph{finite} permutation matrices has been
+parallelised in the BSP model, and in more restrictive models. The following
+two results are the ones relevant here.
+
+\begin{theorem}[{\cite{KT07}}, {\cite[Section 4.2]{KruscheThesis}}]
+\label{thm:kt07}
+Given the nonzeros of two $n\times n$ permutation matrices $P_A$, $P_B$,
+distributed equally across $p$ processors, the nonzeros of $P_C$ with
+$P_C=P_A\stick P_B$ can be computed using
+$W(n,p)=O\bigl(n^{1.5}/p\bigr)$,
+$H(n,p)=M(n,p)=O\bigl(n/\sqrt p\bigr)$ and $S=O(1)$, under the slackness
+condition $n>p^2$.
+\end{theorem}
+
+\begin{theorem}[{\cite{KT10}}, {\cite[Lemma 4.3.3]{KruscheThesis}}]
+\label{thm:kt10}
+Given the nonzeros of two $n\times n$ permutation matrices $P_A$, $P_B$,
+distributed equally across $p<\sqrt[3]{n}$ processors, the nonzeros of $P_C$
+with $P_C=P_A\stick P_B$ can be computed using
+$W(n,p)=O\bigl((n\log n)/p\bigr)$, $H(n,p)=O\bigl((n/p)\log p\bigr)$,
+$M(n,p)=O(n/p)$ and $S=O(\log p)$.
+\end{theorem}
+
+Theorem~\ref{thm:kt10} is work-optimal with respect to
+Theorem~\ref{thm:tiskinsakai}, and has scalable communication within a
+$\log p$ factor of $n/p$; Theorem~\ref{thm:kt07} is synchronisation-efficient
+but is not work-optimal, and its communication and memory are scalable only
+with $c=1/2$. Building on Theorem~\ref{thm:kt10}, Krusche and Tiskin obtain a
+BSP algorithm for semi-local LCS of two strings of length $n$ running in
+$W=O(n^2/p)$, $H=M=O(n/\sqrt p)$ and
+$S=O(\log^2p)$~\cite[Theorem 4.4.1]{KruscheThesis}. Tiskin~\cite{Tiskin20}
+subsequently improved the known upper bounds on communication and
+synchronisation for parallel semi-local LCS, and gave the first constant-sync
+work-optimal LCS algorithm. In the more restrictive massively parallel
+computation (MPC) model of~\cite{KSV10}, Koo~\cite{Koo24} gave an
+$O(1)$-round fully scalable deterministic algorithm for the same
+multiplication.
+
+\section{Problem formulation}
+
+\begin{problem}[Doubly-periodic LCS in BSP]\label{prob:lcs}
+Prove that there is a BSP algorithm which, given strings $a,b$ of lengths
+$m,n$ distributed equally across $p$ processors, together with $k$ and
+$\ell$, computes $\lcs(a^k,b^\ell)$ using
+\begin{gather*}
+W=O\!\left(\frac{mn+n\log n\log k}{p}\right),\qquad
+H=M=O\!\left(n+\frac{m}{p}\right),
+\\
+S=O\bigl(\log^2p+\log p\log k\bigr),
+\end{gather*}
+under the slackness conditions $n>p^3$ and $m\ge p\log n$; that is, which is
+work-optimal with respect to Theorem~\ref{thm:sequential}.
+Better still, and the form the problem is really after, is an algorithm
+meeting the same bounds on $W$ and $S$ with
+\[
+H=M=O\!\left(\frac{m}{p}+\frac{n}{p^c}\right)
+\qquad\text{for some constant }c>0,
+\]
+possibly under a stronger slackness condition; that is, one with scalable
+communication and scalable memory in the sense of
+Definition~\ref{def:scalable}.
+\end{problem}
+
+\begin{remark}\label{rem:monotone}
+The scalable form of Problem~\ref{prob:lcs} implies the plain one, since
+$m/p+n/p^c=O(n+m/p)$; the plain one is a solution as it stands, and the
+scalable one is the same problem carried further.
+The intended solution calls a BSP algorithm for affine sticky multiplication
+in $\tilde H_n$ $O(\log p+\log k)$ times. That multiplication is the only part
+of the pipeline for which no algorithm in any parallel model is currently in
+the literature, and it is of independent interest in its own right.
+\end{remark}
+
+\begin{remark}\label{rem:sync}
+A variant that is equally interesting asks to trade work for synchronisation:
+using a synchronisation-efficient multiplication such as
+Theorem~\ref{thm:kt07} in place of Theorem~\ref{thm:kt10} should give
+$S=O(\log p+\log k)$ at the cost of a larger $W$ and of communication and
+memory scalable only with $c=1/2$. Since the binary exponentiation of
+Theorem~\ref{thm:kernelpower} is inherently sequential in its $\log k$
+rounds, $S=\Omega(\log k)$ for any algorithm of this shape, so
+$S=O(\log p+\log k)$ is the natural target. The same question in the MPC
+model, where Koo's $O(1)$-round fully scalable
+multiplication~\cite{Koo24} is available in place of
+Theorem~\ref{thm:kt07}, asks for $O(\log k)$ rounds.
+\end{remark}
+
+\begin{remark}\label{rem:asymmetry}
+The bounds are asymmetric in the two inputs: $k$ enters through
+$\log k$ and $\ell$ only through Theorem~\ref{thm:score}. This is inherited
+from the sequential algorithm, where the roles of $a^k$ and $b^\ell$ are
+genuinely different --- the first string is combed, the second one is folded
+into the affine structure. Swapping the two inputs gives the bound with $m$
+and $n$, and $k$ and $\ell$, interchanged, and one may of course run whichever
+of the two is cheaper.
+\end{remark}
+
+\begin{remark}\label{rem:general}
+Following the published version of~\cite{GZT25}, the problem is posed for a
+pair of repeats $a^k$, $b^\ell$. Theorem~\ref{thm:score} is stated there for
+a repeat $b^\ell$, with the case of a general periodic string $b^\ell b'$
+deferred to a full version that is not available; a solution of the
+problem above is not expected to depend on
+which of the two variants is used, since the difference lies entirely in the
+$O(n)$ score-retrieval phase.
+\end{remark}
+
+\begin{thebibliography}{GZT25}
+
+\bibitem[Goo99]{Goodrich99}
+Michael~T. Goodrich.
+\newblock Communication-efficient parallel sorting.
+\newblock {\em SIAM Journal on Computing}, 29(2):416--432, 1999.
+
+\bibitem[GV94]{GV94}
+Alexandros~V. Gerbessiotis and Leslie~G. Valiant.
+\newblock Direct bulk-synchronous parallel algorithms.
+\newblock {\em Journal of Parallel and Distributed Computing}, 22(2):251--267,
+  1994.
+
+\bibitem[GZT25]{GZT25}
+Nikita Gaevoy, Boris Zolotov, and Alexander Tiskin.
+\newblock Doubly-periodic string comparison.
+\newblock In Paola Bonizzoni and Veli M{\"a}kinen, editors, {\em 36th Annual
+  Symposium on Combinatorial Pattern Matching (CPM 2025)}, volume 331 of {\em
+  LIPIcs}, pages 13:1--13:19. Schloss Dagstuhl -- Leibniz-Zentrum f\"{u}r
+  Informatik, 2025.
+
+\bibitem[Koo24]{Koo24}
+Jaehyun Koo.
+\newblock An optimal {MPC} algorithm for subunit-{M}onge matrix multiplication,
+  with applications to {LIS}.
+\newblock In {\em 36th ACM Symposium on Parallelism in Algorithms and
+  Architectures (SPAA 2024)}, pages 145--154, 2024.
+
+\bibitem[Kru10]{KruscheThesis}
+Peter Krusche.
+\newblock {\em Parallel String Alignments: Algorithms and Applications}.
+\newblock PhD thesis, University of Warwick, 2010.
+\newblock \url{https://pkrusche.netlify.app/files/semithesis.pdf}.
+
+\bibitem[KSV10]{KSV10}
+Howard Karloff, Siddharth Suri, and Sergei Vassilvitskii.
+\newblock A model of computation for {M}ap{R}educe.
+\newblock In {\em 2010 ACM-SIAM Symposium on Discrete Algorithms (SODA 2010)},
+  pages 938--948, 2010.
+
+\bibitem[KT07]{KT07}
+Peter Krusche and Alexander Tiskin.
+\newblock Efficient parallel string comparison.
+\newblock In {\em Parallel Computing: Architectures, Algorithms and
+  Applications (ParCo 2007)}, volume~38 of {\em NIC Series}, pages 193--200.
+  John von Neumann Institute for Computing, 2007.
+
+\bibitem[KT10]{KT10}
+Peter Krusche and Alexander Tiskin.
+\newblock New algorithms for efficient parallel string comparison.
+\newblock In {\em 22nd Annual ACM Symposium on Parallelism in Algorithms and
+  Architectures (SPAA 2010)}, pages 209--216, 2010.
+
+\bibitem[Pfl22]{Pflueger22}
+Nathan Pflueger.
+\newblock An extended {D}emazure product on integer permutations via min-plus
+  matrix multiplication, 2022.
+\newblock arXiv:2206.14227.
+
+\bibitem[Sak11]{Sakai11}
+Yoshifumi Sakai.
+\newblock A fast algorithm for multiplying min-sum permutations.
+\newblock {\em Discrete Applied Mathematics}, 159(17):2175--2183, 2011.
+
+\bibitem[Tis08]{Tiskin08}
+Alexander Tiskin.
+\newblock Semi-local string comparison: Algorithmic techniques and
+  applications.
+\newblock {\em Mathematics in Computer Science}, 1(4):571--603, 2008.
+
+\bibitem[Tis09]{Tiskin09}
+Alexander Tiskin.
+\newblock Periodic string comparison.
+\newblock In {\em 20th Annual Symposium on Combinatorial Pattern Matching (CPM
+  2009)}, volume 5577 of {\em Lecture Notes in Computer Science}, pages
+  193--206. Springer, 2009.
+
+\bibitem[Tis13]{TiskinArXiv}
+Alexander Tiskin.
+\newblock Semi-local string comparison: algorithmic techniques and
+  applications, 2013.
+\newblock arXiv:0707.3619v21.
+
+\bibitem[Tis15]{Tiskin15}
+Alexander Tiskin.
+\newblock Fast distance multiplication of unit-{M}onge matrices.
+\newblock {\em Algorithmica}, 71(4):859--888, 2015.
+
+\bibitem[Tis20]{Tiskin20}
+Alexander Tiskin.
+\newblock Communication vs synchronisation in parallel string comparison.
+\newblock In {\em 32nd ACM Symposium on Parallelism in Algorithms and
+  Architectures (SPAA 2020)}, pages 479--489, 2020.
+
+\bibitem[Val90]{Valiant90}
+Leslie~G. Valiant.
+\newblock A bridging model for parallel computation.
+\newblock {\em Communications of the ACM}, 33(8):103--111, 1990.
+
+\end{thebibliography}
+
+\end{document}
