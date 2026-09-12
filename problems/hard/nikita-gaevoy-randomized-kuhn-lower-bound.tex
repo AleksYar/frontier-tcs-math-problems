@@ -1,0 +1,307 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{url}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Kuhn}{\text{Kuhn}}
+\newcommand{\BKuhn}{\text{BlockingKuhn}}
+\newcommand{\Ex}{\mathbb{E}}
+\newcommand{\ONCE}{\textup{\textsc{once}}}
+\newcommand{\EACH}{\textup{\textsc{each}}}
+
+\title{A Lower Bound for Randomized Kuhn's Algorithm on Sparse Graphs - Hard}
+\author{Nikita Gaevoy}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+\subsection{Matchings and augmenting paths}
+
+Let $G=(\mathcal{L}\sqcup\mathcal{R},\,\mathcal{E})$ be a bipartite graph. We
+write $L=|\mathcal{L}|$, $R=|\mathcal{R}|$, $V=L+R$ and $E=|\mathcal{E}|$, so
+that $L$, $R$, $V$, $E$ are \emph{cardinalities}; the vertices of $\mathcal{L}$
+are numbered by $[0,L)$ and those of $\mathcal{R}$ by $[0,R)$. The graph is
+assumed connected, so $E\ge V-1$, and it is given by adjacency lists
+$\mathrm{neigh}[v]$, $v\in\mathcal{L}$, which list the neighbours of $v$ in
+$\mathcal{R}$ in some order. That order is part of the input, and it matters:
+the algorithms below read the lists in the order given.
+
+A \emph{matching} is a set $M\subseteq\mathcal{E}$ of pairwise disjoint edges.
+A vertex is \emph{free} if no edge of $M$ meets it. An \emph{augmenting path}
+for $M$ is a path whose endpoints are both free and whose edges alternate
+between $\mathcal{E}\setminus M$ and $M$; replacing $M$ by $M\triangle P$
+enlarges the matching by one. By Berge's theorem~\cite{Berge57}, $M$ is maximum
+if and only if it admits no augmenting path.
+
+\subsection{Kuhn's algorithm}
+
+\begin{definition}[The search]\label{def:dfs}
+Let $\mathit{lmatch}$ and $\mathit{rmatch}$ hold the current matching, with
+$-1$ for a free vertex, and let $\mathit{used}$ be an array of flags on
+$\mathcal{L}$. The search is
+\begin{verbatim}
+    dfs_Kuhn(v):
+        if used[v]: return false
+        used[v] = true
+        for dest in neigh[v]:
+            if rmatch[dest] == -1 or dfs_Kuhn(rmatch[dest]):
+                lmatch[v]    = dest
+                rmatch[dest] = v
+                return true
+        return false
+\end{verbatim}
+It returns true exactly when it has found an augmenting path starting at $v$ and
+has flipped it.
+\end{definition}
+
+\begin{definition}[$\Kuhn$]\label{def:kuhn}
+The classical algorithm scans the left side once, resetting the flags before
+each search:
+\begin{verbatim}
+    for i in [0, L):
+        used = [false] * L
+        dfs_Kuhn(i)
+\end{verbatim}
+\end{definition}
+
+\begin{remark}[On the name]\label{rem:name}
+The augmenting-path algorithm of Definition~\ref{def:kuhn} is called
+\emph{Kuhn's algorithm} in the competitive-programming literature, after the
+Hungarian method~\cite{Kuhn55}; it has no standard name in English-language
+textbooks, where it appears as the unadorned augmenting-path or
+Ford--Fulkerson-style algorithm for bipartite matching. We keep the name
+because it is how the problem below is posed in its source~\cite{Kaban19}.
+\end{remark}
+
+$\Kuhn$ runs in $O(VE)$ time, and the bound is tight essentially independently
+of the relation between $V$ and $E$ --- for sparse graphs, for dense graphs, and
+for everything in between~\cite[\S1]{Kaban19}.
+
+\subsection{The blocking, randomized variant}
+
+Two changes make the algorithm dramatically faster in practice. The first,
+due to Burunduk1~\cite{Burunduk1} and described in English by
+adamant~\cite{Adamant23}, is to reset the flags once per \emph{round} rather
+than once per vertex, so that one $O(E)$ round flips a whole set of
+vertex-disjoint augmenting paths instead of at most one. The second is to
+randomise the order in which the left vertices and their adjacency lists are
+read.
+
+\begin{definition}[$\BKuhn$]\label{def:alg}
+Fix a shuffle mode $\sigma\in\{\ONCE,\EACH\}$. The algorithm is
+\begin{verbatim}
+    reshuffle():
+        shuffle(neigh); for row in neigh: shuffle(row)
+
+    lmatch = [-1] * L;  rmatch = [-1] * R
+    reshuffle()
+    while true:
+        if sigma == EACH: reshuffle()
+        used  = [false] * L
+        found = false
+        for i in [0, L):
+            if lmatch[i] == -1: found |= dfs_Kuhn(i)
+        if not found: break
+    return L - (number of -1 entries in lmatch)
+\end{verbatim}
+Here $\mathrm{shuffle}$ applies a uniformly random permutation, independently
+of everything else, and one iteration of the \texttt{while} loop is a
+\emph{round}. Under $\sigma=\ONCE$ the two shuffles are performed once,
+before the first round; under $\sigma=\EACH$ they are repeated at the
+start of every round, which is the ``stronger'', more random variant. Shuffling
+$\mathrm{neigh}$ renumbers the left vertices, so the loop
+\texttt{for i in [0,L)} then visits them in a uniformly random order.
+\end{definition}
+
+\begin{remark}[Correctness and the trivial bound]\label{rem:correct}
+$\BKuhn$ returns the maximum matching size, for either mode and every outcome
+of the shuffles. Indeed, consider the final round: it performs no augmentation,
+so throughout it the matching is fixed, and sharing $\mathit{used}$ across the
+searches of a single round is then exactly the sharing that is sound for a fixed
+matching --- a left vertex from which no augmenting path exists cannot acquire
+one while nothing changes. Every free left vertex therefore fails, no augmenting
+path exists, and Berge's theorem~\cite{Berge57} applies.
+
+A round costs $O(E)$ and, unless it is the last, augments at least once, so
+there are at most $L+1$ rounds and the running time is $O(VE)$ --- the same
+bound as for $\Kuhn$.
+\end{remark}
+
+\begin{remark}[Why the Hopcroft--Karp bound does not apply]\label{rem:hk}
+The set of augmenting paths flipped in one round is vertex-disjoint, so a round
+resembles a phase of the Hopcroft--Karp algorithm~\cite{HopcroftKarp73}, which
+runs in $O(E\sqrt V)$. It is not one. Hopcroft and Karp flip a maximal set of
+\emph{shortest} augmenting paths, and it is shortness that forces the length of
+a shortest augmenting path to increase from phase to phase and so caps the
+number of phases at $O(\sqrt V)$. The depth-first round of
+Definition~\ref{def:alg} flips paths of arbitrary length --- it commits to the
+first augmenting path the search stumbles on --- and no bound on the number of
+rounds better than the trivial $L+1$ is known. Adding a breadth-first layering
+pass in front of the round restores shortness and turns the algorithm into
+Hopcroft--Karp~\cite{Adamant23}, at which point $O(E\sqrt V)$ is available
+again; but that is a different algorithm, and in practice it is the one the
+heuristic is used \emph{instead} of.
+\end{remark}
+
+\subsection{The cost measure}
+
+\begin{definition}[Work]\label{def:work}
+For a run of $\BKuhn$ let $\rho$ be the number of rounds and let $I$ be the
+total number of iterations of the loop \texttt{for dest in neigh[v]} over the
+whole run, that is, the number of \emph{edge inspections}. The \emph{work} of
+the run is
+\[
+  W \;=\; \rho L+I .
+\]
+The two terms are the flag resets and the searches; everything else costs
+$O(V+E)$ once, so the running time on a unit-cost RAM is $\Theta(V+E+W)$.
+\end{definition}
+
+The shuffles are the only source of randomness, so $W$ is a random variable
+depending on $G$, on the adjacency-list order in which $G$ is presented, and on
+the mode $\sigma$. We study its expectation, in the worst case over inputs:
+\[
+  \mathcal{W}_\sigma(V,E)
+  \;=\;
+  \max_{G}\ \Ex\bigl[W\bigr],
+\]
+the maximum being over connected bipartite graphs with $V$ vertices and $E$
+edges, presented in an arbitrary order. Shuffling makes
+$\mathcal{W}_\sigma$ independent of the presentation order for
+$\sigma=\ONCE$ as well, since the first shuffle destroys it; the
+adversary chooses the graph only.
+
+\section{Problem formulation}
+
+\begin{problem}[Lower bound]\label{prob:lower}
+Prove that $\BKuhn$ is not near-linear on sparse graphs. Formally: exhibit an
+infinite family $(G_k)_{k\ge1}$ of connected bipartite graphs with
+$V_k\to\infty$, $E_k=O(V_k\log^{O(1)}V_k)$, and
+\[
+  \Ex\bigl[W(G_k)\bigr]=\omega\bigl(E_k\log V_k\bigr)
+\]
+for at least one of the two shuffle modes $\sigma$.
+
+The bar $E\log V$ is where the known constructions stop --- it is attained on a
+path, and it is also what a random graph gives, since there every non-maximum
+matching admits an augmenting path of length $O(\log V)$ with high
+probability~\cite{BMST06}; the target is $\Omega(E^{3/2})$, which together with
+the companion upper bound would settle the sparse case exactly.
+\end{problem}
+
+\begin{remark}[The two modes]\label{rem:modes}
+A family defeating either mode is a solution. The modes are not comparable, so
+it is worth being clear which way a result is the stronger one: a family
+defeating $\sigma=\EACH$ is the stronger statement, since it must survive fresh
+randomness at the start of every round, and it does not follow from a family
+defeating $\sigma=\ONCE$ or imply one. A solution should say which mode it
+treats.
+\end{remark}
+
+\begin{remark}[Why the problem is posed on sparse graphs]\label{rem:dense}
+The dense case is nearly settled and is not what is asked.
+For $E=\Theta(V^{2})$ the reference~\cite{Kaban19} reports a family on which
+$\BKuhn$ takes $\Omega\bigl(V^{3}/\log V\bigr)=\Omega(VE/\log V)$ time, which is
+the trivial upper bound up to a logarithm, so there is nothing left to win
+there. The problem therefore lives in the sparse regime, where the gap runs from
+$E\log V$ to $E^{2}$ --- a factor of $V/\log V$ --- and where the source reports
+that generalising the dense construction did not work~\cite{Kaban19}.
+\end{remark}
+
+\begin{remark}[What does not count]\label{rem:notcount}
+Two near misses.
+\begin{itemize}
+  \item A lower bound for the \emph{unshuffled} algorithm. Sparse families
+  forcing $\Omega(V^{2})$ without shuffling are known and easy --- a tree built
+  from a long path with a path of length $3$ hanging from every vertex of it,
+  labelled so that each round finds one long augmenting
+  path~\cite{Dacin21}; the whole content of Problem~\ref{prob:lower} is
+  that the shuffle must not rescue the construction, so the expectation in the
+  statement is over the shuffles and may not be dropped.
+  \item An average-case result. On random graphs the behaviour is understood
+  and near-linear --- in a random graph every non-maximum matching admits an
+  augmenting path of length $O(\log V)$ with high probability, so
+  augmenting-path algorithms run in $O(E\log V)$ there~\cite{BMST06}; the problem is worst case over $G$
+  and averages only over the algorithm's own coins, so a family drawn at random
+  cannot be one.
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Variants that are equally interesting]\label{rem:variants}
+Implementations often shuffle only the adjacency lists, or only the vertex
+order, rather than both; and they often start from a greedy matching. A
+solution for any such variant, clearly stated, is worth having.
+Measured on the one hard construction available --- that of~\cite{Dacin21} ---
+either randomisation alone is already enough to defeat it, so it is not known
+which of them the bound actually needs, and no implication between the variants
+should be assumed in either direction.
+\end{remark}
+
+\begin{remark}\label{rem:dichotomy}
+A separate problem asks for the bound from
+the other side: an implementation-independent $T(V,E)=o(VE)$, with
+$O(E\sqrt E\,)$ as the target. The two are not alternatives and not a
+dichotomy. On sparse graphs the truth lies somewhere between $E\log V$ and
+$E^{2}$, and most of that range satisfies both at once: a proof that
+$\Ex[W]=\Theta(E^{3/2})$, the target named in both, would solve this problem and
+the companion together. Only a bound of $O(E\log V)$ on the companion side would
+exclude this one.
+\end{remark}
+
+\begin{thebibliography}{BMST06}
+
+\bibitem[{ada}23]{Adamant23}
+{adamant}.
+\newblock Implementing {D}initz on bipartite graphs.
+\newblock Codeforces blog entry 118098, 2023.
+
+\bibitem[Ber57]{Berge57}
+Claude Berge.
+\newblock Two theorems in graph theory.
+\newblock {\em Proceedings of the National Academy of Sciences},
+  43(9):842--844, 1957.
+
+\bibitem[BMST06]{BMST06}
+Holger Bast, Kurt Mehlhorn, Guido Sch\"{a}fer, and Hisao Tamaki.
+\newblock Matching algorithms are fast in sparse random graphs.
+\newblock {\em Theory of Computing Systems}, 39(1):3--14, 2006.
+
+\bibitem[{Bur}15]{Burunduk1}
+{Burunduk1}.
+\newblock Matching. {F}ast {K}uhn.
+\newblock Codeforces blog entry 17023, in Russian, 2015.
+
+\bibitem[{dac}17]{Dacin21}
+{dacin21}.
+\newblock An {$\Omega(V^2)$} worst case for blocking {K}uhn on a sparse graph.
+\newblock Comment 417533 on Codeforces blog entry 58048, 2017.
+
+\bibitem[HK73]{HopcroftKarp73}
+John~E. Hopcroft and Richard~M. Karp.
+\newblock An {$n^{5/2}$} algorithm for maximum matchings in bipartite graphs.
+\newblock {\em SIAM Journal on Computing}, 2(4):225--231, 1973.
+
+\bibitem[{Kab}19]{Kaban19}
+{Kaban-5}.
+\newblock What is the exact time complexity of randomized {K}uhn's algorithm?
+\newblock Computer Science Stack Exchange, question 115411, 2019.
+\newblock Version of 2019-10-03.
+
+\bibitem[Kuh55]{Kuhn55}
+H.~W. Kuhn.
+\newblock The {H}ungarian method for the assignment problem.
+\newblock {\em Naval Research Logistics Quarterly}, 2(1--2):83--97, 1955.
+
+\end{thebibliography}
+
+\end{document}

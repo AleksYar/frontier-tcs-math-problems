@@ -1,0 +1,348 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\SKF}{\text{SK1Flow}}
+\newcommand{\arc}[2]{#1\!\to\!#2}
+\DeclareMathOperator{\capa}{cap}
+
+\title{A Sub-Cubic Bound for the SK1Flow Maximum-Flow Algorithm - Medium}
+\author{Nikita Gaevoy}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminaries}
+
+\subsection{Excess networks and preflows}
+
+An \emph{excess network} $N=(V,A,c,e_0,t)$ consists of a vertex set $V$ with
+$|V|=n$; an arc set $A$, partitioned into $m$ \emph{pairs} $\{a,a^{R}\}$ with
+$a=\arc{v}{u}$ and $a^{R}=\arc{u}{v}$; a non-negative capacity
+$c\colon A\to T_{\ge0}$; an \emph{initial excess} $e_0\colon V\to T_{\ge0}$; and
+a \emph{sink} $t\in V$. Arcs may repeat, so the underlying graph is a directed
+multigraph. Here $T$ is a totally ordered abelian group whose order is
+translation invariant,
+\[
+x\le y\implies x+z\le y+z,
+\]
+for instance $\mathbb{Z}$, $\mathbb{Q}$, or arbitrary-precision integers. A
+one-directional arc of capacity $\gamma$ is the pair $(\gamma,0)$, and $m$ is
+the number of pairs, so $\sum_{v}\deg v=2m$ where $\deg v$ counts the arcs
+leaving $v$ in either orientation.
+
+There is no source vertex: sources are the vertices carrying positive initial
+excess, which makes multiple sources free of charge. Throughout, $r(a)$ denotes
+the current \emph{residual capacity} of the arc $a$ and $e(v)$ the current
+excess of $v$; both start at $c$ and $e_0$ and are modified only by the
+operation
+\[
+  \mathrm{push}(\arc{v}{u})\colon\quad
+  \delta:=\min\bigl(e(v),r(\arc{v}{u})\bigr),\qquad
+  \begin{aligned}
+    r(\arc{v}{u})&\mathrel{-}=\delta, & r(\arc{u}{v})&\mathrel{+}=\delta,\\
+    e(v)&\mathrel{-}=\delta,          & e(u)&\mathrel{+}=\delta.
+  \end{aligned}
+\]
+The push is \emph{positive} if $\delta>0$. Two invariants are immediate:
+$r(a)+r(a^{R})$ is constant, and $r\ge0$ and $e\ge0$ hold at all times. The
+intermediate states are therefore \emph{preflows}, not flows: excess may
+accumulate at intermediate vertices and stay there.
+
+\begin{definition}[Residual graph, distance]\label{def:residual}
+The \emph{residual graph} $G_r$ has vertex set $V$ and contains the arc
+$\arc{v}{u}$ exactly when $r(\arc{v}{u})>0$. We write $d(v)$ for the number of
+arcs on a shortest $v\rightsquigarrow t$ path in $G_r$, and $d(v)=\infty$ when
+$t$ is unreachable from $v$ in $G_r$.
+\end{definition}
+
+The quantity to be computed is the maximum amount deliverable to $t$: the
+maximum, over all feasible routings of the initial excess, of the amount that
+ends at $t$. Equivalently it is the value of a maximum flow from a super-source
+$s$ joined to each $v$ by an arc of capacity $e_0(v)$.
+
+\subsection{The algorithm}
+
+$\SKF$ is a phase algorithm. Each phase computes the exact distances $d$ by one
+backward breadth-first search from the sink, and then makes a single greedy
+sweep over the vertices in order of decreasing distance, each vertex forwarding
+whatever excess it holds one layer down.
+
+\begin{definition}[Heights, admissibility]\label{def:height}
+The \emph{height} of $v$ in a phase is $\ell(v)=d(v)+1$ if $d(v)<\infty$, and
+$\ell(v)=\infty$ otherwise, where $d$ is taken at the start of the phase. The
+offset of $1$ is a convenience: it puts the sink at height $1$ and leaves
+height $0$ empty, so the sink has no admissible out-arc and never pushes flow
+back out. An arc $\arc{v}{u}$ is \emph{admissible in the phase} if
+$\ell(u)=\ell(v)-1$ with both heights finite and $r(\arc{v}{u})>0$.
+\end{definition}
+
+\begin{definition}[$\SKF$]\label{def:alg}
+Given an excess network $N$ and its sink $t$, repeat the following
+\emph{phase}.
+\begin{enumerate}
+  \item \emph{Layering.} Run a breadth-first search from $t$ in the reverse of
+  $G_r$. This sets $\ell(v)=d(v)+1$ for every $v$ with $d(v)<\infty$ and
+  $\ell(v)=\infty$ for the rest, and produces a list
+  $\mathrm{order}$ of exactly the vertices of finite height, without
+  repetition, in non-decreasing order of $\ell$.
+
+  \item \emph{Sweep.} Traverse $\mathrm{order}$ backwards, that is in
+  non-increasing order of $\ell$, so that every vertex of finite height is
+  visited exactly once. On visiting $v$, scan the arcs leaving $v$ in a fixed
+  but arbitrary order, stopping as soon as $e(v)=0$, and perform
+  $\mathrm{push}(\arc{v}{u})$ on every admissible arc $\arc{v}{u}$
+  encountered.
+
+  \item \emph{Termination test.} If the sweep performed no positive push, stop.
+\end{enumerate}
+On stopping, return $e(t)$ and reset $e(t)$ to zero, so that a further call
+resumes from the current residual state instead of restarting.
+\end{definition}
+
+Two features distinguish $\SKF$ from its classical relatives, and both are
+load-bearing. Its intermediate states are preflows, so a sweep may strand
+excess at an intermediate vertex, whereas a blocking-flow phase of Dinitz's
+algorithm~\cite{Dinitz70} returns the surplus and ends with a genuine flow.
+At the same time it recomputes \emph{exact} distances once per phase, whereas
+push-relabel~\cite{GoldbergTarjan88} maintains lazy lower-bound estimates and
+relabels a single vertex at a time. $\SKF$ is the remaining combination:
+preflow-shaped, with exact per-phase relabelling.
+Removing the stranding --- a backward pass returning each vertex's surplus along
+the arcs that delivered it --- is exactly the balancing performed inside one
+layered network by the preflow-based blocking-flow routines of
+Karzanov~\cite{Karzanov74} and of Malhotra, Kumar and
+Maheshwari~\cite{MKM78}; with the exact per-phase relabelling already in place a
+phase then becomes a full Dinitz phase, and the algorithm becomes Dinitz's. The
+excess carried across phases is not an incidental feature of the implementation,
+and it is what the problem below is about.
+
+\begin{remark}\label{rem:order}
+The arc order inside a sweep is arbitrary and is not part of the problem: all
+the bounds below hold for every choice. It does change \emph{which} vertices
+strand excess, hence the constants, so a solution may not assume a particular
+order unless it establishes the bound for all of them.
+\end{remark}
+
+\begin{remark}\label{rem:correct}
+$\SKF$ is correct. On termination let $\mathcal{R}=\{v:d(v)<\infty\}$. If a
+phase makes no positive push then no $v\ne t$ with $e(v)>0$ lies in
+$\mathcal{R}$, since such a $v$ would have an admissible first arc on a shortest
+$v\rightsquigarrow t$ path and would have pushed along it. Hence every arc
+entering $\mathcal{R}$ from outside is saturated, and summing the excess
+conservation identity over $\mathcal{R}$ gives
+$e(t)=\sum_{v\in\mathcal{R}}e_0(v)+\capa(V\setminus\mathcal{R}\to\mathcal{R})$,
+which is an upper bound on
+what any routing can deliver. The excess stranded outside $\mathcal{R}$ could not have
+reached $t$ under any routing, so no final balancing stage is needed; the
+residual state left behind is a preflow and must not be read as a flow
+decomposition without first cancelling that excess.
+\end{remark}
+
+\subsection{The cost measure}
+
+Cost is measured in elementary operations: one comparison, one addition, one
+subtraction, or one copy of an element of $T$, and one word-RAM operation on an
+index or a height. For $T=\mathbb{Z}$ inside a machine word these are $O(1)$
+each. Every bound below is strongly polynomial, that is, independent of the
+capacity values.
+
+\begin{definition}[The three counters]\label{def:counters}
+Over a whole run of $\SKF$ on an excess network $N$ write
+\begin{itemize}
+  \item $P=P(N)$ for the number of phases, including the final pushless one;
+  \item $S=S(N)$ for the number of positive pushes that leave their arc
+  saturated, $r(\arc{v}{u})=0$;
+  \item $Q=Q(N)$ for the number of positive pushes that leave their tail empty,
+  $e(v)=0$.
+\end{itemize}
+A push that does both is counted in $S$ and in $Q$. Every positive push lies in
+$S\cup Q$, since $\delta=\min(e(v),r(\arc{v}{u}))$ attains one of its
+arguments.
+\end{definition}
+
+The counters $P$, $S$, $Q$ depend only on $N$ and on the arc order of
+Remark~\ref{rem:order}; they are properties of the run, not of any particular
+implementation of step~1 of Definition~\ref{def:alg}.
+
+\begin{remark}[The layering step is not the subject]\label{rem:layering}
+Step~1 as written costs $\Theta(n+m)$ per phase whatever the phase does, and a
+literal implementation therefore runs in $\Theta(P(n+m))$. This is an artefact
+of recomputing from scratch, and the problem below is posed for the
+\emph{algorithm}, not for that implementation: a solver may replace step~1 by
+any procedure that produces the same heights $\ell=d+1$, and in particular by
+an incremental relabeller. Theorem~\ref{thm:time} records what this buys,
+and Problem~\ref{prob:upper} restates the licence explicitly. The sweep, the
+pushes, and hence the counters of Definition~\ref{def:counters} are unaffected
+by any such substitution.
+\end{remark}
+
+\begin{theorem}[Running time]\label{thm:time}
+Maintain the heights incrementally, recomputing only the vertices whose exact
+distance changes, and resume each vertex's arc scan from a current-arc pointer
+that is reset only when its height changes. Then $\SKF$ runs in
+\[
+  O(n+m+nm+S+Q)\;=\;O(n+nm+Q)
+\]
+elementary operations, and no implementation runs in fewer than
+$\Omega(n+m+S+Q)$. Consequently $\SKF$ runs in $O(n^{3})$ unconditionally, and,
+on networks with $m\ge1$, in $O(nm)$ if and only if $Q=O(nm)$.
+\end{theorem}
+
+\begin{proof}
+A finite height is at most $n$ and never decreases, so each vertex's height
+changes at most $n$ times; each change costs $O(\deg v)$ to propagate and is the
+only event that resets that vertex's pointer, so the relabelling and the arc
+scans together cost $O\bigl(\sum_v n\deg v\bigr)=O(nm)$. An arc that has been
+saturated regains residual capacity only through a push on its partner, which
+raises the height of its head by at least two, so each arc is saturated $O(n)$
+times and $S=O(nm)$. Every positive push is counted by $S+Q$ and costs $O(1)$,
+and visiting the active vertices in non-increasing height order costs $O(1)$
+amortised per visit with a monotone bucket queue over the $n+1$ possible
+heights; the initial arrays and search cost $O(n+m)$. For the lower bound, every
+implementation must read its input and perform the pushes of step~2, one
+elementary operation each.
+
+For the unconditional bound, each vertex empties its tail at most once per phase,
+so $Q\le nP$; and every phase but the last two strictly raises $d(v)$ for some
+$v$, while $\sum_v d(v)$ can rise at most $n(n-1)$ times, so $P=O(n^{2})$ and
+$Q=O(n^{3})$. Conversely an $O(nm)$ running time forces $Q=O(nm)$, since $Q$ is
+a lower bound on the number of operations.
+\end{proof}
+
+\section{Problem formulation}
+
+\begin{problem}[Upper bound]\label{prob:upper}
+Prove that $\SKF$ runs in $o(n^{3})$ elementary operations. Formally: exhibit a
+function $T(n,m)$ with
+\[
+  T(n,m)=o(n^{3})\quad\text{as }n\to\infty\text{ for some infinite family of
+  densities }m=m(n),
+\]
+and an implementation of $\SKF$ that runs in $O\bigl(T(n,m)\bigr)$ elementary
+operations on every excess network with $n$ vertices and $m$ arc pairs.
+
+The implementation is free to compute the heights of step~1 of
+Definition~\ref{def:alg} by any means, as long as the heights it produces are
+the exact ones, $\ell=d+1$; the sweep and the pushes of step~2 must be
+performed exactly as stated.
+
+On densities $m=O(n^{2-\varepsilon})$, Theorem~\ref{thm:time} makes this
+equivalent to the purely combinatorial statement
+\[
+  Q=o(n^{3})
+\]
+about the run: every other term of the running time is already $o(n^{3})$
+there, while conversely $Q$ is a lower bound on the operations of any
+implementation.
+\end{problem}
+
+\begin{remark}[Why $o(n^{3})$ rather than $O(nm)$]\label{rem:density}
+On dense graphs the two coincide: $nm=\Theta(n^{3})$ when $m=\Theta(n^{2})$, so
+the conjectured $O(nm)$ is \emph{not} an improvement there. Nor can the
+accounting of Theorem~\ref{thm:time} deliver one, whatever is proved about $Q$:
+its other terms already amount to $\Theta(nm)$, and beating $O(n^{3})$ on dense
+graphs would need a cheaper way to maintain the heights than the $O(nm)$ of
+Theorem~\ref{thm:time}, which nothing here rules out but which is a separate
+question. Problem~\ref{prob:upper} is therefore stated as $o(n^{3})$
+for \emph{some} infinite family of densities, and the interesting regime is
+$m=o(n^{2})$. Three targets of increasing strength are worth naming:
+\begin{enumerate}
+  \item $Q=o(n^{3})$ for sparse graphs, $m=O(n)$, where the current bound
+  $Q=O(n^{3})$ is a factor $n$ away from the conjecture;
+  \item $Q=O(n^{2}\sqrt m\,)$, the bound that holds for the genuine
+  highest-label push-relabel rule~\cite{CheriyanMaheshwari89} and which is
+  $o(n^{3})$ whenever $m=o(n^{2})$. The sweep of step~2 visits vertices in
+  non-increasing height order, which makes $\SKF$ resemble that rule; it is not
+  that rule, because it defers every relabel to the end of the phase instead of
+  lifting a stuck vertex at once, and whether the potential argument
+  of~\cite{CheriyanMaheshwari89,CheriyanMehlhorn99} survives the deferral is
+  open;
+  \item $Q=O(nm)$, the conjecture, which by Theorem~\ref{thm:time} gives
+  an $O(nm)$ running time outright.
+\end{enumerate}
+Any one of them solves Problem~\ref{prob:upper}.
+\end{remark}
+
+\begin{remark}\label{rem:dichotomy}
+A separate problem asks for a bound from the
+other side: an infinite family of excess networks on which $\SKF$ performs
+$\omega(nm)$ tail-emptying pushes, and hence takes $\omega(nm)$ time whatever
+implementation of step~1 is used. The two are not alternatives and not a
+dichotomy. The gap they straddle runs from $nm$ to $n^{3}$, and most bounds
+inside it satisfy both at once: a proof that $Q=\Theta(n^{2}\sqrt m\,)$ on sparse
+graphs, say, would solve this problem and the companion together. Only the
+strongest form named in Remark~\ref{rem:density}, $Q=O(nm)$, excludes the
+companion.
+\end{remark}
+
+\begin{remark}[Scope]\label{rem:scope}
+The problem is about $\SKF$ as defined, not about the maximum flow problem.
+Maximum flow is solvable in $O(nm)$ time~\cite{Orlin13} and in
+$m^{1+o(1)}$ time~\cite{CKLPGS22}, so it is not asking for a new record; what is
+at stake is the analysis of one short algorithm.
+
+A solution must hold for every arc order of Remark~\ref{rem:order}, since the
+implementation fixes none.
+\end{remark}
+
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{CKL{\etalchar{+}}22}
+
+\bibitem[CKL{\etalchar{+}}22]{CKLPGS22}
+Li~Chen, Rasmus Kyng, Yang~P. Liu, Richard Peng, Maximilian Probst~Gutenberg,
+  and Sushant Sachdeva.
+\newblock Maximum flow and minimum-cost flow in almost-linear time.
+\newblock In {\em Proceedings of the 63rd IEEE Annual Symposium on Foundations
+  of Computer Science (FOCS 2022)}, pages 612--623, 2022.
+
+\bibitem[CM89]{CheriyanMaheshwari89}
+Joseph Cheriyan and S.~N. Maheshwari.
+\newblock Analysis of preflow push algorithms for maximum network flow.
+\newblock {\em SIAM Journal on Computing}, 18(6):1057--1086, 1989.
+
+\bibitem[CM99]{CheriyanMehlhorn99}
+Joseph Cheriyan and Kurt Mehlhorn.
+\newblock An analysis of the highest-level selection rule in the preflow-push
+  max-flow algorithm.
+\newblock {\em Information Processing Letters}, 69(5):239--242, 1999.
+
+\bibitem[Din70]{Dinitz70}
+E.~A. Dinitz.
+\newblock Algorithm for solution of a problem of maximum flow in networks with
+  power estimation.
+\newblock {\em Soviet Mathematics Doklady}, 11:1277--1280, 1970.
+
+\bibitem[GT88]{GoldbergTarjan88}
+Andrew~V. Goldberg and Robert~E. Tarjan.
+\newblock A new approach to the maximum-flow problem.
+\newblock {\em Journal of the ACM}, 35(4):921--940, 1988.
+
+\bibitem[Kar74]{Karzanov74}
+A.~V. Karzanov.
+\newblock Determining the maximal flow in a network by the method of preflows.
+\newblock {\em Soviet Mathematics Doklady}, 15(2):434--437, 1974.
+
+\bibitem[MKM78]{MKM78}
+V.~M. Malhotra, M.~Pramodh Kumar, and S.~N. Maheshwari.
+\newblock An {$O(|V|^3)$} algorithm for finding maximum flows in networks.
+\newblock {\em Information Processing Letters}, 7(6):277--278, 1978.
+
+\bibitem[Orl13]{Orlin13}
+James~B. Orlin.
+\newblock Max flows in {$O(nm)$} time, or better.
+\newblock In {\em Proceedings of the 45th Annual ACM Symposium on Theory of
+  Computing (STOC 2013)}, pages 765--774, 2013.
+
+\end{thebibliography}
+
+\end{document}
